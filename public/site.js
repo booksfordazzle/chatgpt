@@ -7,13 +7,13 @@ menu?.addEventListener('click', () => { const open = menu.getAttribute('aria-exp
 nav?.addEventListener('click', event => { if (event.target.closest('a')) closeMenu(); });
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && menu?.getAttribute('aria-expanded') === 'true') { closeMenu(); menu.focus(); } });
 document.addEventListener('click', event => { if (!event.target.closest('.site-header')) closeMenu(); });
-const form = document.querySelector('.waitlist-form');
 const localPreview = location.protocol === 'file:';
-form?.addEventListener('submit', async event => {
+document.querySelectorAll('.waitlist-form').forEach(form => {
+form.addEventListener('submit', async event => {
   event.preventDefault();
   const button = form.querySelector('button[type=submit]');
   if (button.disabled || !form.reportValidity()) return;
-  const status = document.querySelector('#signup-status');
+  const status = form.querySelector('.form-status');
   if (localPreview) {
     status.textContent = 'Η εγγραφή δεν είναι διαθέσιμη σε αυτό το αρχείο. Άνοιξε τον δημοσιευμένο ιστότοπο για να εγγραφείς.';
     return;
@@ -43,6 +43,7 @@ form?.addEventListener('submit', async event => {
   } finally {
     button.disabled = false; button.innerHTML = originalLabel; form.removeAttribute('aria-busy');
   }
+});
 });
 // Scroll controls the desktop film; mobile and reduced-motion visitors see the poster.
 const film = document.querySelector('[data-film]');
