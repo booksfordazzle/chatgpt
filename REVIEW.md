@@ -96,3 +96,9 @@ The requested replacement product photograph is visible inline in chat but was n
 Split the introductory copy into shorter paragraphs, promoted the “30 ingredients” message into a clear scan anchor, highlighted the two named ingredients and three product roles, converted usage occasions to a semantic bullet list, and separated the three “Χωρίς…” statements. Kept the owner's substantive wording and the existing single H1. Adjusted reading size, line height, contrast hierarchy and grouping without introducing card containers.
 
 Build and 11 tests passed. Chromium checks at 1440, 768, 390 and 320px confirmed the scan anchors, lists and no horizontal overflow or script exceptions. The supplied replacement photo is still inline-only: attachment discovery found only the original HTML export, so the product-image replacement remains unperformed pending a downloadable image file or ZIP.
+
+## Product photograph replacement completed
+
+Received `primal core-mastic.zip` and copied its supplied 2096×1184 JPEG byte-for-byte to `public/assets/product-mastic.jpg`. Replaced every use of the old photograph in the homepage, about page, blog card, ancestral-ingredients article and generated social metadata; removed the old image asset. Updated alt text and intrinsic dimensions. The homepage now preserves the photograph's complete aspect ratio with the established rounded corners.
+
+This resolves the prior product-photo attachment blocker. Build and all 11 automated tests passed. Desktop/mobile browser checks verified the new image on all four affected surfaces, full-image homepage presentation, rounded corners, no obsolete photo references and no horizontal overflow. Previously deferred video/other packaging updates remain separate.
