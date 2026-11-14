@@ -73,3 +73,33 @@ if (film) {
   addEventListener('scroll', schedule, { passive: true }); addEventListener('resize', schedule, { passive: true });
   desktop.addEventListener('change', configure); reduced.addEventListener('change', configure); configure();
 }
+
+// The center play button enhances native controls without preventing no-JS playback.
+const ingredientVideo = document.querySelector('#ingredient-video');
+const ingredientPlay = document.querySelector('.ingredient-play');
+if (ingredientVideo && ingredientPlay) {
+  const status = document.querySelector('.ingredient-video-status');
+  const syncPlayButton = () => { ingredientPlay.hidden = !ingredientVideo.paused && !ingredientVideo.ended; };
+  ingredientPlay.addEventListener('click', async () => {
+    if (ingredientPlay.disabled) return;
+    ingredientPlay.disabled = true;
+    ingredientPlay.setAttribute('aria-busy', 'true');
+    status.textContent = '';
+    try {
+      if (ingredientVideo.ended) ingredientVideo.currentTime = 0;
+      await ingredientVideo.play();
+      ingredientVideo.focus({ preventScroll: true });
+    } catch {
+      status.textContent = 'Το βίντεο δεν μπόρεσε να ξεκινήσει. Δοκίμασε ξανά ή χρησιμοποίησε τα χειριστήρια αναπαραγωγής.';
+    } finally {
+      ingredientPlay.disabled = false;
+      ingredientPlay.removeAttribute('aria-busy');
+      syncPlayButton();
+    }
+  });
+  ['play', 'pause', 'ended'].forEach(name => ingredientVideo.addEventListener(name, syncPlayButton));
+  ingredientVideo.addEventListener('error', () => {
+    syncPlayButton();
+    status.textContent = 'Το βίντεο δεν είναι διαθέσιμο αυτή τη στιγμή. Μπορείς να διαβάσεις τα συστατικά παρακάτω.';
+  });
+}

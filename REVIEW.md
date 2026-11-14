@@ -80,3 +80,13 @@ Applied the requested fixed hero line break and removed both hero links. Updated
 The ingredient film now spans the viewport; five ingredient columns sit below it on wide screens, with three, two or one column as space decreases. Replaced the former ingredient with Chios mastic oil in all live text, metadata, image descriptions and relevant handoff documents. Its description identifies it as an ingredient without borrowing the prior oil's efficacy claims. The owner explicitly chose to retain the existing videos temporarily and supply replacement media later; those videos and their posters still contain the old ingredient imagery and packaging. Their replacement remains an outstanding media task.
 
 Validation: build and 11 automated tests passed. Browser checks at 1440, 1024, 768, 390 and 320px confirmed the precise hero break, no hero links, full-width ingredient video, responsive columns, dark CTA hover text, rounded images, updated titles and no overflow or JavaScript exceptions. All live HTML was searched to confirm no outdated ingredient text remains.
+
+## Launch message and centered play button
+
+Reduced hero shading from 58% to 48% opacity. Replaced the introduction with the owner's latest Greek copy and made its chemistry-degree headline the page's sole H1; the earlier hero question is now an H2. Centered “5 συστατικά μόνο. Τίποτε άλλο”, removed the ingredient-development note, and added the supplied early-bird 15% launch offer to the email section.
+
+Added a centered, keyboard-accessible ingredient play button that hides during playback and returns on pause/end, with native controls retained for no-JavaScript use. A direct MP4 source ensures failed loads reject playback correctly and leave a retryable error state.
+
+Validation: four viewport widths passed with no overflow or browser exceptions; mouse and keyboard playback, pause, media-load failure, and no-JavaScript controls passed. Build and automated tests passed.
+
+The requested replacement product photograph is visible inline in chat but was not exposed as a downloadable file or workspace path. Its exact bytes could not be retrieved through the available tools. The existing product image remains pending delivery of the supplied photo as a file. It has not been replaced with a generated approximation.
