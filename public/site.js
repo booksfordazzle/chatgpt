@@ -44,7 +44,37 @@ form?.addEventListener('submit', async event => {
     button.disabled = false; button.innerHTML = originalLabel; form.removeAttribute('aria-busy');
   }
 });
-// Muted looping playback is shared by the hero and ingredient films.
+// Scroll controls the desktop film; mobile and reduced-motion visitors see the poster.
+const film = document.querySelector('[data-film]');
+if (film) {
+  const desktop = matchMedia('(min-width: 761px)');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let loaded = false, scheduled = false;
+  function scrub() {
+    scheduled = false;
+    if (!desktop.matches || reduced.matches || !Number.isFinite(film.duration) || film.seeking) return;
+    const stage = film.closest('.hero-film');
+    const distance = stage.offsetHeight - film.parentElement.offsetHeight;
+    const progress = Math.min(1, Math.max(0, (scrollY - stage.offsetTop) / Math.max(1, distance)));
+    const time = progress * Math.max(0, film.duration - .05);
+    if (Math.abs(film.currentTime - time) > .06) film.currentTime = time;
+  }
+  function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(scrub); } }
+  function configure() {
+    film.pause();
+    if (!desktop.matches || reduced.matches) { film.classList.remove('is-ready'); return; }
+    if (!loaded) { loaded = true; film.preload = 'auto'; film.load(); }
+    else if (film.readyState >= 2) film.classList.add('is-ready');
+    schedule();
+  }
+  film.addEventListener('loadeddata', () => { if (desktop.matches && !reduced.matches) film.classList.add('is-ready'); schedule(); });
+  film.addEventListener('seeked', schedule);
+  film.addEventListener('error', () => film.classList.remove('is-ready'));
+  addEventListener('scroll', schedule, { passive: true }); addEventListener('resize', schedule, { passive: true });
+  desktop.addEventListener('change', configure); reduced.addEventListener('change', configure); configure();
+}
+
+// Ingredient film retains muted autoplay and independent pause.
 document.querySelectorAll('[data-loop-video]').forEach(video => {
   const frame = video.closest('[data-video-frame]');
   const toggle = frame.querySelector('.media-toggle');
