@@ -47,3 +47,9 @@ The supplied address is shown as **MMTX E.E, Φιλικής Εταιρείας 1
 4. Verify media rights, final packaging/ingredient consistency and any quantitative scientific statements in the educational articles. No claim is made that this work validates the finished cosmetic's safety, efficacy or regulatory status.
 
 The implementation and deployment configuration are prepared. Full live launch readiness depends on the explicit items above; the site has not been published and live Google Sheets storage has not been claimed as working.
+
+## Download preview correction
+
+The first ZIP used origin-root asset paths, which failed when its HTML was opened directly from disk. All page links, images, posters, scripts, styles and font URLs now resolve relative to their files. A top-level `index.html` opens `public/index.html`, and the README explains extracting the entire folder before opening it. File previews explicitly state that signup cannot save emails until the server is published.
+
+Validation: build passed; 11 automated tests passed including two new archive-preview regression checks; all 10 content pages rendered correctly at both the HTTP site root and a nested `/public/` location. Filesystem checks resolved all relative links/assets. Direct `file://` browser navigation is blocked by this cloud browser's administrator policy, so an actual desktop double-click could not be reproduced here.

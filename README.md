@@ -2,6 +2,12 @@
 
 A Greek prelaunch site for primalcore.gr. Static, server-renderable HTML, self-hosted fonts, responsive WebP images, scroll-driven film on desktop and opt-in playback on mobile. No frontend dependencies, analytics, cookies or third-party browser requests.
 
+## Preview by double-clicking (no installation)
+
+Download the latest GitHub ZIP and **extract the entire ZIP first**. Open the extracted folder, then double-click **index.html** at the top level. It opens the site in your browser. Keep the `public` folder and its contents together; do not move the HTML file by itself or open it from inside the ZIP.
+
+Pages, images, styling, navigation and videos use relative paths and work locally. Waitlist submissions require the published server and Google configuration, so local previews clearly say they cannot save emails.
+
 ## Develop and verify
 
 Requires Node.js 22 or newer. No dependency installation is necessary.

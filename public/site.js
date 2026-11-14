@@ -8,11 +8,17 @@ nav?.addEventListener('click', event => { if (event.target.closest('a')) closeMe
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && menu?.getAttribute('aria-expanded') === 'true') { closeMenu(); menu.focus(); } });
 document.addEventListener('click', event => { if (!event.target.closest('.site-header')) closeMenu(); });
 const form = document.querySelector('.waitlist-form');
+const localPreview = location.protocol === 'file:';
+if (form && localPreview) document.querySelector('#signup-status').textContent = 'Τοπική προεπισκόπηση: οι εγγραφές λειτουργούν μόνο στον δημοσιευμένο ιστότοπο.';
 form?.addEventListener('submit', async event => {
   event.preventDefault();
   const button = form.querySelector('button[type=submit]');
   if (button.disabled || !form.reportValidity()) return;
   const status = document.querySelector('#signup-status');
+  if (localPreview) {
+    status.textContent = 'Τοπική προεπισκόπηση: το email σου δεν αποθηκεύτηκε. Οι εγγραφές λειτουργούν μόνο στον δημοσιευμένο ιστότοπο.';
+    return;
+  }
   const email = form.elements.email;
   const originalLabel = button.innerHTML;
   button.disabled = true;
