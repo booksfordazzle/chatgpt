@@ -44,90 +44,102 @@ form?.addEventListener('submit', async event => {
     button.disabled = false; button.innerHTML = originalLabel; form.removeAttribute('aria-busy');
   }
 });
-// Scroll controls the desktop film; mobile and reduced-motion visitors see the poster.
-const film = document.querySelector('[data-film]');
-if (film) {
-  const desktop = matchMedia('(min-width: 761px)');
+// Muted looping playback is shared by the hero and ingredient films.
+document.querySelectorAll('[data-loop-video]').forEach(video => {
+  const frame = video.closest('[data-video-frame]');
+  const toggle = frame.querySelector('.media-toggle');
+  const status = document.getElementById(video.dataset.statusId);
+  const name = video.dataset.videoName;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  let loaded = false, scheduled = false;
-  function scrub() {
-    scheduled = false;
-    if (!desktop.matches || reduced.matches || !Number.isFinite(film.duration) || film.seeking) return;
-    const stage = film.closest('.hero-film');
-    const distance = stage.offsetHeight - film.parentElement.offsetHeight;
-    const progress = Math.min(1, Math.max(0, (scrollY - stage.offsetTop) / Math.max(1, distance)));
-    const time = progress * Math.max(0, film.duration - .05);
-    if (Math.abs(film.currentTime - time) > .06) film.currentTime = time;
-  }
-  function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(scrub); } }
-  function configure() {
-    film.pause();
-    if (!desktop.matches || reduced.matches) { film.classList.remove('is-ready'); return; }
-    if (!loaded) { loaded = true; film.preload = 'auto'; film.load(); }
-    else if (film.readyState >= 2) film.classList.add('is-ready');
-    schedule();
-  }
-  film.addEventListener('loadeddata', () => { if (desktop.matches && !reduced.matches) film.classList.add('is-ready'); schedule(); });
-  film.addEventListener('seeked', schedule);
-  film.addEventListener('error', () => film.classList.remove('is-ready'));
-  addEventListener('scroll', schedule, { passive: true }); addEventListener('resize', schedule, { passive: true });
-  desktop.addEventListener('change', configure); reduced.addEventListener('change', configure); configure();
-}
-
-// Prepare playback before the film enters view, preserving a deliberate user pause.
-const ingredientVideo = document.querySelector('#ingredient-video');
-const ingredientToggle = document.querySelector('.ingredient-toggle');
-if (ingredientVideo && ingredientToggle) {
-  const status = document.querySelector('.ingredient-video-status');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  let userPaused = false;
-  let nearViewport = false;
-  let playPending = false;
-  ingredientVideo.muted = true;
-  ingredientVideo.controls = false;
-  const syncToggle = () => {
-    const paused = ingredientVideo.paused;
-    ingredientToggle.setAttribute('aria-label', paused ? 'Αναπαραγωγή βίντεο συστατικών' : 'Παύση βίντεο συστατικών');
-    ingredientToggle.innerHTML = paused
+  let userPaused = false, nearViewport = false, playPending = false;
+  video.muted = true;
+  video.controls = false;
+  function sync() {
+    toggle.setAttribute('aria-label', (video.paused ? 'Αναπαραγωγή βίντεο ' : 'Παύση βίντεο ') + name);
+    toggle.innerHTML = video.paused
       ? '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z" fill="currentColor"/></svg>'
       : '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="M7 5h3v14H7zM14 5h3v14h-3z" fill="currentColor"/></svg>';
-  };
-  async function startPlayback(explicit = false) {
+  }
+  async function play(explicit = false) {
     if (playPending || (!explicit && (userPaused || reduced.matches || !nearViewport || document.hidden))) return;
     playPending = true;
+    if (explicit) { video.classList.add('explicit-playback'); nearViewport = true; }
     status.textContent = '';
-    try { await ingredientVideo.play(); }
-    catch (error) {
-      if (error.name !== 'AbortError') status.textContent = 'Η αυτόματη αναπαραγωγή δεν είναι διαθέσιμη. Πάτησε το κουμπί κάτω δεξιά για αναπαραγωγή.';
-    } finally {
+    try { await video.play(); }
+    catch (error) { if (error.name !== 'AbortError') status.textContent = 'Πάτησε το κουμπί κάτω δεξιά για αναπαραγωγή.'; }
+    finally {
       playPending = false;
-      if (userPaused || document.hidden || !nearViewport) ingredientVideo.pause();
-      syncToggle();
+      if (userPaused || document.hidden || !nearViewport) video.pause();
+      sync();
     }
   }
-  ingredientToggle.addEventListener('click', () => {
-    if (!ingredientVideo.paused || playPending) { userPaused = true; ingredientVideo.pause(); syncToggle(); }
-    else { userPaused = false; startPlayback(true); }
+  toggle.addEventListener('click', () => {
+    if (!video.paused || playPending) { userPaused = true; video.pause(); sync(); }
+    else { userPaused = false; play(true); }
   });
-  ['play', 'pause', 'ended'].forEach(name => ingredientVideo.addEventListener(name, syncToggle));
-  ingredientVideo.addEventListener('error', () => {
-    syncToggle();
-    status.textContent = 'Το βίντεο δεν είναι διαθέσιμο αυτή τη στιγμή. Μπορείς να διαβάσεις τα συστατικά παρακάτω.';
+  ['play', 'pause', 'ended'].forEach(event => video.addEventListener(event, sync));
+  video.addEventListener('loadeddata', () => video.classList.add('is-ready'));
+  if (video.readyState >= 2) video.classList.add('is-ready');
+  video.addEventListener('error', () => {
+    video.classList.remove('is-ready');
+    status.textContent = 'Το βίντεο δεν είναι διαθέσιμο αυτή τη στιγμή.';
+    sync();
   });
-  const observer = new IntersectionObserver(entries => {
+  new IntersectionObserver(entries => {
     nearViewport = entries[0].isIntersecting;
-    if (nearViewport) startPlayback();
-    else ingredientVideo.pause();
-  }, { rootMargin: '600px 0px', threshold: 0 });
-  observer.observe(ingredientVideo);
-  // Some browsers suspend muted media outside the actual viewport. Retry on entry.
-  const visibleObserver = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) { nearViewport = true; startPlayback(); }
-  }, { threshold: 0.01 });
-  visibleObserver.observe(ingredientVideo);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) ingredientVideo.pause(); else startPlayback(); });
-  reduced.addEventListener('change', () => { if (reduced.matches) ingredientVideo.pause(); else startPlayback(); });
-  // The observer will start it near the viewport; do not play off-screen on page load.
-  ingredientVideo.pause();
-  syncToggle();
+    if (nearViewport) play(); else video.pause();
+  }, { rootMargin: '600px 0px' }).observe(video);
+  new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) { nearViewport = true; play(); }
+  }, { threshold: .01 }).observe(video);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) video.pause(); else play(); });
+  reduced.addEventListener('change', () => { if (reduced.matches) video.pause(); else play(); });
+  video.pause();
+  sync();
+});
+
+const slider = document.querySelector('.ingredient-slider');
+if (slider) {
+  const slidesElement = slider.querySelector('.ingredient-slides');
+  const slides = [...slidesElement.children];
+  const count = slider.querySelector('.slider-count');
+  let index = 0;
+  function show(next) {
+    index = (next + slides.length) % slides.length;
+    slides.forEach((slide, i) => { slide.hidden = i !== index; });
+    count.textContent = `${index + 1} / ${slides.length}`;
+    count.setAttribute('aria-label', `Συστατικό ${index + 1} από ${slides.length}: ${slides[index].querySelector('h3').textContent}`);
+  }
+  function measure() {
+    const probe = slidesElement.cloneNode(true);
+    probe.removeAttribute('id');
+    probe.setAttribute('aria-hidden', 'true');
+    Object.assign(probe.style, { position: 'absolute', visibility: 'hidden', pointerEvents: 'none', width: `${slidesElement.clientWidth}px`, left: '0', top: '0' });
+    [...probe.children].forEach(slide => { slide.hidden = false; });
+    slider.append(probe);
+    const height = Math.max(...[...probe.children].map(slide => slide.getBoundingClientRect().height));
+    probe.remove();
+    slidesElement.style.minHeight = `${Math.ceil(height)}px`;
+  }
+  slider.querySelector('.slider-prev').addEventListener('click', () => show(index - 1));
+  slider.querySelector('.slider-next').addEventListener('click', () => show(index + 1));
+  slider.addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    show(event.key === 'Home' ? 0 : event.key === 'End' ? slides.length - 1 : index + (event.key === 'ArrowRight' ? 1 : -1));
+  });
+  let touch;
+  slider.addEventListener('pointerdown', event => { if (event.pointerType === 'touch') touch = { x: event.clientX, y: event.clientY }; });
+  slider.addEventListener('pointerup', event => {
+    if (!touch) return;
+    const dx = event.clientX - touch.x, dy = event.clientY - touch.y;
+    touch = null;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy)) show(index + (dx < 0 ? 1 : -1));
+  });
+  slider.addEventListener('pointercancel', () => { touch = null; });
+  let resizeFrame;
+  addEventListener('resize', () => { cancelAnimationFrame(resizeFrame); resizeFrame = requestAnimationFrame(measure); });
+  show(0);
+  measure();
+  document.fonts.ready.then(measure);
 }

@@ -123,3 +123,38 @@ img,.product-image img,.ritual img,.prose img,.article-grid img{border-radius:va
 .ingredients>h2{margin-bottom:var(--heading-film-gap)}
 .ingredient-toggle{bottom:10px}
 @media(max-width:760px){:root{--heading-content-gap:40px;--image-caption-gap:20px;--heading-film-gap:48px}.ingredient-toggle{bottom:8px}}
+
+/* Edge-to-edge product photograph; this surface intentionally has square corners. */
+.product-image{width:100%;max-width:none;margin:0;padding:0;border-radius:0}
+.product-image img{display:block;width:100%;max-width:none;height:auto;aspect-ratio:2.4/1;object-fit:cover;object-position:center;border-radius:0}
+.product-image figcaption{margin-inline:auto}
+/* Uploaded 60fps hero now plays normally rather than through scroll scrubbing. */
+.hero-film{height:auto}
+.hero-sticky{position:relative;top:0;height:calc(100svh - var(--header));min-height:360px;border-radius:0}
+.hero-content,.hero-shade{pointer-events:none}
+.hero-poster,.hero-video{border-radius:0}
+html:not(.js) .hero-video{opacity:1}
+.media-toggle{display:none;position:absolute;right:18px;bottom:10px;width:44px;height:44px;padding:0;align-items:center;justify-content:center;border:1px solid rgba(241,240,233,.3);border-radius:50%;background:rgba(8,9,8,.75);color:var(--text);z-index:3}
+.js .media-toggle{display:flex}
+.media-toggle:hover{background:var(--bg)}
+.hero-video-status{position:absolute;left:20px;bottom:65px;right:20px;margin:0;font-size:14px;color:var(--text);z-index:3}
+.hero-video-status:empty{display:none}
+/* Five owner-provided ingredient slides with progressive no-JS reading access. */
+.ingredient-slider{margin-top:112px;text-align:center;touch-action:pan-y}
+.ingredient-slide{max-width:760px;margin-inline:auto;padding-block:8px}
+.ingredient-slide+.ingredient-slide{margin-top:56px}
+.ingredient-slide .ingredient-icon{width:56px;height:56px;margin:0 auto 24px}
+.ingredient-slide h3{font-size:clamp(28px,3vw,40px);margin-bottom:24px}
+.ingredient-slide p{font-size:20px;line-height:1.8;color:var(--muted);max-width:58ch;margin:0 auto}
+.js .ingredient-slide+.ingredient-slide{margin-top:0}
+.ingredient-slide[hidden]{display:none}
+.slider-controls{display:none;align-items:center;justify-content:center;gap:32px;margin-top:40px}
+.js .slider-controls{display:flex}
+.slider-controls button{width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:transparent;color:var(--text);border:1px solid #63685b;border-radius:50%}
+.slider-controls button:hover{background:var(--text);color:var(--bg)}
+.slider-count{font-variant-numeric:tabular-nums;font-size:15px;margin:0;min-width:48px}
+@media(max-width:1100px){.product-image img{aspect-ratio:2/1}}
+@media(max-width:760px){.product-image img{aspect-ratio:4/3;object-position:50% 50%}.hero-sticky{height:calc(100svh - var(--header));min-height:360px}.media-toggle{right:12px;bottom:8px}.ingredient-slider{margin-top:76px}.ingredient-slide p{font-size:17px}.ingredient-slide h3{font-size:30px}.slider-controls{margin-top:32px}}
+.ingredient-slider{position:relative}
+
+@media(prefers-reduced-motion:reduce){.hero-video.explicit-playback{display:block}}

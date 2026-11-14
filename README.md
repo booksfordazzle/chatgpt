@@ -1,6 +1,6 @@
 # PRIMAL CORE
 
-A Greek prelaunch site for primalcore.gr. Static, server-renderable HTML, self-hosted fonts, responsive WebP images, scroll-driven hero film on desktop, a static hero poster on mobile, and a muted looping ingredient video with a pause/resume control. No frontend dependencies, analytics, cookies or third-party browser requests.
+A Greek prelaunch site for primalcore.gr. Static, server-renderable HTML, self-hosted fonts, responsive WebP images, a supplied 60fps hero film and ingredient film with muted autoplay/loop and independent pause controls, a manually operated ingredient slider, and a full-bleed cinematic product image. No frontend dependencies, analytics, cookies or third-party browser requests.
 
 ## Preview by double-clicking (no installation)
 

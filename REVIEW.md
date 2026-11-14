@@ -132,3 +132,13 @@ Replaced the prior product photograph with the exact owner-supplied 1920×819 PN
 Saved the owner's generous-spacing rule in DESIGN.md and root AGENTS.md. Shared CSS tokens now set benefits heading/content gaps to 56px desktop / 40px mobile, image/caption gaps to 24px / 20px, and ingredient heading/video gaps to 72px / 48px. The pause control sits lower at 10px / 8px from the frame bottom. Benefits remain top-aligned and the product photo remains directly after the introductory “Χωρίς περιττά.” section.
 
 Validation: build and all 11 tests passed. Five viewport widths verified the exact measured gaps, full supplied photo aspect ratio, stable benefits heading, muted loop/pause behavior and no horizontal overflow. The new PNG response has the correct image/png content type. This resolves the pending open-tin photo replacement from the previous review entry.
+
+## Uploaded slider, edge-to-edge product photo and 60fps hero
+
+Implemented a five-slide ingredient carousel using the supplied markdown's headings/descriptions verbatim, with preserved icons, next/previous controls, a 1 / 5 counter, keyboard navigation and touch swiping. It does not auto-advance. The maximum slide height is reserved to prevent later content from jumping. All texts remain readable without JavaScript.
+
+The supplied product ZIP was byte-identical to the existing open-jar PNG. Preserved those source bytes and grading. Removed the homepage figure's container class and image radius/insets; centered cover crops use 2.40:1 on wide desktop, 2:1 on tablet and 4:3 on mobile. The caption retains the normal content grid and saved image/caption spacing. This is an explicit exception to the general rounded-image rule.
+
+Replaced the old scroll-scrubbed hero with the uploaded 1920×1080 60fps MP4, copied without transcoding, plus a poster extracted from that video. The hero now occupies one visible screen and uses muted autoplay/loop with a bottom-right pause/resume control. A shared media controller preserves independent user pauses, reduced-motion choices, tab visibility and no-JavaScript native controls. The separate ingredient film remains in place. Old unused hero assets were removed.
+
+Validation: build and 11 tests passed. Five viewport widths verified full-bleed geometry, expected crops, centered product, grid-aligned caption, no horizontal overflow or browser errors, one active slide, exact counters, wrapping next/previous navigation, keyboard controls, touch events and stable downstream heading position. Hero/ingredient autoplay and pause passed; no-JavaScript reading/native controls and reduced-motion explicit playback passed.
