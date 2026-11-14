@@ -1,0 +1,16 @@
+[
+  {
+    "file": "origin.webp",
+    "source": "Generated for this project with OpenAI image generation",
+    "prompt": "A single wide landscape 16:9 cinematic editorial photograph for a Greek skincare brand manifesto. In a nearly black ancient stone setting, a fragment of an anonymous classical Greek marble male bust occupies the right third of the frame. Weathered chalk-white marble face and shoulder with authentic sculptural detail, dark charcoal limestone below, a narrow soft shaft of daylight from upper right grazing the stone and illuminating one side of the face. Very large calm black negative space in the left half for typography to be added in code. Intimate museum-quality physical photography, tactile ancient marble, deep blacks, subdued warm ivory highlights and a trace of muted olive in the shadows. No modern objects, no pedestal labels, no text, no lettering, no watermark, no graphic overlays. This is an atmospheric imagined classical artifact, not a portrait of an identified historical person. Sophisticated restrained lighting, rich real texture, not a CGI illustration.",
+    "original": "/workspace/generated_images/exec-c98439d3-1348-4436-93af-d4c269c44586.png",
+    "note": "Atmospheric artwork; not a documentary photograph or identified historical artifact."
+  },
+  {
+    "file": "bottle.webp",
+    "source": "Generated for this project with OpenAI image generation",
+    "prompt": "A single photographic packshot of an unbranded opaque warm-white skincare pump bottle, entire bottle visible and uncropped, isolated on a fully transparent background. Tall cylindrical cosmetic lotion bottle with a simple matte white pump dispenser and blank smooth label area, photographed straight on with a very slight three-quarter view. Soft directional studio illumination from upper left, subtle realistic material reflections and gentle contact shading, crisp organic photographic silhouette with a clean transparent alpha edge. No floor, no backdrop, no environment, no lettering, no text, no logos, no watermark, no other objects. The image will be reused at different scales in a cinematic dark-background composition about excessive skincare products.",
+    "original": "/workspace/generated_images/exec-e36254f3-0045-4b4e-99b5-052b80faade1.png",
+    "note": "Unbranded illustrative bottle. No competitor product is depicted."
+  }
+]
