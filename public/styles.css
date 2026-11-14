@@ -62,3 +62,18 @@ img,.product-image img,.ritual img,.prose img,.article-grid img{border-radius:va
 .ingredient-video-status:empty{display:none}
 .ingredients .ingredient-list{margin-top:48px}
 @media(max-width:760px){.intro h1{font-size:38px}.ingredient-play{width:64px;height:64px}.ingredients .ingredient-list{margin-top:32px}}
+
+/* Short reading groups and clear scan anchors for the introductory copy. */
+.intro-copy{font-size:18px;line-height:1.8;color:#cccec6}
+.intro-copy>p{margin-bottom:24px;max-width:58ch}
+.intro-copy strong{color:var(--text);font-weight:650}
+.intro-copy .intro-statement{font-size:clamp(21px,2vw,25px);line-height:1.5;margin-block:32px}
+.intro-statement>span{display:block;margin-top:10px}
+.intro-uses{margin-top:36px}
+.intro-uses>p{margin-bottom:12px}
+.intro-uses ul{margin:0;padding-left:23px}
+.intro-uses li{padding-left:5px;margin-top:8px}
+.intro-uses li::marker{color:var(--accent)}
+.intro-promises{list-style:none;margin:36px 0 0;padding:0;font-size:clamp(21px,2vw,25px);font-weight:550;line-height:1.5;color:var(--text)}
+.intro-promises li+li{margin-top:8px}
+@media(max-width:760px){.intro-copy{font-size:17px;line-height:1.8}.intro-copy .intro-statement{margin-block:28px}.intro-uses{margin-top:28px}.intro-promises{margin-top:28px}}

@@ -90,3 +90,9 @@ Added a centered, keyboard-accessible ingredient play button that hides during p
 Validation: four viewport widths passed with no overflow or browser exceptions; mouse and keyboard playback, pause, media-load failure, and no-JavaScript controls passed. Build and automated tests passed.
 
 The requested replacement product photograph is visible inline in chat but was not exposed as a downloadable file or workspace path. Its exact bytes could not be retrieved through the available tools. The existing product image remains pending delivery of the supplied photo as a file. It has not been replaced with a generated approximation.
+
+## Introduction readability refinement
+
+Split the introductory copy into shorter paragraphs, promoted the “30 ingredients” message into a clear scan anchor, highlighted the two named ingredients and three product roles, converted usage occasions to a semantic bullet list, and separated the three “Χωρίς…” statements. Kept the owner's substantive wording and the existing single H1. Adjusted reading size, line height, contrast hierarchy and grouping without introducing card containers.
+
+Build and 11 tests passed. Chromium checks at 1440, 768, 390 and 320px confirmed the scan anchors, lists and no horizontal overflow or script exceptions. The supplied replacement photo is still inline-only: attachment discovery found only the original HTML export, so the product-image replacement remains unperformed pending a downloadable image file or ZIP.
