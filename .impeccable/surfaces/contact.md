@@ -9,3 +9,5 @@ The contact invitation and email occupy the first column; the supplied MMTX E.E 
 ## Validation
 
 Browser QA covered 1440px, 1024px, 390px and 320px widths, including navigation, wordmark-aligned paragraphs and benefit chevrons. The finish review of 1440px and 390px captures returned **ship**, with no required fixes. Build and all 11 tests passed.
+
+Owner revision: H1 is “Έχεις κάποια ερώτηση; Γράψε μας.” Remove the old Επικοινωνία heading. Email is initially concealed behind an accessible reveal button and assembled only after a click. This is basic obfuscation, not CAPTCHA or guaranteed spam prevention; actual CAPTCHA requires a configured verification service. No-JS visitors receive a human-readable [στο] address.

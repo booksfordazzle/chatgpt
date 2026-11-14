@@ -174,3 +174,21 @@ if (slider) {
   measure();
   document.fonts.ready.then(measure);
 }
+
+// Avoid publishing a plain email link in the contact page's initial markup.
+document.querySelectorAll('[data-reveal-email]').forEach(button => {
+  button.hidden = false;
+  button.addEventListener('click', () => {
+    const result = document.getElementById(button.getAttribute('aria-controls'));
+    if (result.childElementCount) return;
+    const address = atob(button.dataset.revealEmail);
+    const link = document.createElement('a');
+    link.className = 'contact-email';
+    link.href = 'mailto:' + address;
+    link.textContent = address;
+    result.append(link);
+    button.setAttribute('aria-expanded', 'true');
+    button.hidden = true;
+    link.focus();
+  });
+});
