@@ -115,3 +115,11 @@ img,.product-image img,.ritual img,.prose img,.article-grid img{border-radius:va
 /* Accordion growth must not vertically recenter the benefits heading or photo. */
 .ritual{align-items:start}
 .ritual>div{align-self:start}
+
+/* Durable owner preference: generous heading/content and image/caption spacing. */
+:root{--heading-content-gap:56px;--image-caption-gap:24px;--heading-film-gap:72px}
+.ritual h2{margin-bottom:var(--heading-content-gap)}
+.product-image figcaption{margin-top:var(--image-caption-gap)}
+.ingredients>h2{margin-bottom:var(--heading-film-gap)}
+.ingredient-toggle{bottom:10px}
+@media(max-width:760px){:root{--heading-content-gap:40px;--image-caption-gap:20px;--heading-film-gap:48px}.ingredient-toggle{bottom:8px}}

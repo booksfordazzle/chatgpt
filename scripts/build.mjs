@@ -14,7 +14,7 @@ async function visit(dir) {
   let html = await readFile(file, 'utf8');
   if (origin && !html.includes('noindex, follow')) {
    const url = origin + route;
-   html = html.replace('</head>', `<link rel="canonical" href="${escape(url)}"><meta property="og:url" content="${escape(url)}"><meta property="og:image" content="${escape(origin)}/assets/product-mastic.jpg"><meta property="og:image:alt" content="PRIMAL CORE face balm"><meta name="twitter:image" content="${escape(origin)}/assets/product-mastic.jpg"></head>`);
+   html = html.replace('</head>', `<link rel="canonical" href="${escape(url)}"><meta property="og:url" content="${escape(url)}"><meta property="og:image" content="${escape(origin)}/assets/tallow-mastic-balm.png"><meta property="og:image:alt" content="PRIMAL CORE face balm"><meta name="twitter:image" content="${escape(origin)}/assets/tallow-mastic-balm.png"></head>`);
    pages.push(url);
   }
   await writeFile(file, html);

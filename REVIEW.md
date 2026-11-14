@@ -124,3 +124,11 @@ Validation: build and 11 automated tests passed. Four viewport widths verified d
 Changed the benefits/photo grid from vertical centering to top alignment, including explicit top alignment of both grid children. Opening disclosures now expands downward without recentering the heading or photo.
 
 Build passed. Browser checks across five viewport widths verified a constant heading position through all eight open/closed combinations of the three benefits, plus real-click viewport-position checks and no horizontal overflow. The newly requested open-tin replacement image (image 4) is inline-only and is not among the available attachment files; the existing closed-tin product photograph remains until that new image is supplied as a ZIP/file.
+
+## Latest open-jar photo and saved spacing preference
+
+Replaced the prior product photograph with the exact owner-supplied 1920×819 PNG from `Primal Core Tallow Balm Jar (1).zip`, without regenerating or cropping it. Updated homepage/about/blog/article references and generated social metadata, removed the previous image, and added PNG MIME support to the development server.
+
+Saved the owner's generous-spacing rule in DESIGN.md and root AGENTS.md. Shared CSS tokens now set benefits heading/content gaps to 56px desktop / 40px mobile, image/caption gaps to 24px / 20px, and ingredient heading/video gaps to 72px / 48px. The pause control sits lower at 10px / 8px from the frame bottom. Benefits remain top-aligned and the product photo remains directly after the introductory “Χωρίς περιττά.” section.
+
+Validation: build and all 11 tests passed. Five viewport widths verified the exact measured gaps, full supplied photo aspect ratio, stable benefits heading, muted loop/pause behavior and no horizontal overflow. The new PNG response has the correct image/png content type. This resolves the pending open-tin photo replacement from the previous review entry.
