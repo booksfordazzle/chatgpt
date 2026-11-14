@@ -11,3 +11,5 @@ The marble bust and unbranded illustrative bottle are generated assets; their pr
 Motion is progressive enhancement: the static CSS presents every scene and both material panels in reading order. JavaScript adds the motion class only when reduced motion is off; preference changes restore the static presentation. Native scene anchors remain keyboard-accessible. Scroll and resize events schedule animation frames only when needed, with no perpetual animation loop. Keep text legible over imagery, including the dark backing behind the subtraction scroll hint, and leave room above the fixed scene navigation.
 
 Only the philosophy route receives the cinematic story styles; other routes receive the added navigation link and a responsive menu adjustment.
+
+The owner-supplied ancestral manifesto is distributed through the five scenes: Hippocrates/Dioscorides in the origin, modern complexity and essentials in subtraction, traditional preparation in return, tallow/mastic descriptions in materials, contemporary philosophy in the final product scene. Do not repeat this copy as an article-style appendix.

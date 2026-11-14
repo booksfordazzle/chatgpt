@@ -88,3 +88,8 @@
 .has-story-motion .materials-note{position:relative;inset:auto;padding:0 0 56px;font-size:14px;color:var(--scene-muted)}
 .has-story-motion .material-panel>div{bottom:112px}
 @media(max-width:760px){.has-story-motion .subtraction-hint{bottom:94px}.has-story-motion .materials-note{padding-bottom:40px;font-size:13px}.has-story-motion .tallow-panel>div{bottom:auto}.has-story-motion .mastic-panel>div{bottom:130px}}
+
+/* The supplied manifesto is told inside the five scenes, never repeated as an appendix. */
+.origin-history{max-width:48ch;margin-top:36px}.origin-history p{font-size:19px;line-height:1.75;margin:0 0 24px}.origin-shade{background:linear-gradient(90deg,rgba(8,9,8,.8),rgba(8,9,8,.35) 52%,transparent)}
+.complexity-copy p{max-width:42ch}.materials-heading>p{max-width:62ch;margin-inline:auto;line-height:1.7}.return-copy p{font-size:22px}.manifesto-copy>p{max-width:46ch;font-size:20px;line-height:1.75}.manifesto-copy strong{color:var(--scene-ink)}
+@media(max-width:760px){.origin-history{max-width:30ch;margin-top:32px}.origin-history p{font-size:17px;line-height:1.75}.origin-copy{padding-block:64px 120px}.origin-shade{background:rgba(8,9,8,.68)}.return-copy p{font-size:19px}.has-story-motion .material-panel p{font-size:16px;line-height:1.65}.has-story-motion .tallow-panel>div{top:32px}.has-story-motion .mastic-panel>div{bottom:112px}.material-panel h3{font-size:30px}.material-panel p{margin-top:18px}.manifesto-copy>p{font-size:18px;max-width:34ch}.manifesto-copy h2{font-size:42px}}
