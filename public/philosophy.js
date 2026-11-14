@@ -10,14 +10,9 @@ if (story) {
   const subtractionFrame = story.querySelector('.subtraction-frame');
   const complexity = story.querySelector('.complexity-copy');
   const essence = story.querySelector('.essence-lockup');
-  const hint = story.querySelector('.subtraction-hint');
   const bottles = [...story.querySelectorAll('.clutter-bottle')];
   const returnScene = story.querySelector('.return-scene');
   const returnImage = story.querySelector('.return-visual img');
-  const materials = story.querySelector('.materials-scene');
-  const materialsHeading = story.querySelector('.materials-heading');
-  const materialFrame = story.querySelector('.materials-panels');
-  const panels = [...story.querySelectorAll('.material-panel')];
   const manifesto = story.querySelector('.manifesto-scene');
   const manifestoImage = story.querySelector('.manifesto-image');
   const positions = [
@@ -59,25 +54,16 @@ if (story) {
     essence.style.opacity = String(arrival);
     essence.style.filter = `blur(${(1 - arrival) * 14}px)`;
     essence.style.transform = `translate(-50%,calc(-50% + ${(1 - arrival) * 20}px))`;
-    const message = p < .75 ? 'Συνέχισε την κύλιση. Άφησε τα περιττά πίσω.' : 'Η αφαίρεση είναι συνειδητή επιλογή.';
-    if (hint.textContent !== message) hint.textContent = message;
     const returnProgress = clamp((innerHeight - returnScene.getBoundingClientRect().top) / (innerHeight + returnScene.offsetHeight));
     returnImage.style.clipPath = `inset(0 ${(1 - returnProgress) * 16}% 0 0)`;
-    const headingOffset = parseFloat(getComputedStyle(materials).paddingTop) + materialsHeading.offsetHeight + parseFloat(getComputedStyle(materialsHeading).marginBottom) + story.querySelector('.materials-note').offsetHeight;
-    const materialProgress = clamp((header - materials.getBoundingClientRect().top - headingOffset) / Math.max(1, materials.offsetHeight - headingOffset - materialFrame.offsetHeight));
-    const mix = materialProgress * materialProgress * (3 - 2 * materialProgress);
-    panels.forEach(panel => { panel.style.opacity = '1'; });
-    panels[0].querySelector('img').style.opacity = String(1 - mix);
-    panels[1].querySelector('img').style.opacity = String(mix);
     const productProgress = clamp((innerHeight - manifesto.getBoundingClientRect().top) / (innerHeight * .8));
     manifestoImage.style.filter = `brightness(${.4 + productProgress * .6})`;
     subtraction.dataset.progress = p.toFixed(3);
-    materials.dataset.progress = materialProgress.toFixed(3);
   }
   function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(update); } }
   function configure() {
     story.classList.toggle('has-story-motion', !reduced.matches);
-    [originImage, complexity, essence, returnImage, manifestoImage, ...bottles, ...panels, ...panels.map(panel => panel.querySelector('img'))].forEach(element => element.removeAttribute('style'));
+    [originImage, complexity, essence, returnImage, manifestoImage, ...bottles].forEach(element => element.removeAttribute('style'));
     schedule();
   }
   addEventListener('scroll', schedule, { passive: true });

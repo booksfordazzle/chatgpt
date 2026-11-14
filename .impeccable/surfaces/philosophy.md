@@ -13,3 +13,5 @@ Motion is progressive enhancement: the static CSS presents every scene and both 
 Only the philosophy route receives the cinematic story styles; other routes receive the added navigation link and a responsive menu adjustment.
 
 The owner-supplied ancestral manifesto is distributed through the five scenes: Hippocrates/Dioscorides in the origin, modern complexity and essentials in subtraction, traditional preparation in return, tallow/mastic descriptions in materials, contemporary philosophy in the final product scene. Do not repeat this copy as an article-style appendix.
+
+Latest owner revision: remove the entire two-materials panel scene and its composition note, remove the origin scroll link and subtraction hints, and use four scene-navigation links. Final headline is “Η εξέλιξη είναι αφαίρεση.” Ingredient link is removed from the shared menu only; the homepage ingredient section stays. New inline owner photographs await a ZIP upload before exact replacements can be made.
