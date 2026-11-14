@@ -29,3 +29,21 @@ html:not(.js) .hero-film{height:auto}html:not(.js) .hero-sticky{position:relativ
 .faq summary h3{font:inherit;letter-spacing:inherit;text-wrap:balance}
 @media(max-width:760px){.hero-content h1{font-size:clamp(17px,5vw,36px)}}
 @media(max-width:400px){.header-inner{gap:12px}}
+
+/* Shared image treatment, readable CTA states, and the full-width ingredient film. */
+:root{--image-radius:16px}
+img,.product-image img,.ritual img,.prose img,.article-grid img{border-radius:var(--image-radius)}
+.brand{border-radius:var(--image-radius)}
+.site-header nav>a.button-small:hover,.site-header nav>a.button-small:focus-visible,.site-header nav>a.button-small:active{background:var(--accent);color:var(--bg)}
+.hero-content h1{font-size:clamp(32px,4.2vw,64px);text-wrap:initial}
+.ingredients{display:block;width:100%;max-width:none;padding-inline:0}
+.ingredients>h2{margin-bottom:40px}
+.ingredients>video{width:100%;max-width:none;aspect-ratio:16/9;object-fit:contain;background:#000;border-radius:var(--image-radius)}
+.ingredients>.note{margin-top:24px;margin-bottom:44px}
+.ingredient-list{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:28px}
+.ingredient-list>div,.ingredient-list>div:last-child{padding-block:24px 0;border-top:1px solid var(--line);border-bottom:0;min-width:0}
+.ingredient-list dt{font-size:22px;line-height:1.3}
+.ingredient-list dd{font-size:15px;max-width:none}
+@media(max-width:1100px){.ingredient-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:32px}}
+@media(max-width:760px){.hero-content h1{font-size:clamp(16px,4.5vw,34px)}.ingredient-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 20px}.ingredients>h2{margin-bottom:28px}.ingredients>.note{margin-bottom:28px}.ingredient-list dt{font-size:20px}}
+@media(max-width:480px){.ingredient-list{grid-template-columns:1fr}}
