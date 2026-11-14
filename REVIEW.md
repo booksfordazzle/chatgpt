@@ -60,3 +60,9 @@ Validation: build passed; 11 automated tests passed including two new archive-pr
 Replaced the horn logo home link with the supplied PRIMAL CORE wordmark. Applied self-hosted Google Sans across the interface, including Greek, Latin, variable weights and italic text, using the official Google Fonts source and bundled SIL license. Replaced all three benefit descriptions and all five ingredient descriptions with the owner's supplied wording. These latest descriptions supersede the earlier restrained benefit copy in this review's original assessment; they are supplied claims, not independently verified results.
 
 Kept the ingredient presentation as an optional, controlled video alongside always-visible descriptions, avoiding forced scrolling for reading. Build and all 11 tests passed; Chromium checks confirmed Google Sans normal/italic loading, new logo and copy, and no horizontal overflow at 1440, 390 and 320px.
+
+## Centered hero and copy assessment
+
+Centered the whole hero message and actions horizontally and vertically within the visible film area. Removed the pause-motion and skip-film controls. Desktop hero seeking remains driven by scrolling; mobile and reduced-motion settings use the static poster. Ingredient video playback controls are unchanged. The local development server now handles HTTP byte ranges, so media seeking also works during served previews.
+
+Chromium verified centering at 1440, 768, 390 and 320px, absence of the removed controls, working desktop film seeking, reduced-motion fallback, no horizontal overflow and no script exceptions. Normal/suffix/invalid byte ranges were checked. The English marketing draft was evaluated and a Greek alternative saved in COPY-PROPOSAL.md for review, without replacing the existing hero wording.

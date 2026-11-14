@@ -45,17 +45,15 @@ form?.addEventListener('submit', async event => {
     button.disabled = false; button.innerHTML = originalLabel; form.removeAttribute('aria-busy');
   }
 });
-// A single event-driven film: no perpetual animation loop, no download for reduced motion.
+// Scroll controls the desktop film; mobile and reduced-motion visitors see the poster.
 const film = document.querySelector('[data-film]');
-const filmButton = document.querySelector('[data-film-toggle]');
-if (film && filmButton) {
+if (film) {
   const desktop = matchMedia('(min-width: 761px)');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  let paused = false, loaded = false, scheduled = false;
-  const load = () => { if (!loaded) { loaded = true; film.preload = 'auto'; film.load(); } };
+  let loaded = false, scheduled = false;
   function scrub() {
     scheduled = false;
-    if (!desktop.matches || reduced.matches || paused || !Number.isFinite(film.duration) || film.seeking) return;
+    if (!desktop.matches || reduced.matches || !Number.isFinite(film.duration) || film.seeking) return;
     const stage = film.closest('.hero-film');
     const distance = stage.offsetHeight - film.parentElement.offsetHeight;
     const progress = Math.min(1, Math.max(0, (scrollY - stage.offsetTop) / Math.max(1, distance)));
@@ -65,23 +63,14 @@ if (film && filmButton) {
   function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(scrub); } }
   function configure() {
     film.pause();
-    if (reduced.matches) { filmButton.hidden = true; film.classList.remove('is-ready'); return; }
-    filmButton.hidden = false;
-    filmButton.setAttribute('aria-pressed', String(paused));
-    filmButton.textContent = desktop.matches ? (paused ? 'Συνέχιση κίνησης' : 'Παύση κίνησης') : 'Προβολή ταινίας';
-    if (desktop.matches) { load(); schedule(); }
+    if (!desktop.matches || reduced.matches) { film.classList.remove('is-ready'); return; }
+    if (!loaded) { loaded = true; film.preload = 'auto'; film.load(); }
+    else if (film.readyState >= 2) film.classList.add('is-ready');
+    schedule();
   }
-  film.addEventListener('loadeddata', () => { if (!reduced.matches) film.classList.add('is-ready'); schedule(); });
+  film.addEventListener('loadeddata', () => { if (desktop.matches && !reduced.matches) film.classList.add('is-ready'); schedule(); });
   film.addEventListener('seeked', schedule);
-  film.addEventListener('ended', () => { filmButton.textContent = 'Προβολή ξανά'; filmButton.setAttribute('aria-pressed', 'false'); });
-  film.addEventListener('error', () => { film.classList.remove('is-ready'); filmButton.hidden = true; });
-  filmButton.addEventListener('click', async () => {
-    if (desktop.matches) { paused = !paused; configure(); return; }
-    load();
-    if (!film.paused) { film.pause(); filmButton.textContent = 'Συνέχιση ταινίας'; filmButton.setAttribute('aria-pressed','false'); return; }
-    if (film.ended) film.currentTime = 0;
-    try { await film.play(); film.classList.add('is-ready'); filmButton.textContent = 'Παύση ταινίας'; filmButton.setAttribute('aria-pressed','true'); } catch { filmButton.textContent = 'Δοκίμασε ξανά την ταινία'; }
-  });
+  film.addEventListener('error', () => film.classList.remove('is-ready'));
   addEventListener('scroll', schedule, { passive: true }); addEventListener('resize', schedule, { passive: true });
   desktop.addEventListener('change', configure); reduced.addEventListener('change', configure); configure();
 }
