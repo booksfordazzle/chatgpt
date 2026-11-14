@@ -95,3 +95,12 @@
 .origin-history{max-width:48ch;margin-top:36px}.origin-history p{font-size:19px;line-height:1.75;margin:0 0 24px}.origin-shade{background:linear-gradient(90deg,rgba(8,9,8,.8),rgba(8,9,8,.35) 52%,transparent)}
 .complexity-copy p{max-width:42ch}.materials-heading>p{max-width:62ch;margin-inline:auto;line-height:1.7}.return-copy p{font-size:22px}.manifesto-copy>p{max-width:46ch;font-size:20px;line-height:1.75}.manifesto-copy strong{color:var(--scene-ink)}
 @media(max-width:760px){.origin-history{max-width:30ch;margin-top:32px}.origin-history p{font-size:17px;line-height:1.75}.origin-copy{padding-block:64px 120px}.origin-shade{background:rgba(8,9,8,.68)}.return-copy p{font-size:19px}.has-story-motion .material-panel p{font-size:16px;line-height:1.65}.has-story-motion .tallow-panel>div{top:32px}.has-story-motion .mastic-panel>div{bottom:112px}.material-panel h3{font-size:30px}.material-panel p{margin-top:18px}.manifesto-copy>p{font-size:18px;max-width:34ch}.manifesto-copy h2{font-size:42px}}
+
+/* Keep scroll-reading copy in genuine black negative space, with photographs framed right. */
+.return-copy{align-items:flex-start}.return-copy>*{width:44%;max-width:560px}
+.return-visual img{position:absolute;left:30%;width:70%;object-position:75% center}
+.return-visual:after,.return-visual:has(img[src$="return-marble.png"]):after{background:linear-gradient(90deg,#050605 0%,#050605 46%,rgba(5,6,5,.4) 66%,rgba(5,6,5,.08) 100%)}
+.manifesto-image{left:30%;width:70%;object-position:75% center}
+.manifesto-shade{background:linear-gradient(90deg,#050605 0%,#050605 46%,rgba(5,6,5,.3) 66%,rgba(5,6,5,.08) 100%)}
+.manifesto-copy h2,.manifesto-copy>p{width:44%;max-width:560px}
+@media(max-width:760px){.return-copy>*,.manifesto-copy h2,.manifesto-copy>p{width:72%;max-width:none}.return-copy h2,.manifesto-copy h2{font-size:clamp(30px,8vw,42px)}.return-copy p,.manifesto-copy>p{font-size:17px;line-height:1.75}.return-visual img,.return-visual img[src$="return-marble.png"],.manifesto-image{left:48%;width:65%;object-position:75% center}.return-visual:after,.return-visual:has(img[src$="return-marble.png"]):after,.manifesto-shade{background:linear-gradient(90deg,#050605 0%,#050605 72%,rgba(5,6,5,.35) 90%,rgba(5,6,5,.1))}.manifesto-copy .button{max-width:72%;padding-inline:14px;gap:12px;font-size:14px}.manifesto-copy .button svg{flex:none}}

@@ -169,3 +169,7 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 .waitlist-section{background:rgba(25,27,24,.72)}
 .philosophy-history{max-width:1000px;padding-block:100px 120px}.philosophy-history h2{margin-bottom:var(--heading-content-gap)}.philosophy-history .history-copy{columns:2;column-gap:64px}.philosophy-history p{font-size:18px;line-height:1.85;margin:0 0 28px;break-inside:avoid;color:var(--muted)}.philosophy-history strong{color:var(--text)}
 @media(max-width:760px){.philosophy-history{padding-block:72px 100px}.philosophy-history .history-copy{columns:1}}
+
+/* Homepage reading sequence: benefits, film, ingredient title/slider, product, introduction. */
+.ingredients>h2{margin-top:var(--heading-film-gap);margin-bottom:var(--heading-content-gap)}
+.ingredients .ingredient-slider{margin-top:0}
