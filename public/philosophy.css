@@ -104,3 +104,7 @@
 .manifesto-shade{background:linear-gradient(90deg,#050605 0%,#050605 46%,rgba(5,6,5,.3) 66%,rgba(5,6,5,.08) 100%)}
 .manifesto-copy h2,.manifesto-copy>p{width:44%;max-width:560px}
 @media(max-width:760px){.return-copy>*,.manifesto-copy h2,.manifesto-copy>p{width:72%;max-width:none}.return-copy h2,.manifesto-copy h2{font-size:clamp(30px,8vw,42px)}.return-copy p,.manifesto-copy>p{font-size:17px;line-height:1.75}.return-visual img,.return-visual img[src$="return-marble.png"],.manifesto-image{left:48%;width:65%;object-position:75% center}.return-visual:after,.return-visual:has(img[src$="return-marble.png"]):after,.manifesto-shade{background:linear-gradient(90deg,#050605 0%,#050605 72%,rgba(5,6,5,.35) 90%,rgba(5,6,5,.1))}.manifesto-copy .button{max-width:72%;padding-inline:14px;gap:12px;font-size:14px}.manifesto-copy .button svg{flex:none}}
+
+/* Keep the two essentials statements free of authored line breaks. */
+.essence-lockup h2,.essence-lockup>p{text-wrap:initial}
+@media(min-width:1101px){.essence-lockup h2{font-size:clamp(36px,4vw,58px)}.essence-lockup>p{font-size:clamp(28px,3.2vw,46px)}}
