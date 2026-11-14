@@ -19,3 +19,13 @@ html:not(.js) .hero-film{height:auto}html:not(.js) .hero-sticky{position:relativ
 /* Center the complete hero message within the visible film area. */
 .hero-sticky{min-height:0}.hero-content{align-items:center;text-align:center;padding-block:32px}.hero-content h1{max-width:740px}.hero-content p{max-width:520px}.hero-shade{background:rgba(0,0,0,.58)}
 @media(max-width:760px){.hero-sticky{min-height:calc(100svh - var(--header))}.hero-content{height:auto;padding-block:32px}.hero-content p{max-width:32ch}}
+
+/* Owner-requested type and editorial refinements. */
+.site-header nav>a,.menu-toggle{font-size:16.1px}
+.hero-content h1{width:100%;max-width:1200px;font-size:clamp(32px,4.2vw,64px);text-wrap:balance}
+.hero-content .button{margin-top:32px}
+.intro .note{margin-top:24px}
+.article-grid img{border-radius:16px}
+.faq summary h3{font:inherit;letter-spacing:inherit;text-wrap:balance}
+@media(max-width:760px){.hero-content h1{font-size:clamp(17px,5vw,36px)}}
+@media(max-width:400px){.header-inner{gap:12px}}
