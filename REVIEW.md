@@ -110,3 +110,11 @@ Enabled native looping on the ingredient video while preserving explicit user-in
 Removed the period from the availability heading. Moved the revised early-bird message directly above the email label/input and associated it with the input's accessible description. Added matching, transparent white SVG ingredient symbols (horns, resin drop, hexagon, oil drop and capsule) above the five names; decorative icons are hidden from assistive technology.
 
 Validation: build and 11 tests passed. Five viewport widths verified the centered headline, desktop/mobile columns, icons, text, offer placement and absence of overflow or JavaScript exceptions. Browser playback crossed the video's endpoint and restarted without pausing, and manual pause restored the play button.
+
+## Automatic ingredient film and expandable benefits
+
+Replaced the benefit statements with the supplied revised headings/explanations using native details/summary disclosures, monochrome circular checks and plus/minus indicators. Replaced the mastic symbol with a transparent white faceted-resin shape matching the reference. Centered ingredient icons and text, removed their top rules, and increased the video-to-ingredients gap to 112px on desktop and 76px on mobile.
+
+The ingredient film now uses muted autoplay, looping and inline playback, with a compact bottom-right pause/resume control. Playback is prepared near the viewport and retried on actual entry for browsers that suspend off-screen media. Manual pause persists across scroll-away/return; background tabs stop playback. Reduced-motion settings require explicit play. Native controls remain the no-JavaScript fallback. The email label is visually hidden while its accessible name is retained.
+
+Validation: build and 11 automated tests passed. Four viewport widths verified disclosures, keyboard interaction, icon/description alignment, spacing, label handling, looping, pause/resume and no overflow or JavaScript exceptions. Additional fresh-page desktop/mobile checks confirmed playback started with `navigator.userActivation.hasBeenActive === false`, without any prior click. Reduced-motion manual playback and persistent manual pause also passed.

@@ -74,32 +74,60 @@ if (film) {
   desktop.addEventListener('change', configure); reduced.addEventListener('change', configure); configure();
 }
 
-// The center play button enhances native controls without preventing no-JS playback.
+// Prepare playback before the film enters view, preserving a deliberate user pause.
 const ingredientVideo = document.querySelector('#ingredient-video');
-const ingredientPlay = document.querySelector('.ingredient-play');
-if (ingredientVideo && ingredientPlay) {
+const ingredientToggle = document.querySelector('.ingredient-toggle');
+if (ingredientVideo && ingredientToggle) {
   const status = document.querySelector('.ingredient-video-status');
-  const syncPlayButton = () => { ingredientPlay.hidden = !ingredientVideo.paused && !ingredientVideo.ended; };
-  ingredientPlay.addEventListener('click', async () => {
-    if (ingredientPlay.disabled) return;
-    ingredientPlay.disabled = true;
-    ingredientPlay.setAttribute('aria-busy', 'true');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let userPaused = false;
+  let nearViewport = false;
+  let playPending = false;
+  ingredientVideo.muted = true;
+  ingredientVideo.controls = false;
+  const syncToggle = () => {
+    const paused = ingredientVideo.paused;
+    ingredientToggle.setAttribute('aria-label', paused ? 'Αναπαραγωγή βίντεο συστατικών' : 'Παύση βίντεο συστατικών');
+    ingredientToggle.innerHTML = paused
+      ? '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z" fill="currentColor"/></svg>'
+      : '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="M7 5h3v14H7zM14 5h3v14h-3z" fill="currentColor"/></svg>';
+  };
+  async function startPlayback(explicit = false) {
+    if (playPending || (!explicit && (userPaused || reduced.matches || !nearViewport || document.hidden))) return;
+    playPending = true;
     status.textContent = '';
-    try {
-      if (ingredientVideo.ended) ingredientVideo.currentTime = 0;
-      await ingredientVideo.play();
-      ingredientVideo.focus({ preventScroll: true });
-    } catch {
-      status.textContent = 'Το βίντεο δεν μπόρεσε να ξεκινήσει. Δοκίμασε ξανά ή χρησιμοποίησε τα χειριστήρια αναπαραγωγής.';
+    try { await ingredientVideo.play(); }
+    catch (error) {
+      if (error.name !== 'AbortError') status.textContent = 'Η αυτόματη αναπαραγωγή δεν είναι διαθέσιμη. Πάτησε το κουμπί κάτω δεξιά για αναπαραγωγή.';
     } finally {
-      ingredientPlay.disabled = false;
-      ingredientPlay.removeAttribute('aria-busy');
-      syncPlayButton();
+      playPending = false;
+      if (userPaused || document.hidden || !nearViewport) ingredientVideo.pause();
+      syncToggle();
     }
+  }
+  ingredientToggle.addEventListener('click', () => {
+    if (!ingredientVideo.paused || playPending) { userPaused = true; ingredientVideo.pause(); syncToggle(); }
+    else { userPaused = false; startPlayback(true); }
   });
-  ['play', 'pause', 'ended'].forEach(name => ingredientVideo.addEventListener(name, syncPlayButton));
+  ['play', 'pause', 'ended'].forEach(name => ingredientVideo.addEventListener(name, syncToggle));
   ingredientVideo.addEventListener('error', () => {
-    syncPlayButton();
+    syncToggle();
     status.textContent = 'Το βίντεο δεν είναι διαθέσιμο αυτή τη στιγμή. Μπορείς να διαβάσεις τα συστατικά παρακάτω.';
   });
+  const observer = new IntersectionObserver(entries => {
+    nearViewport = entries[0].isIntersecting;
+    if (nearViewport) startPlayback();
+    else ingredientVideo.pause();
+  }, { rootMargin: '600px 0px', threshold: 0 });
+  observer.observe(ingredientVideo);
+  // Some browsers suspend muted media outside the actual viewport. Retry on entry.
+  const visibleObserver = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) { nearViewport = true; startPlayback(); }
+  }, { threshold: 0.01 });
+  visibleObserver.observe(ingredientVideo);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) ingredientVideo.pause(); else startPlayback(); });
+  reduced.addEventListener('change', () => { if (reduced.matches) ingredientVideo.pause(); else startPlayback(); });
+  // The observer will start it near the viewport; do not play off-screen on page load.
+  ingredientVideo.pause();
+  syncToggle();
 }
