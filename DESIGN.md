@@ -24,4 +24,4 @@ Use subtle, broad asymmetric neutral gradients from near-black to charcoal/mediu
 
 ## Homepage sequence
 
-Owner-specified order: scroll hero → benefits → autoplay ingredient film with overlaid heading → manual slider → waitlist availability form → full-width product photograph with caption → introduction → FAQ and blog prompt. Keep this DOM order on all breakpoints.
+Owner-specified order: scroll hero with waitlist CTA → waitlist availability form → benefits → autoplay ingredient film with centered two-line heading → manual slider → full-width product photograph with caption → introduction → FAQ and blog prompt. Keep this DOM order on all breakpoints.

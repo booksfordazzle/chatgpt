@@ -181,3 +181,7 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 .ingredients .ingredient-slider{margin-top:var(--heading-film-gap)}
 .ingredient-film .media-toggle{z-index:3}
 @media(max-width:760px){.ingredient-film .ingredient-film-title{bottom:24%;font-size:clamp(25px,6.8vw,40px);max-width:90%;text-wrap:balance}}
+
+/* Center the two-line ingredient title in the film, independent of viewport size. */
+.ingredient-film .ingredient-film-title{top:50%;bottom:auto;left:50%;right:auto;transform:translate(-50%,-50%);width:calc(100% - 40px);max-width:1280px;margin:0;text-align:center}
+.hero-content .hero-waitlist{pointer-events:auto;margin-top:32px}
