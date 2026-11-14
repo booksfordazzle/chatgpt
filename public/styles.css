@@ -173,3 +173,11 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 /* Homepage reading sequence: benefits, film, ingredient title/slider, product, introduction. */
 .ingredients>h2{margin-top:var(--heading-film-gap);margin-bottom:var(--heading-content-gap)}
 .ingredients .ingredient-slider{margin-top:0}
+
+/* The ingredient heading sits over the independently looping film. */
+.ingredient-film{position:relative;isolation:isolate}
+.ingredient-film:after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.72),rgba(0,0,0,.12) 55%,transparent);pointer-events:none;z-index:1}
+.ingredient-film .ingredient-film-title{position:absolute;left:0;right:0;bottom:12%;margin:0 auto;text-align:center;z-index:2;color:var(--text);font-size:clamp(30px,4vw,58px);line-height:1.15;pointer-events:none}
+.ingredients .ingredient-slider{margin-top:var(--heading-film-gap)}
+.ingredient-film .media-toggle{z-index:3}
+@media(max-width:760px){.ingredient-film .ingredient-film-title{bottom:24%;font-size:clamp(25px,6.8vw,40px);max-width:90%;text-wrap:balance}}
