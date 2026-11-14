@@ -192,3 +192,43 @@ document.querySelectorAll('[data-reveal-email]').forEach(button => {
     link.focus();
   });
 });
+
+// Two photo frames move by at most 18px, without changing layout or captions.
+const parallaxFrames = [...document.querySelectorAll('[data-photo-parallax]')];
+if (parallaxFrames.length) {
+  const reducedPhotoMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const visibleFrames = new Set();
+  let photoFramePending = false;
+  function updatePhotos() {
+    photoFramePending = false;
+    if (reducedPhotoMotion.matches) return;
+    visibleFrames.forEach(frame => {
+      const rect = frame.getBoundingClientRect();
+      const progress = Math.max(-1, Math.min(1, (innerHeight / 2 - rect.top - rect.height / 2) / ((innerHeight + rect.height) / 2)));
+      const distance = Math.min(innerWidth <= 760 ? 8 : 18, rect.height * .025);
+      frame.querySelector('img').style.transform = `translateY(${progress * distance}px) scale(1.06)`;
+    });
+  }
+  function schedulePhotos() {
+    if (!reducedPhotoMotion.matches && visibleFrames.size && !photoFramePending) {
+      photoFramePending = true;
+      requestAnimationFrame(updatePhotos);
+    }
+  }
+  const photoObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => { if (entry.isIntersecting) visibleFrames.add(entry.target); else visibleFrames.delete(entry.target); });
+    schedulePhotos();
+  }, { rootMargin: '64px 0px' });
+  function configurePhotoMotion() {
+    parallaxFrames.forEach(frame => {
+      frame.classList.toggle('has-parallax', !reducedPhotoMotion.matches);
+      if (reducedPhotoMotion.matches) frame.querySelector('img').style.removeProperty('transform');
+    });
+    schedulePhotos();
+  }
+  parallaxFrames.forEach(frame => photoObserver.observe(frame));
+  addEventListener('scroll', schedulePhotos, { passive: true });
+  addEventListener('resize', schedulePhotos);
+  reducedPhotoMotion.addEventListener('change', configurePhotoMotion);
+  configurePhotoMotion();
+}

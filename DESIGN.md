@@ -35,3 +35,5 @@ Owner-specified order: scroll hero with its own consented email signup → benef
 Both hero and bottom signup forms submit independently through the same confirmed-storage handler; each owns unique field IDs, validation and status messages.
 
 The shared menu contains no waitlist button. Both email fields show “Το email σου” as their placeholder.
+
+The benefits photograph and full-width product photograph use subtle clipped parallax (up to 18px desktop/8px mobile, 6% overscan). Text, accordion headings and captions remain stationary. Reduced-motion and no-JavaScript visitors see static photographs. Scroll frames are scheduled only on events while images are near the viewport. The bottom signup no longer includes the mailto question link.

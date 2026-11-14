@@ -221,3 +221,11 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 @media(max-width:760px){:root{--page-gutter:20px}.contact-page>h1{margin-bottom:48px}.contact-layout{grid-template-columns:1fr;gap:64px}.contact-email{font-size:clamp(21px,5.8vw,32px);gap:12px}.contact-help{margin-top:40px}}
 
 .contact-page>h1{max-width:900px}.contact-reveal{margin-block:32px}.contact-reveal .button[hidden]{display:none}.contact-reveal .contact-email{margin:0}
+
+/* Restrained scroll depth, clipped to the original photograph frames. */
+.parallax-frame{overflow:hidden;position:relative}
+.ritual>.parallax-frame{border-radius:16px}
+.parallax-frame>img{display:block;transform-origin:center}
+.parallax-frame.has-parallax>img{will-change:transform}
+.product-image>.parallax-frame{border-radius:0}
+@media(prefers-reduced-motion:reduce){.parallax-frame>img{transform:none!important;will-change:auto}}
