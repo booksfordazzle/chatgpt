@@ -108,3 +108,7 @@
 /* Keep the two essentials statements free of authored line breaks. */
 .essence-lockup h2,.essence-lockup>p{text-wrap:initial}
 @media(min-width:1101px){.essence-lockup h2{font-size:clamp(36px,4vw,58px)}.essence-lockup>p{font-size:clamp(28px,3.2vw,46px)}}
+
+/* Place the final action over the quiet balm photograph, apart from the reading column. */
+.manifesto-cta{position:absolute;z-index:3;left:76%;top:62%;transform:translate(-50%,-50%);max-width:calc(48% - 40px);white-space:nowrap}
+@media(max-width:760px){.manifesto-copy{padding-bottom:420px}.manifesto-image{left:0;width:100%;object-position:75% center}.manifesto-shade{mask-image:linear-gradient(#000 0%,#000 calc(100% - 340px),transparent calc(100% - 260px))}.manifesto-cta{left:50%;top:auto;bottom:130px;transform:translateX(-50%);max-width:calc(100% - 40px);font-size:14px;padding-inline:18px;gap:20px}}

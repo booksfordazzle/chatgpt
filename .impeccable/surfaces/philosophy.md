@@ -17,3 +17,5 @@ The owner-supplied ancestral manifesto is distributed through the five scenes: H
 Latest owner revision: remove the entire two-materials panel scene and its composition note, remove the origin scroll link and subtraction hints, and use four scene-navigation links. Final headline is “Η εξέλιξη είναι αφαίρεση.” Ingredient link is removed from the shared menu only; the homepage ingredient section stays. Owner ZIP photographs are now installed unchanged: return-marble.png in the return scene and evolution-balm.png in the final manifesto scene. Keep the scene copy, layout and transitions fixed when replacing these backgrounds.
 
 Frame return and manifesto photographs to the right and keep scroll-reading copy on the left, over pure black negative space. On narrow screens, preserve a narrower black reading column with the photograph visible on the right.
+
+The final manifesto action is positioned over the quiet balm area on the right; on mobile it sits on a dedicated image area below the text. Preserve the authored break between the two final evolution statements.
