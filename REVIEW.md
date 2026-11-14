@@ -102,3 +102,11 @@ Build and 11 tests passed. Chromium checks at 1440, 768, 390 and 320px confirmed
 Received `primal core-mastic.zip` and copied its supplied 2096×1184 JPEG byte-for-byte to `public/assets/product-mastic.jpg`. Replaced every use of the old photograph in the homepage, about page, blog card, ancestral-ingredients article and generated social metadata; removed the old image asset. Updated alt text and intrinsic dimensions. The homepage now preserves the photograph's complete aspect ratio with the established rounded corners.
 
 This resolves the prior product-photo attachment blocker. Build and all 11 automated tests passed. Desktop/mobile browser checks verified the new image on all four affected surfaces, full-image homepage presentation, rounded corners, no obsolete photo references and no horizontal overflow. Previously deferred video/other packaging updates remain separate.
+
+## Looping ingredients and newspaper-style introduction
+
+Enabled native looping on the ingredient video while preserving explicit user-initiated playback, center play control and pause behavior. Centered the introduction's single H1 across the full section, with no manual break, and arranged its reading groups into two desktop columns that stack in document order on mobile. Applied the supplied Chios mastic description verbatim.
+
+Removed the period from the availability heading. Moved the revised early-bird message directly above the email label/input and associated it with the input's accessible description. Added matching, transparent white SVG ingredient symbols (horns, resin drop, hexagon, oil drop and capsule) above the five names; decorative icons are hidden from assistive technology.
+
+Validation: build and 11 tests passed. Five viewport widths verified the centered headline, desktop/mobile columns, icons, text, offer placement and absence of overflow or JavaScript exceptions. Browser playback crossed the video's endpoint and restarted without pausing, and manual pause restored the play button.

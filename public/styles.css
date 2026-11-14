@@ -79,3 +79,16 @@ img,.product-image img,.ritual img,.prose img,.article-grid img{border-radius:va
 @media(max-width:760px){.intro-copy{font-size:17px;line-height:1.8}.intro-copy .intro-statement{margin-block:28px}.intro-uses{margin-top:28px}.intro-promises{margin-top:28px}}
 
 .product-image img{aspect-ratio:auto;height:auto;object-fit:contain}
+
+/* Centered editorial headline and two newspaper-style reading columns. */
+.intro{display:block}
+.intro>h1{text-align:center;max-width:none;margin:0 auto 56px;font-size:clamp(30px,3.5vw,52px);text-wrap:balance}
+.intro>.intro-copy{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:80px;max-width:none}
+.intro-column{min-width:0}
+.intro-column>p{margin-bottom:24px;max-width:58ch}
+.intro-column>.intro-uses:first-child{margin-top:0}
+.ingredient-icon{display:block;width:48px;height:48px;margin-bottom:20px;color:var(--text)}
+.waitlist-offer{font-size:20px;line-height:1.6;color:var(--text);margin:0 0 24px;max-width:44ch}
+@media(max-width:1100px){.intro>.intro-copy{gap:48px}}
+@media(max-width:760px){.intro>h1{font-size:clamp(30px,7.8vw,38px);margin-bottom:36px}.intro>.intro-copy{grid-template-columns:1fr;gap:28px}.intro-column>p:last-child{margin-bottom:0}.waitlist-offer{font-size:18px}.ingredient-icon{margin-bottom:16px}}
+.intro-promises{font-weight:650}
