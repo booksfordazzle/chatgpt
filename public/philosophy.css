@@ -36,6 +36,8 @@
 .return-visual{position:absolute;inset:0;background:#050605;overflow:hidden}
 .return-visual img{width:100%;height:100%;object-fit:cover;object-position:20% center;border-radius:0}
 .return-visual:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(5,6,5,.55) 48%,#050605 80%)}
+.return-visual:has(img[src$="return-marble.png"]):after{background:linear-gradient(90deg,rgba(5,6,5,.1),rgba(5,6,5,.38) 48%,rgba(5,6,5,.62))}
+@media(max-width:760px){.return-visual img[src$="return-marble.png"]{object-position:75% center}.return-visual:has(img[src$="return-marble.png"]):after{background:rgba(5,6,5,.65)}}
 .return-copy{position:relative;display:flex;flex-direction:column;align-items:flex-end;padding-block:100px}
 .return-copy>*{width:44%;max-width:560px}
 .return-copy p{font-size:clamp(19px,2vw,26px);line-height:1.65;margin-top:36px}
