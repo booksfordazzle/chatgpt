@@ -37,3 +37,5 @@ Both hero and bottom signup forms submit independently through the same confirme
 The shared menu contains no waitlist button. Both email fields show “Το email σου” as their placeholder.
 
 The benefits photograph and full-width product photograph use subtle clipped parallax (up to 18px desktop/8px mobile, 6% overscan). Text, accordion headings and captions remain stationary. Reduced-motion and no-JavaScript visitors see static photographs. Scroll frames are scheduled only on events while images are near the viewport. The bottom signup no longer includes the mailto question link.
+
+Each of these two photographs also receives a one-time 2.5% zoom over 1.8 seconds when at least 15% enters view. It composes with parallax without moving the frame, text or caption, and is disabled for reduced motion.

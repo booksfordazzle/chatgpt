@@ -219,10 +219,20 @@ if (parallaxFrames.length) {
     entries.forEach(entry => { if (entry.isIntersecting) visibleFrames.add(entry.target); else visibleFrames.delete(entry.target); });
     schedulePhotos();
   }, { rootMargin: '64px 0px' });
+  const photoEncounterObserver = new IntersectionObserver(entries => {
+    if (reducedPhotoMotion.matches) return;
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('photo-encountered');
+        photoEncounterObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: .15 });
   function configurePhotoMotion() {
     parallaxFrames.forEach(frame => {
       frame.classList.toggle('has-parallax', !reducedPhotoMotion.matches);
       if (reducedPhotoMotion.matches) frame.querySelector('img').style.removeProperty('transform');
+      else if (!frame.classList.contains('photo-encountered')) photoEncounterObserver.observe(frame);
     });
     schedulePhotos();
   }
