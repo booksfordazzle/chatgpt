@@ -53,3 +53,10 @@ The implementation and deployment configuration are prepared. Full live launch r
 The first ZIP used origin-root asset paths, which failed when its HTML was opened directly from disk. All page links, images, posters, scripts, styles and font URLs now resolve relative to their files. A top-level `index.html` opens `public/index.html`, and the README explains extracting the entire folder before opening it. File previews explicitly state that signup cannot save emails until the server is published.
 
 Validation: build passed; 11 automated tests passed including two new archive-preview regression checks; all 10 content pages rendered correctly at both the HTTP site root and a nested `/public/` location. Filesystem checks resolved all relative links/assets. Direct `file://` browser navigation is blocked by this cloud browser's administrator policy, so an actual desktop double-click could not be reproduced here.
+
+
+## Owner-requested brand and copy update
+
+Replaced the horn logo home link with the supplied PRIMAL CORE wordmark. Applied self-hosted Google Sans across the interface, including Greek, Latin, variable weights and italic text, using the official Google Fonts source and bundled SIL license. Replaced all three benefit descriptions and all five ingredient descriptions with the owner's supplied wording. These latest descriptions supersede the earlier restrained benefit copy in this review's original assessment; they are supplied claims, not independently verified results.
+
+Kept the ingredient presentation as an optional, controlled video alongside always-visible descriptions, avoiding forced scrolling for reading. Build and all 11 tests passed; Chromium checks confirmed Google Sans normal/italic loading, new logo and copy, and no horizontal overflow at 1440, 390 and 320px.

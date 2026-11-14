@@ -50,9 +50,9 @@ A generic static host can serve the pages but **cannot** run the waitlist endpoi
 
 - Complete the live Google Sheet integration test. This has not been performed in this workspace; no deployed Apps Script URL or credentials were supplied.
 - Confirm the full business address (city/postcode/country), monitored contact mailbox, retention period, hosting/Google processor arrangements and any international-transfer disclosures required for your actual configuration. The supplied legal name and street address are included; missing address details were not invented. Define how withdrawal and deletion requests are handled in Sheets and future mailing tools.
-- Confirm the existing images, film and packaging artwork are yours to publish and accurately represent the intended product. The old before/after image and guaranteed efficacy/certification claims have been removed. Product images are labelled as developmental; the packaging artwork contains wording that may differ from the final ingredient list.
+- Confirm the existing images, film and packaging artwork are yours to publish and accurately represent the intended product. The old before/after image and certification claims have been removed. Benefit and ingredient descriptions now use the owner-provided wording; confirm supporting evidence before launch. Product images are labelled as developmental; the packaging artwork contains wording that may differ from the final ingredient list.
 - Review the general educational articles and substantiate any quantitative ingredient statements before presenting them as scientific references. The articles are not clinical evidence for PRIMAL CORE.
 
 This handoff prepares source and deployment configuration. It does not publish DNS, deploy Netlify, install a Google Apps Script deployment, or establish regulatory approval for a cosmetic product.
 
-See `REVIEW.md` for the assessment and verification results. Roboto's license is in `public/assets/ROBOTO-LICENSE.txt`.
+See `REVIEW.md` for the assessment and verification results. Google Sans is self-hosted in Greek/Latin variable subsets, including italics; its SIL Open Font License is in `public/assets/GOOGLE-SANS-LICENSE.txt`.
