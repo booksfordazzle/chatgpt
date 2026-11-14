@@ -194,3 +194,14 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 .hero-content .hero-signup .form-status{margin-top:12px;max-width:none;font-size:14px}
 @media(max-width:760px){.hero-signup{margin-top:40px;max-width:480px}.hero-sticky:has(.hero-signup){height:auto;min-height:calc(100svh - var(--header))}.hero-content:has(.hero-signup){padding-block:56px 40px}}
 @media(min-width:761px) and (max-height:700px){.hero-sticky:has(.hero-signup){min-height:560px}.hero-signup{margin-top:40px}}
+
+/* Two adjacent reading/action columns at the bottom; stack on small screens. */
+.faq-signup{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:96px;align-items:start}
+.faq-signup>.faq{display:block;min-width:0}.faq-signup .faq>h2{margin-bottom:var(--heading-content-gap)}
+.faq-signup>.waitlist-section{padding:0;border:0;background:transparent;min-width:0}
+.faq-signup .waitlist-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
+.faq-signup .waitlist-grid h2{margin-bottom:28px}
+.faq-signup .email-row{flex-direction:column}.faq-signup .email-row .button{width:100%}
+@media(min-width:1101px){.faq-signup .email-row{flex-direction:row}.faq-signup .email-row .button{width:auto}}
+@media(max-width:1100px){.faq-signup{gap:48px}.faq-signup .waitlist-grid h2{font-size:36px}}
+@media(max-width:760px){.faq-signup{grid-template-columns:1fr;gap:80px}.faq-signup .faq>h2{margin-bottom:var(--heading-content-gap)}}

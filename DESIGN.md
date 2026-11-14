@@ -24,6 +24,8 @@ Use subtle, broad asymmetric neutral gradients from near-black to charcoal/mediu
 
 ## Homepage sequence
 
-Owner-specified order: scroll hero with its own consented email signup → benefits → autoplay ingredient film with centered two-line heading → manual slider → full-width product photograph with caption → introduction → FAQ → waitlist availability form immediately before the footer. Keep this DOM order on all breakpoints.
+Owner-specified order: scroll hero with its own consented email signup → benefits → autoplay ingredient film with centered two-line heading → manual slider → full-width product photograph with caption → introduction → FAQ and waitlist availability form side by side immediately before the footer; stack them in that order on mobile.
 
 Both hero and bottom signup forms submit independently through the same confirmed-storage handler; each owns unique field IDs, validation and status messages.
+
+The shared menu contains no waitlist button. Both email fields show “Το email σου” as their placeholder.
