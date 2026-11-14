@@ -118,3 +118,9 @@ Replaced the benefit statements with the supplied revised headings/explanations 
 The ingredient film now uses muted autoplay, looping and inline playback, with a compact bottom-right pause/resume control. Playback is prepared near the viewport and retried on actual entry for browsers that suspend off-screen media. Manual pause persists across scroll-away/return; background tabs stop playback. Reduced-motion settings require explicit play. Native controls remain the no-JavaScript fallback. The email label is visually hidden while its accessible name is retained.
 
 Validation: build and 11 automated tests passed. Four viewport widths verified disclosures, keyboard interaction, icon/description alignment, spacing, label handling, looping, pause/resume and no overflow or JavaScript exceptions. Additional fresh-page desktop/mobile checks confirmed playback started with `navigator.userActivation.hasBeenActive === false`, without any prior click. Reduced-motion manual playback and persistent manual pause also passed.
+
+## Stable benefit heading
+
+Changed the benefits/photo grid from vertical centering to top alignment, including explicit top alignment of both grid children. Opening disclosures now expands downward without recentering the heading or photo.
+
+Build passed. Browser checks across five viewport widths verified a constant heading position through all eight open/closed combinations of the three benefits, plus real-click viewport-position checks and no horizontal overflow. The newly requested open-tin replacement image (image 4) is inline-only and is not among the available attachment files; the existing closed-tin product photograph remains until that new image is supplied as a ZIP/file.

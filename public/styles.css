@@ -112,3 +112,6 @@ img,.product-image img,.ritual img,.prose img,.article-grid img{border-radius:va
 .js .ingredient-toggle{display:flex}
 .ingredient-toggle:hover{background:var(--bg)}
 @media(max-width:760px){.ingredients .ingredient-list{margin-top:76px}.benefit-list summary{font-size:20px;gap:12px}.benefit-list details>p{margin-left:36px}.ingredient-toggle{right:12px;bottom:12px}}
+/* Accordion growth must not vertically recenter the benefits heading or photo. */
+.ritual{align-items:start}
+.ritual>div{align-self:start}
