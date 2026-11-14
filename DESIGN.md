@@ -8,11 +8,17 @@ Navigation is native links to static URLs. FAQs use native details/summary. The 
 
 Tokens and responsive rules are in public/styles.css. Publishing headers are in netlify.toml.
 
-The shared navigation and footer include “Φιλοσοφία” at `/philosophy.html`. The header uses its collapsible menu at widths of 1100px and below so the expanded link set fits. Route-specific cinematic composition and motion belong in [the philosophy surface brief](.impeccable/surfaces/philosophy.md), rather than becoming defaults for other pages.
+The shared menu contains “Φιλοσοφία”, “Ιστορία”, “Blog” and “Επικοινωνία”, linking to `/philosophy.html`, `/about.html`, `/blog/index.html` and `/contact.html`. The about page uses “Ιστορία” in its title. The footer contact link also opens `/contact.html`. FAQ remains on the homepage and is omitted from the shared menu. The header uses its collapsible menu at widths of 1100px and below so the expanded link set fits. Route-specific cinematic composition and motion belong in [the philosophy surface brief](.impeccable/surfaces/philosophy.md), rather than becoming defaults for other pages.
+
+## Layout
+
+Use the shared `--page-gutter`: `max(40px, calc((100vw - 1520px)/2))` on desktop, 28px at 1100px and below, and 20px at 760px and below. Content wrappers and prose align their left edge with the wordmark; prose retains its 740px maximum reading width. Intentionally centered compositions stay centered. Contact-specific layout belongs in [the contact surface brief](.impeccable/surfaces/contact.md).
 
 ## Saved owner spacing preference
 
 Leave generous, visible space between a section heading and the list or content below it. Do not let the benefits heading touch the accordion's first rule. Use `--heading-content-gap` (56px desktop, 40px mobile), `--image-caption-gap` (24px desktop, 20px mobile), and `--heading-film-gap` (72px desktop, 48px mobile). Apply the same generous grouping principle to future surfaces; dense control labels may remain compact. Keep benefits top-aligned so opening answers never recenters its heading. The full-width product photograph is an explicit exception to the rounded-image rule: it is edge-to-edge with no container inset or corners, approximately 2.40:1 on desktop, 2:1 on tablet and 4:3 on mobile. Use centered cover cropping while preserving the source image and grading; keep its caption on the normal content grid with the saved caption gap.
+
+Benefit accordions retain native details/summary behavior and use a chevron that rotates 180 degrees when open.
 
 ## Ingredient slider
 
