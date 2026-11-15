@@ -85,3 +85,5 @@ Homepage hero: “Το πρόσωπό σου,<br>πιο απαλό από ποτ
 Latest sizing adjustment: increase the current hero title font by a further 10% on both languages: clamp(52.8px, 6.93vw, 105.6px), mobile clamp(26.4px, 7.425vw, 56.1px). Move the mobile ingredient title down exactly 150px from its previous clamped position: calc(max(64px, calc(50% - 400px)) + 150px). Desktop ingredient title remains centered.
 
 All shared footers include the credit “Website by Ermitikos” linking directly to https://www.instagram.com/ermitikos, beside the copyright on wide screens and wrapping as one unit on narrow screens. Preserve the five-link mobile navigation row.
+
+Current consent label, both homepage forms: “Συμφωνώ να λαμβάνω ενημερώσεις και έχω διαβάσει την πολιτική απορρήτου.” English: “I agree to receive updates and have read the privacy policy.” Keep the policy link and required, initially unchecked checkbox.
