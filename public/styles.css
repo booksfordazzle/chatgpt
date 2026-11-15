@@ -248,8 +248,8 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 @media(max-width:760px){.brand img{width:142%}}
 
 /* Owner reference: a single flag control and inset pill signup. */
-.language-switch .language-flag{width:44px;min-width:44px;height:44px;padding:0;border:1px solid var(--line);background:#171a16;border-radius:12px;font-size:24px;line-height:1}
-.language-switch .language-flag:hover{background:#30352a;border-color:#8f9584}
+.language-switch .language-flag{width:44px;min-width:44px;height:44px;padding:0;border:0;background:transparent;border-radius:0;line-height:1}
+.language-switch .language-flag:hover{background:transparent;opacity:.8}
 .language-flag span{font:inherit;min-width:0;min-height:0}
 .waitlist-form .email-row{display:flex;flex-direction:row;align-items:center;gap:6px;padding:5px;border:1px solid rgba(241,240,233,.38);border-radius:999px;background:rgba(32,34,32,.94);box-shadow:0 7px 18px rgba(0,0,0,.24);overflow:visible}
 .waitlist-form .email-row input[type="email"]{flex:1;width:0;min-width:0;min-height:44px;padding:10px 16px;border:1px solid #777d73;border-radius:999px;background:linear-gradient(180deg,#41443e,#292c28);font-size:16px;color:var(--text)}
@@ -258,3 +258,7 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 .waitlist-form .email-row .button:hover{background:var(--accent)}
 @media(max-width:760px){.waitlist-form .email-row{gap:5px;padding:4px}.waitlist-form .email-row input[type="email"]{padding-inline:12px;font-size:14px}.waitlist-form .email-row .button{padding-inline:13px;font-size:13px}}
 @media(max-width:359px){.waitlist-form .email-row{flex-direction:column;align-items:stretch;border-radius:26px}.waitlist-form .email-row input[type="email"],.waitlist-form .email-row .button{width:100%}}
+
+/* A bare flag after Contact; artwork also renders correctly without emoji fonts. */
+.site-header nav .language-switch{margin-left:0}.language-flag .flag-emoji{display:block;width:40px;height:34px;object-fit:contain;border-radius:0}
+@media(max-width:1100px){.site-header nav .language-switch{align-self:flex-start;margin-left:8px}}

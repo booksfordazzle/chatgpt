@@ -1,10 +1,10 @@
 # Connect the PRIMAL CORE waitlist to Supabase
 
-The code and database migration are prepared. **No hosted project has been created, no hosted migration has been applied, and live storage is not yet verified.** The local tests use an isolated PostgreSQL container, not your production database.
+The code and database migration are prepared. **The owner supplied https://exsrdnljhsfkphiatddu.supabase.co. Its migration, credentials and live storage are not yet verified.** The local tests use an isolated PostgreSQL container, not your production database.
 
-## 1. Create your project
+## 1. Your project
 
-1. Sign in at https://supabase.com/dashboard and create an organization/project.
+1. Sign in at https://supabase.com/dashboard and open your existing project `exsrdnljhsfkphiatddu`.
 2. Pick an EU region appropriate for your Greek customers and your processor/transfer review. Save the database password privately; the website does not need that password.
 3. Wait until the project is available. Keep it private. A free-tier project is fine for evaluation if its current limits fit your needs; check the current plan/pausing/quotas before sending traffic.
 4. In the project's connection/API settings, copy the **Project URL** (normally `https://<project-ref>.supabase.co`). This URL is not a secret and may be shared for setup.
