@@ -19,3 +19,5 @@ Latest owner revision: remove the entire two-materials panel scene and its compo
 Frame return and manifesto photographs to the right and keep scroll-reading copy on the left, over pure black negative space. On narrow screens, preserve a narrower black reading column with the photograph visible on the right.
 
 The final manifesto action is positioned over the quiet balm area on the right; on mobile it sits on a dedicated image area below the text. Preserve the authored break between the two final evolution statements.
+
+Current owner revision: extend the sticky-frame language of the complexity section to origin and manifesto with scroll-scenes.css/js. Origin reveals the ancient-care imagery; manifesto resolves toward the balm and the launch action. Preserve all copy, the authored breaks and paragraph pause, and the existing complexity bottle animation. Static/reduced-motion/small-height views must keep the whole text and action readable. Shared compact navigation contains the flag in the right-aligned narrow dropdown, with Menu in both languages; launch CTAs now say Let me in!.

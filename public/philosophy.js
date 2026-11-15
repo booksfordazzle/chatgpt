@@ -33,8 +33,6 @@ if (story) {
       active = nextActive;
     }
     if (reduced.matches) return;
-    const originProgress = clamp(-origin.getBoundingClientRect().top / origin.offsetHeight);
-    originImage.style.transform = `translateY(${originProgress * 18}px) scale(${1.03 + originProgress * .05})`;
     const p = clamp((header - subtraction.getBoundingClientRect().top) / Math.max(1, subtraction.offsetHeight - subtractionFrame.offsetHeight));
     const withdrawal = clamp((p - .38) / .42);
     bottles.forEach((bottle, index) => {
@@ -56,8 +54,6 @@ if (story) {
     essence.style.transform = `translate(-50%,calc(-50% + ${(1 - arrival) * 20}px))`;
     const returnProgress = returnScene ? clamp((innerHeight - returnScene.getBoundingClientRect().top) / (innerHeight + returnScene.offsetHeight)) : 0;
     if (returnImage) returnImage.style.clipPath = `inset(0 ${(1 - returnProgress) * 16}% 0 0)`;
-    const productProgress = clamp((innerHeight - manifesto.getBoundingClientRect().top) / (innerHeight * .8));
-    manifestoImage.style.filter = `brightness(${.4 + productProgress * .6})`;
     subtraction.dataset.progress = p.toFixed(3);
   }
   function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(update); } }
