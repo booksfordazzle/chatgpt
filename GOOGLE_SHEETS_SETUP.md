@@ -1,0 +1,58 @@
+# Activate Google Sheets signup storage
+
+The active waitlist now uses the existing Google Sheet, not Supabase. Code/tests are prepared; live Google storage is **not yet configured or verified**. No existing Sheet or Supabase records have been copied/deleted. No welcome email is sent.
+
+Target: [the existing PRIMAL CORE spreadsheet](https://docs.google.com/spreadsheets/d/1ptOmDxONI9KD_rLRZp0xGsjJezsOyIP0H3gd5HgleRg/edit).
+
+## 1. Open Apps Script from the Sheet
+
+1. Open the spreadsheet above with the Google account that owns/can edit it.
+2. In the spreadsheet menu, choose **Extensions → Apps Script** (Επεκτάσεις → Apps Script).
+3. If a script already exists, preserve a copy/version before replacing anything. Copy the complete current [`google-apps-script/Code.gs`](google-apps-script/Code.gs) from this branch into the script editor. Save.
+4. In the function dropdown beside **Run**, choose **setupWaitlist**, then click **Run**. Approve Google's account permissions for your own script/project. This binds only the agreed spreadsheet and creates a random shared secret if one is not already configured. Repeating setup preserves that secret. It does not expose it in logs.
+5. Open **Project Settings → Script properties**. Confirm `SPREADSHEET_ID` is set. Keep `WAITLIST_SHARED_SECRET` private; you will copy it directly into the hosting provider's secure settings, never into chat or public code.
+
+If your organization blocks Apps Script authorization/public web-app execution, an account/admin policy change or another hosting integration is required; do not make the Sheet publicly editable as a workaround.
+
+## 2. Deploy the receiver
+
+1. Click **Deploy → New deployment** (Ανάπτυξη → Νέα ανάπτυξη).
+2. Select **Web app** (Εφαρμογή ιστού).
+3. Set **Execute as: Me** (Εκτέλεση ως: Εγώ) and **Who has access: Anyone** (Οποιοσδήποτε). Public access is to this authenticated receiver, not to the Sheet. The shared secret still gates writes.
+4. Click **Deploy**, then copy the **Web app URL ending in `/exec`**. Do not use a `/dev` URL, the editor URL or the spreadsheet URL.
+5. This `/exec` URL can be sent for configuration. Never send the shared secret in chat.
+
+After subsequent source edits, publish a new deployment version. Saving Code.gs alone does not update a previously deployed version.
+
+## 3. Configure the website's server
+
+In Netlify's secure function environment settings, add:
+
+| Variable | Value |
+| --- | --- |
+| `GOOGLE_APPS_SCRIPT_URL` | The deployment URL ending in `/exec`. |
+| `WAITLIST_SHARED_SECRET` | Exactly the secret from Apps Script's Script properties. Mark sensitive/secret; server runtime only. |
+
+Deploy the updated `codex/bilingual-site` branch with the existing `netlify.toml`. Restart/redeploy after changing runtime variables. The function accepts only the Google Apps Script HTTPS endpoint and follows Google's ContentService redirect as a GET without forwarding the secret/body. The browser never receives either server setting.
+
+For this cloud environment, save/review its Google URL/secret requirements and network additions (`script.google.com`, `script.googleusercontent.com`). Saving a draft does not apply it. Local `npm run dev` does not automatically load `.env` files. Old Supabase variables/secret requirements are no longer needed by the active code; remove obsolete requirements from environment settings if they continue to prompt for a value. Do not delete Supabase tables or data merely to switch providers.
+
+## 4. Verify a real signup
+
+1. On the **deployed** site, use an email address you control and check consent.
+2. Confirm a row appears in the dedicated **Waitlist** tab and only then regard the signup as verified.
+3. Submit the same email again, then a different-case variant. Confirm there is only one row and the original receipt time stays unchanged.
+4. Test Greek and US English forms and native/no-JavaScript submission. Invalid/unconfirmed storage must show an error and must not claim success. No automatic email will arrive.
+5. Confirm the Sheet remains private and only authorized staff can access its email records. Remove controlled test rows after validation.
+
+The receiver records email, registration/consent UTC times, consent text/policy versions, locale, form source, bounded UTM fields, referrer origin and landing path. Each row is written under a script lock; formula-like text is escaped. Existing tabs are preserved. The previous five-column Waitlist layout is upgraded by appending missing column headings, leaving old rows/timestamps unchanged. Unexpected/custom header layouts fail safely instead of overwriting data. Empty new fields on old records remain empty; do not invent historical consent evidence.
+
+Current versions: consent `launch-updates-v1`; privacy `2026-11-15-sheets-v1`. Existing duplicate rows are not rewritten. Existing records from Supabase are not imported automatically; request a separately reviewed import if needed.
+
+## Important remaining audit work
+
+Before real acquisition, validate live saving and access permissions, review unsettled formula/skin claims, confirm 15% offer terms, retention/withdrawal operations and processor arrangements. Google Apps Script/Sheets has quotas and the public endpoint has no rate limit/captcha beyond its honeypot/input checks; add suitable rate limiting before scaling traffic. This integration does not implement mail delivery, automated unsubscribe/suppression, priority ranking, referrals or rewards.
+
+## Developer checks
+
+`npm test` covers server/receiver validation, additive legacy headers, case-insensitive duplicates, versioned consent/attribution, formula escaping, Google redirect safety and truthful UI/locale contracts. `npm run build` generates the static site. These checks use mocks and do not establish Google account permissions, deployment validity or live row persistence. The retained Supabase migration/test files are historical/inactive; they are not part of Google setup.

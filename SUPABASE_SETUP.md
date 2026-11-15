@@ -1,3 +1,5 @@
+> **Archived:** Supabase is no longer the active signup storage. Use [GOOGLE_SHEETS_SETUP.md](GOOGLE_SHEETS_SETUP.md). Do not execute these historical steps for Google setup. Existing Supabase data has not been deleted.
+
 # Connect the PRIMAL CORE waitlist to Supabase
 
 The code and database migration are prepared. **The owner supplied https://exsrdnljhsfkphiatddu.supabase.co. Its migration, credentials and live storage are not yet verified.** The local tests use an isolated PostgreSQL container, not your production database.

@@ -1,37 +1,78 @@
-/** Deploy as a web app: Execute as you; access Anyone. Keep this source and Script Properties private. */
+/** Deploy as you, access Anyone. The spreadsheet stays private; a server secret authenticates writes. */
 function doPost(event) {
   var lock = LockService.getScriptLock();
   var locked = false;
+  var baseHeaders = ['Email', 'Registered at (UTC)', 'Consent', 'Privacy version', 'Source'];
+  var extraHeaders = ['Consent received at (UTC)', 'Consent text version', 'Locale', 'UTM source', 'UTM medium', 'UTM campaign', 'UTM term', 'UTM content', 'Referrer origin', 'Landing path'];
   function reply(ok) { return ContentService.createTextOutput(JSON.stringify({ ok: ok })).setMimeType(ContentService.MimeType.JSON); }
+  function bounded(value, limit) { return typeof value === 'string' ? value.trim().replace(/[\x00-\x1f\x7f]/g, '').slice(0, limit) : ''; }
+  function cell(value) { value = String(value); return /^[=+\-@]/.test(value) ? "'" + value : value; }
   try {
     if (!event || !event.postData || event.postData.contents.length > 4096) return reply(false);
     var input = JSON.parse(event.postData.contents);
+    if (!input || typeof input !== 'object' || Array.isArray(input)) return reply(false);
     var props = PropertiesService.getScriptProperties();
     var expected = props.getProperty('WAITLIST_SHARED_SECRET');
-    if (!expected || input.token !== expected || input.consent !== true || input.policyVersion !== '2026-11-14') return reply(false);
+    if (!expected || input.token !== expected || input.consent !== true
+      || input.policyVersion !== '2026-11-15-sheets-v1' || input.consentTextVersion !== 'launch-updates-v1') return reply(false);
     var email = typeof input.email === 'string' ? input.email.trim() : '';
     if (email.length > 254 || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email) || /[\r\n\x00]/.test(email)) return reply(false);
+    var locale = input.locale === 'en-US' ? 'en-US' : 'el';
+    var source = ['primal-core-waitlist','primal-core-hero','primal-core-footer'].indexOf(input.source) >= 0 ? input.source : 'primal-core-waitlist';
+    var utm = input.utm && typeof input.utm === 'object' && !Array.isArray(input.utm) ? input.utm : {};
     lock.waitLock(10000); locked = true;
     var book = SpreadsheetApp.openById(props.getProperty('SPREADSHEET_ID'));
     var sheet = book.getSheetByName('Waitlist') || book.insertSheet('Waitlist');
+    var headers;
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['Email', 'Registered at (UTC)', 'Consent', 'Privacy version', 'Source']);
+      headers = baseHeaders.concat(extraHeaders);
+      sheet.appendRow(headers);
       sheet.setFrozenRows(1);
+    } else {
+      headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getDisplayValues()[0];
+      // Upgrade the previous five-column layout additively. Unknown layouts fail safely.
+      if (!baseHeaders.every(function(name, i) { return headers[i] === name; })) return reply(false);
+      if (headers.some(function(name, i) { return !name || headers.indexOf(name) !== i; })) return reply(false);
+      var missing = extraHeaders.filter(function(name) { return headers.indexOf(name) < 0; });
+      if (missing.length) {
+        sheet.getRange(1, headers.length + 1, 1, missing.length).setValues([missing]);
+        headers = headers.concat(missing);
+      }
     }
-    // Text values prevent spreadsheet formula injection. Deduplicate under the same lock.
     var key = email.toLowerCase();
     var rows = sheet.getLastRow() > 1 ? sheet.getRange(2, 1, sheet.getLastRow() - 1, 1).getDisplayValues() : [];
-    var exists = rows.some(function(row) { return row[0].toLowerCase() === key; });
+    var exists = rows.some(function(row) { return String(row[0]).replace(/^'/, '').toLowerCase() === key; });
     if (!exists) {
-      var rowNumber = sheet.getLastRow() + 1;
-      var range = sheet.getRange(rowNumber, 1, 1, 5);
+      var now = new Date().toISOString();
+      var values = {
+        'Email': "'" + email, 'Registered at (UTC)': now, 'Consent': 'true',
+        'Privacy version': '2026-11-15-sheets-v1', 'Source': source,
+        'Consent received at (UTC)': now, 'Consent text version': 'launch-updates-v1', 'Locale': locale,
+        'Referrer origin': bounded(input.referrerOrigin, 256), 'Landing path': bounded(input.landingPath, 256)
+      };
+      ['source','medium','campaign','term','content'].forEach(function(name) { values['UTM ' + name] = bounded(utm['utm_' + name], 128); });
+      var range = sheet.getRange(sheet.getLastRow() + 1, 1, 1, headers.length);
       range.setNumberFormat('@');
-      range.setValues([["'" + email, new Date().toISOString(), 'true', '2026-11-14', 'primal-core-waitlist']]);
-      SpreadsheetApp.flush();
+      range.setValues([headers.map(function(name) { return cell(values[name] || ''); })]);
     }
+    SpreadsheetApp.flush();
     return reply(true);
   } catch (_) {
-    // Never log the email address or shared secret.
+    // Never log personal data, the shared secret, or raw provider errors.
     return reply(false);
   } finally { if (locked) lock.releaseLock(); }
+}
+
+/** Run once from Extensions → Apps Script in the owner's existing spreadsheet. */
+function setupWaitlist() {
+  var book = SpreadsheetApp.getActiveSpreadsheet();
+  if (!book || book.getId() !== '1ptOmDxONI9KD_rLRZp0xGsjJezsOyIP0H3gd5HgleRg') {
+    throw new Error('Open Apps Script from the agreed PRIMAL CORE spreadsheet.');
+  }
+  var props = PropertiesService.getScriptProperties();
+  props.setProperty('SPREADSHEET_ID', book.getId());
+  if (!props.getProperty('WAITLIST_SHARED_SECRET')) {
+    props.setProperty('WAITLIST_SHARED_SECRET', Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, ''));
+  }
+  // Secret is visible only in this project's Script Properties. Never log it.
 }

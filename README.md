@@ -6,7 +6,7 @@ A Greek prelaunch site for primalcore.gr. Greek/English static, server-renderabl
 
 Download the latest GitHub ZIP and **extract the entire ZIP first**. Open the extracted folder, then double-click **index.html** at the top level. It opens the site in your browser. Keep the `public` folder and its contents together; do not move the HTML file by itself or open it from inside the ZIP.
 
-Pages, images, styling, navigation and videos use relative paths and work locally. Waitlist submissions require the published server and Supabase configuration, so local previews clearly say they cannot save emails.
+Pages, images, styling, navigation and videos use relative paths and work locally. Waitlist submissions require the published server and Google Apps Script configuration, so local previews clearly say they cannot save emails.
 
 ## Languages
 
@@ -24,30 +24,30 @@ npm run build
 
 The development server uses port 8080. `public/` is the editable source; `dist/` is the generated publication directory. Build runs from the repository root and generates canonical URLs, social image metadata, robots.txt and sitemap.xml for `https://primalcore.gr`. Set `SITE_URL` to another HTTPS origin only when intentionally changing domains. Build output is ignored by Git. The source upload remains unchanged outside this repository.
 
-## Connect Supabase
+## Connect Google Sheets
 
-The waitlist now persists through a server-only Supabase RPC. Follow [SUPABASE_SETUP.md](SUPABASE_SETUP.md) to create a project, apply `supabase/migrations/202611150001_waitlist.sql`, add `SUPABASE_URL` and `SUPABASE_SECRET_KEY` securely to the function runtime, deploy and verify a real signup. A legacy `SUPABASE_SERVICE_ROLE_KEY` is also supported. Never expose these secrets in `public/` or chat. No Supabase SDK or dependency installation is required.
+The active waitlist uses the previous Google Sheet through a server-only Apps Script receiver. Follow [GOOGLE_SHEETS_SETUP.md](GOOGLE_SHEETS_SETUP.md): open the Sheet → Extensions → Apps Script, save the current `google-apps-script/Code.gs`, run its `setupWaitlist` helper, deploy as a web app, then securely configure `GOOGLE_APPS_SCRIPT_URL` and `WAITLIST_SHARED_SECRET` in the hosting function runtime.
 
-Without configuration, the API returns 503 and the form retains the email with an honest error. Local development does not automatically load `.env`. `npm run test:db` optionally validates the migration and concurrency in isolated PostgreSQL via Docker; it does not prove hosted storage works.
+The Sheet stays private. A dedicated Waitlist tab records emails, timestamped/versioned consent and minimal attribution. Duplicates are case-insensitive and preserve old records. Existing five-column headers are upgraded additively. Success requires a confirmed write; without configuration the API returns 503 and retains the entered email. Local dev does not automatically load `.env`.
 
-The old `google-apps-script/Code.gs` is retained as historical source. The active function no longer writes to Sheets. Existing Sheet records have not been transferred or deleted; see the setup guide before changing production traffic. No welcome email, queue position, referrals or rewards are implemented.
+Supabase is no longer called by the active handler. Its source/migrations remain for historical reference; no records have been deleted/imported, and `npm run test:db` exercises only that inactive historical schema. No welcome email, automated unsubscribe or priority ranking is implemented.
 
 ## Publish on Netlify
 
 1. Deploy this repository with the included `netlify.toml`: build `npm run build`, publish `dist`, functions directory `netlify/functions`.
-2. Configure the server-only Supabase variables above and apply the migration first. Optionally set `SITE_URL=https://primalcore.gr` (this is already the build default).
+2. Configure the two server-only Google variables above and deploy the Apps Script receiver. Optionally set `SITE_URL=https://primalcore.gr` (this is already the build default).
 3. Add `primalcore.gr` as the custom domain, configure DNS as instructed by Netlify, and enable HTTPS. Redirect the `www` variant to the chosen apex domain in hosting domain settings.
-4. Verify `/api/waitlist`, an actual Supabase signup and consent receipt, `/blog/`, `/privacy.html`, `/sitemap.xml`, `/robots.txt` and the custom 404 page on the deployed domain. Verify the security headers supplied by `netlify.toml` are active.
+4. Verify `/api/waitlist`, an actual saved Google Sheet row and its consent fields, `/blog/`, `/privacy.html`, `/sitemap.xml`, `/robots.txt` and the custom 404 page on the deployed domain. Verify the security headers supplied by `netlify.toml` are active.
 
 A generic static host can serve the pages but **cannot** run the waitlist endpoint. Use Netlify or provide an equivalent server-side adapter. Do not replace confirmed saves with `fetch(..., {mode: 'no-cors'})`; opaque responses cannot prove that a row was saved.
 
 ## Before making the site public
 
-- Complete the live Supabase integration and anonymous-access tests. No hosted project or credentials have been supplied; local tests do not establish hosted readiness.
-- Confirm the full business address (city/postcode/country), monitored contact mailbox, retention period, hosting/Supabase processor arrangements and any international-transfer disclosures required for your actual configuration. The supplied legal name and street address are included; missing address details were not invented. Define how withdrawal and deletion requests are handled in Supabase and future mailing tools.
+- Complete the live Google Sheet save/duplicate/privacy tests. No Apps Script deployment URL or secret is currently configured here; mocked tests do not establish live readiness.
+- Confirm the full business address (city/postcode/country), monitored contact mailbox, retention period, hosting/Google processor arrangements and any international-transfer disclosures required for your actual configuration. The supplied legal name and street address are included; missing address details were not invented. Define how withdrawal and deletion requests are handled in Sheets and future mailing tools.
 - Confirm the existing images, film and packaging artwork are yours to publish and accurately represent the intended product. The old before/after image and certification claims have been removed. Benefit and ingredient descriptions now use the owner-provided wording; confirm supporting evidence before launch. Product images are labelled as developmental; the packaging artwork contains wording that may differ from the final ingredient list.
 - Review the general educational articles and substantiate any quantitative ingredient statements before presenting them as scientific references. The articles are not clinical evidence for PRIMAL CORE.
 
-This handoff prepares source and deployment configuration. It does not publish DNS, deploy Netlify, create a hosted Supabase project or apply its migration, or establish regulatory approval for a cosmetic product.
+This handoff prepares source and deployment configuration. It does not publish DNS, deploy Netlify, deploy your Google Apps Script receiver, or establish regulatory approval for a cosmetic product.
 
 See `REVIEW.md` for the assessment and verification results. Google Sans is self-hosted in Greek/Latin variable subsets, including italics; its SIL Open Font License is in `public/assets/GOOGLE-SANS-LICENSE.txt`.

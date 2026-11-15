@@ -33,12 +33,12 @@ export function createHandler({ env = process.env, fetchImpl = fetch } = {}) {
     if (data.consent !== true && data.consent !== 'true') return reply(400, false, 'consent_required');
 
     let endpoint;
-    const key = env.SUPABASE_SECRET_KEY || env.SUPABASE_SERVICE_ROLE_KEY;
+    const secret = env.WAITLIST_SHARED_SECRET;
     try {
-      const url = new URL(env.SUPABASE_URL);
-      if (url.protocol !== 'https:' || !/^[a-z0-9-]+\.supabase\.co$/.test(url.hostname)
-        || url.port || url.username || url.password || url.pathname !== '/' || url.search || url.hash || !key) throw Error();
-      endpoint = new URL('/rest/v1/rpc/capture_waitlist', url);
+      endpoint = new URL(env.GOOGLE_APPS_SCRIPT_URL);
+      if (endpoint.protocol !== 'https:' || endpoint.hostname !== 'script.google.com'
+        || endpoint.port || endpoint.username || endpoint.password || endpoint.search || endpoint.hash
+        || !/^\/macros\/s\/[^/]+\/exec$/.test(endpoint.pathname) || !secret) throw Error();
     } catch { return reply(503, false, 'not_configured'); }
 
     const utm = {};
@@ -49,15 +49,23 @@ export function createHandler({ env = process.env, fetchImpl = fetch } = {}) {
     // Only the pathname is retained, never potentially identifying queries/fragments.
     const landingPath = landing?.startsWith('/') && !landing.startsWith('//') ? landing.split(/[?#]/)[0] : null;
     const source = SOURCES.has(data.source) ? data.source : 'primal-core-waitlist';
-    const requestHeaders = { 'Content-Type': 'application/json', apikey: key };
-    // Modern sb_secret_ keys use apikey only; legacy service-role JWTs also support Bearer.
-    if (key.split('.').length === 3) requestHeaders.Authorization = `Bearer ${key}`;
     try {
-      const response = await fetchImpl(endpoint.href, {
-        method: 'POST', redirect: 'error', signal: AbortSignal.timeout(18000), headers: requestHeaders,
-        body: JSON.stringify({ p_email: email, p_consent: true, p_locale: locale, p_source: source,
-          p_utm: utm, p_referrer_origin: referrerOrigin, p_landing_path: landingPath })
+      const signal = AbortSignal.timeout(18000);
+      let response = await fetchImpl(endpoint.href, {
+        method: 'POST', redirect: 'manual', signal,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, consent: true, token: secret, locale, source,
+          policyVersion: '2026-11-15-sheets-v1', consentTextVersion: 'launch-updates-v1',
+          utm, referrerOrigin, landingPath })
       });
+      // Apps Script ContentService serves its JSON through this Google-only redirect.
+      // Never forward the POST body/shared secret to the redirect destination.
+      if (response.status === 302 || response.status === 303) {
+        const target = new URL(response.headers.get('location'));
+        if (target.protocol !== 'https:' || target.hostname !== 'script.googleusercontent.com'
+          || target.port || target.username || target.password || target.pathname !== '/macros/echo') throw Error();
+        response = await fetchImpl(target.href, { method: 'GET', redirect: 'error', signal });
+      }
       if (!response.ok) return reply(502, false, 'storage_unavailable');
       const result = await response.json();
       if (!result || result.ok !== true) return reply(502, false, 'storage_unconfirmed');

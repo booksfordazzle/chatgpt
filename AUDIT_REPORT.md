@@ -1,6 +1,6 @@
 # PRIMAL CORE — read-only audit and change plan
 
-**Historical snapshot:** This report describes commit f443f01 before the subsequently requested flag/form/Supabase changes. For current activation steps and remaining work, see SUPABASE_SETUP.md. Original statuses below are not a re-audit of the updated implementation.
+**Historical snapshot:** This report describes commit f443f01 before the subsequently requested flag/form/Supabase changes. For current activation steps and remaining work, see GOOGLE_SHEETS_SETUP.md; the subsequently prepared Supabase adapter was replaced at the owner’s request. Original statuses below are not a re-audit of the updated implementation.
 
 Audit date: 15 November 2026 (Europe/Athens). Repository: `booksfordazzle/chatgpt`; branch: `codex/bilingual-site`; audited commit: `f443f01c587f59669ade8a95a0286d4c07bdf9cc`.
 
