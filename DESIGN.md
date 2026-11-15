@@ -81,3 +81,5 @@ The five story sections combine the former personal opening/changes, search, tal
 ## Latest homepage and footer copy
 
 Homepage hero: “Το πρόσωπό σου,<br>πιο απαλό από ποτέ”, mirrored as “Your face,<br>softer than ever” in English. Preserve the explicit two-line break and current type scale. All footers show only the copyright text without the under-development suffix. The product-development disclosure remains in the relevant content. Mobile footer links stay together on one row, with compact readable labels (Απόρρητο / Privacy), no wrapping, and 44px-high link targets.
+
+Latest sizing adjustment: increase the current hero title font by a further 10% on both languages: clamp(52.8px, 6.93vw, 105.6px), mobile clamp(26.4px, 7.425vw, 56.1px). Move the mobile ingredient title down exactly 150px from its previous clamped position: calc(max(64px, calc(50% - 400px)) + 150px). Desktop ingredient title remains centered.

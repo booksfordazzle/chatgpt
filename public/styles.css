@@ -301,11 +301,11 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 /* Owner revision: the flag lives in the narrow dropdown again. */
 .site-header nav .language-switch{margin-left:0}
 @media(max-width:1100px){.header-inner>.menu-toggle{margin-left:auto}.site-header nav .language-switch{align-self:flex-start;margin-left:8px}}
-@media(max-width:760px){.ingredient-film .ingredient-film-title{top:max(64px,calc(50% - 400px))}}
+@media(max-width:760px){.ingredient-film .ingredient-film-title{top:calc(max(64px,calc(50% - 400px)) + 150px)}}
 
-/* Hero type increased by 50%, keeping the same responsive scale. */
-.hero-content #hero-title{font-size:clamp(48px,6.3vw,96px)}
-@media(max-width:760px){.hero-content #hero-title{font-size:clamp(24px,6.75vw,51px)}}
+/* Owner-requested hero type scale, including the latest 10% increase. */
+.hero-content #hero-title{font-size:clamp(52.8px,6.93vw,105.6px)}
+@media(max-width:760px){.hero-content #hero-title{font-size:clamp(26.4px,7.425vw,56.1px)}}
 
 /* All five footer destinations remain on one row on mobile. */
 @media(max-width:760px){.site-footer>div{flex-wrap:nowrap;justify-content:space-between;gap:6px;font-size:clamp(12px,3.2vw,14px)}.site-footer>div>a{display:inline-flex;align-items:center;min-height:44px;white-space:nowrap;flex:none}}
