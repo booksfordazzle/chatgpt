@@ -1,12 +1,16 @@
 # PRIMAL CORE
 
-A Greek prelaunch site for primalcore.gr. Static, server-renderable HTML, self-hosted fonts, responsive WebP images, a supplied 60fps hero film and ingredient film with muted autoplay/loop and independent pause controls, a manually operated ingredient slider, and a full-bleed cinematic product image. No frontend dependencies, analytics, cookies or third-party browser requests.
+A Greek prelaunch site for primalcore.gr. Greek/English static, server-renderable HTML, self-hosted fonts, responsive WebP images, a supplied 60fps hero film and ingredient film with muted autoplay/loop and independent pause controls, a manually operated ingredient slider, and a full-bleed cinematic product image. No frontend dependencies, analytics, cookies or third-party browser requests.
 
 ## Preview by double-clicking (no installation)
 
 Download the latest GitHub ZIP and **extract the entire ZIP first**. Open the extracted folder, then double-click **index.html** at the top level. It opens the site in your browser. Keep the `public` folder and its contents together; do not move the HTML file by itself or open it from inside the ZIP.
 
 Pages, images, styling, navigation and videos use relative paths and work locally. Waitlist submissions require the published server and Google configuration, so local previews clearly say they cannot save emails.
+
+## Languages
+
+Greek pages live directly in `public/`; their complete English counterparts live in `public/en/`, including every blog article and the privacy and registration pages. The EL / EN header switch opens the corresponding page and works without JavaScript. Keep both language versions in sync when editing copy. Shared styles, scripts and media remain in `public/`. The build includes both languages in the sitemap, with language alternatives declared in each source page. Form feedback and native submission redirects follow the selected language.
 
 ## Develop and verify
 

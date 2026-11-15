@@ -234,3 +234,15 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 .parallax-frame.has-parallax>img{scale:1;transition:scale 1.8s cubic-bezier(.16,1,.3,1)}
 .parallax-frame.has-parallax.photo-encountered>img{scale:1.025}
 @media(prefers-reduced-motion:reduce){.parallax-frame>img{scale:1!important;transition:none!important}}
+
+/* Rounded signup controls across every route and breakpoint. */
+.email-row{border-radius:16px;overflow:hidden}.email-row input[type="email"]{border-radius:16px}.email-row .button{border-radius:14px}
+
+/* The language switch stays available beside the mobile menu. */
+.language-switch{display:flex;align-items:center;gap:4px;margin-left:auto;font-size:13px;flex:none}
+.language-switch a,.language-switch span{display:inline-flex;align-items:center;justify-content:center;min-width:38px;min-height:44px;text-decoration:none;border-radius:8px}
+.language-switch span{color:var(--text);font-weight:700}.language-switch a{color:var(--muted)}.language-switch a:hover{color:var(--text);background:var(--line)}
+.email-row:focus-within{outline:2px solid var(--text);outline-offset:4px}
+@media(max-width:760px){.header-inner{gap:8px}.language-switch{gap:0;font-size:12px}.language-switch a,.language-switch span{min-width:30px}.brand{width:clamp(110px,31vw,155px)}}
+
+@media(max-width:760px){.brand img{width:142%}}

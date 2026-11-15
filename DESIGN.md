@@ -41,3 +41,7 @@ The shared menu contains no waitlist button. Both email fields show “Το emai
 The benefits photograph and full-width product photograph use subtle clipped parallax (up to 18px desktop/8px mobile, 6% overscan). Text, accordion headings and captions remain stationary. Reduced-motion and no-JavaScript visitors see static photographs. Scroll frames are scheduled only on events while images are near the viewport. The bottom signup no longer includes the mailto question link.
 
 Each of these two photographs also receives a one-time 2.5% zoom over 1.8 seconds when at least 15% enters view. It composes with parallax without moving the frame, text or caption, and is disabled for reduced motion.
+
+## Bilingual navigation and latest owner refinements
+
+Preserve complete Greek and English static pages, including articles, with the compact EL / EN switch available outside the collapsed menu. Greek remains the primary language; switches open the matching page without requiring JavaScript. Shared signup fields and buttons have rounded corners at every breakpoint. The philosophy now has three scenes: origin, complexity and manifesto; the return-marble scene and its text were removed at the owner's request. The manifesto heading is “Η αφαίρεση είναι εξέλιξη.” Preserve the owner's explicit three-line opening and blank paragraph pause before its final sentence. The Chios mastic article and its listing use the supplied golden resin photograph. The two featured article previews omit their introductory descriptions; their article content remains intact.

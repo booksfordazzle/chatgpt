@@ -3,9 +3,10 @@ export function createHandler({ env = process.env, fetchImpl = fetch } = {}) {
   return async function handler(event) {
     const headers = { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', 'X-Content-Type-Options': 'nosniff' };
     const json = /application\/json/i.test(event.headers?.accept || '');
+    let languagePrefix = '';
     const reply = (statusCode, ok, error) => json || event.httpMethod !== 'POST'
       ? { statusCode, headers, body: JSON.stringify({ ok, ...(error ? { error } : {}) }) }
-      : { statusCode: 303, headers: { ...headers, Location: ok ? '/thanks.html' : '/signup-unavailable.html' }, body: '' };
+      : { statusCode: 303, headers: { ...headers, Location: languagePrefix + (ok ? '/thanks.html' : '/signup-unavailable.html') }, body: '' };
     if (event.httpMethod !== 'POST') return { ...reply(405, false, 'method_not_allowed'), headers: { ...headers, Allow: 'POST' } };
     const origin = event.headers?.origin;
     const host = event.headers?.host;
@@ -19,6 +20,7 @@ export function createHandler({ env = process.env, fetchImpl = fetch } = {}) {
       else return reply(415, false, 'unsupported_content_type');
     } catch { return reply(400, false, 'invalid_request'); }
     if (!data || typeof data !== 'object' || Array.isArray(data)) return reply(400, false, 'invalid_request');
+    languagePrefix = data.lang === 'en' ? '/en' : '';
     // Silently discard the honeypot; never write bot submissions to Sheets.
     if (data.website) return reply(400, false, 'invalid_request');
     const email = typeof data.email === 'string' ? data.email.trim() : '';

@@ -1,4 +1,22 @@
 'use strict';
+const english = document.documentElement.lang === 'en';
+const messages = {
+  "Η εγγραφή δεν είναι διαθέσιμη σε αυτό το αρχείο. Άνοιξε τον δημοσιευμένο ιστότοπο για να εγγραφείς.": "Signup is not available in this file preview. Open the published website to join.",
+  "Αποθήκευση εγγραφής…": "Saving your registration…",
+  "Αποθήκευση…": "Saving…",
+  "Η εγγραφή σου ολοκληρώθηκε. Θα λάβεις νέα για την κυκλοφορία!": "You are on the list. You will receive launch updates!",
+  "Η εγγραφή δεν επιβεβαιώθηκε. Δοκίμασε ξανά αργότερα ή ": "Registration could not be confirmed. Try again later or ",
+  "γράψε μας στο hello@primalcore.gr": "write to hello@primalcore.gr",
+  "Αναπαραγωγή βίντεο ": "Play video: ",
+  "Παύση βίντεο ": "Pause video: ",
+  "Πάτησε το κουμπί κάτω δεξιά για αναπαραγωγή.": "Select the button at the bottom right to play.",
+  "Το βίντεο δεν είναι διαθέσιμο αυτή τη στιγμή.": "The video is currently unavailable."
+};
+const translate = text => english ? (messages[text] || text) : text;
+// Keep chapter and section anchors when changing languages.
+document.querySelectorAll('[data-language-link]').forEach(link => {
+  link.addEventListener('click', () => { link.hash = location.hash; });
+});
 document.documentElement.classList.add('js');
 const menu = document.querySelector('.menu-toggle');
 const nav = document.querySelector('#navigation');
@@ -15,7 +33,7 @@ form.addEventListener('submit', async event => {
   if (button.disabled || !form.reportValidity()) return;
   const status = form.querySelector('.form-status');
   if (localPreview) {
-    status.textContent = 'Η εγγραφή δεν είναι διαθέσιμη σε αυτό το αρχείο. Άνοιξε τον δημοσιευμένο ιστότοπο για να εγγραφείς.';
+    status.textContent = translate("Η εγγραφή δεν είναι διαθέσιμη σε αυτό το αρχείο. Άνοιξε τον δημοσιευμένο ιστότοπο για να εγγραφείς.");
     return;
   }
   const email = form.elements.email;
@@ -24,22 +42,22 @@ form.addEventListener('submit', async event => {
   form.setAttribute('aria-busy', 'true');
   email.removeAttribute('aria-invalid');
   status.classList.remove('error');
-  status.textContent = 'Αποθήκευση εγγραφής…';
-  button.textContent = 'Αποθήκευση…';
+  status.textContent = translate("Αποθήκευση εγγραφής…");
+  button.textContent = translate("Αποθήκευση…");
   try {
     const response = await fetch('/api/waitlist', {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ email: email.value.trim(), consent: form.elements.consent.checked, website: form.elements.website.value }),
+      body: JSON.stringify({ email: email.value.trim(), consent: form.elements.consent.checked, lang: document.documentElement.lang, website: form.elements.website.value }),
       signal: AbortSignal.timeout(25000)
     });
     const result = await response.json();
     if (!response.ok || result.ok !== true) throw new Error('Not confirmed');
-    status.textContent = 'Η εγγραφή σου ολοκληρώθηκε. Θα λάβεις νέα για την κυκλοφορία!';
+    status.textContent = translate("Η εγγραφή σου ολοκληρώθηκε. Θα λάβεις νέα για την κυκλοφορία!");
     form.reset();
   } catch {
     status.classList.add('error');
-    status.textContent = 'Η εγγραφή δεν επιβεβαιώθηκε. Δοκίμασε ξανά αργότερα ή ';
-    const link = document.createElement('a'); link.href = 'mailto:hello@primalcore.gr'; link.textContent = 'γράψε μας στο hello@primalcore.gr'; status.append(link, '.');
+    status.textContent = translate("Η εγγραφή δεν επιβεβαιώθηκε. Δοκίμασε ξανά αργότερα ή ");
+    const link = document.createElement('a'); link.href = 'mailto:hello@primalcore.gr'; link.textContent = translate("γράψε μας στο hello@primalcore.gr"); status.append(link, '.');
   } finally {
     button.disabled = false; button.innerHTML = originalLabel; form.removeAttribute('aria-busy');
   }
@@ -86,7 +104,7 @@ document.querySelectorAll('[data-loop-video]').forEach(video => {
   video.muted = true;
   video.controls = false;
   function sync() {
-    toggle.setAttribute('aria-label', (video.paused ? 'Αναπαραγωγή βίντεο ' : 'Παύση βίντεο ') + name);
+    toggle.setAttribute('aria-label', (video.paused ? translate("Αναπαραγωγή βίντεο ") : translate("Παύση βίντεο ")) + name);
     toggle.innerHTML = video.paused
       ? '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z" fill="currentColor"/></svg>'
       : '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="M7 5h3v14H7zM14 5h3v14h-3z" fill="currentColor"/></svg>';
@@ -97,7 +115,7 @@ document.querySelectorAll('[data-loop-video]').forEach(video => {
     if (explicit) { video.classList.add('explicit-playback'); nearViewport = true; }
     status.textContent = '';
     try { await video.play(); }
-    catch (error) { if (error.name !== 'AbortError') status.textContent = 'Πάτησε το κουμπί κάτω δεξιά για αναπαραγωγή.'; }
+    catch (error) { if (error.name !== 'AbortError') status.textContent = translate("Πάτησε το κουμπί κάτω δεξιά για αναπαραγωγή."); }
     finally {
       playPending = false;
       if (userPaused || document.hidden || !nearViewport) video.pause();
@@ -113,7 +131,7 @@ document.querySelectorAll('[data-loop-video]').forEach(video => {
   if (video.readyState >= 2) video.classList.add('is-ready');
   video.addEventListener('error', () => {
     video.classList.remove('is-ready');
-    status.textContent = 'Το βίντεο δεν είναι διαθέσιμο αυτή τη στιγμή.';
+    status.textContent = translate("Το βίντεο δεν είναι διαθέσιμο αυτή τη στιγμή.");
     sync();
   });
   new IntersectionObserver(entries => {
@@ -139,7 +157,7 @@ if (slider) {
     index = (next + slides.length) % slides.length;
     slides.forEach((slide, i) => { slide.hidden = i !== index; });
     count.textContent = `${index + 1} / ${slides.length}`;
-    count.setAttribute('aria-label', `Συστατικό ${index + 1} από ${slides.length}: ${slides[index].querySelector('h3').textContent}`);
+    count.setAttribute('aria-label', `${english ? 'Ingredient' : 'Συστατικό'} ${index + 1} ${english ? 'of' : 'από'} ${slides.length}: ${slides[index].querySelector('h3').textContent}`);
   }
   function measure() {
     const probe = slidesElement.cloneNode(true);

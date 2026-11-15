@@ -54,8 +54,8 @@ if (story) {
     essence.style.opacity = String(arrival);
     essence.style.filter = `blur(${(1 - arrival) * 14}px)`;
     essence.style.transform = `translate(-50%,calc(-50% + ${(1 - arrival) * 20}px))`;
-    const returnProgress = clamp((innerHeight - returnScene.getBoundingClientRect().top) / (innerHeight + returnScene.offsetHeight));
-    returnImage.style.clipPath = `inset(0 ${(1 - returnProgress) * 16}% 0 0)`;
+    const returnProgress = returnScene ? clamp((innerHeight - returnScene.getBoundingClientRect().top) / (innerHeight + returnScene.offsetHeight)) : 0;
+    if (returnImage) returnImage.style.clipPath = `inset(0 ${(1 - returnProgress) * 16}% 0 0)`;
     const productProgress = clamp((innerHeight - manifesto.getBoundingClientRect().top) / (innerHeight * .8));
     manifestoImage.style.filter = `brightness(${.4 + productProgress * .6})`;
     subtraction.dataset.progress = p.toFixed(3);
@@ -63,7 +63,7 @@ if (story) {
   function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(update); } }
   function configure() {
     story.classList.toggle('has-story-motion', !reduced.matches);
-    [originImage, complexity, essence, returnImage, manifestoImage, ...bottles].forEach(element => element.removeAttribute('style'));
+    [originImage, complexity, essence, returnImage, manifestoImage, ...bottles].forEach(element => element?.removeAttribute('style'));
     schedule();
   }
   addEventListener('scroll', schedule, { passive: true });

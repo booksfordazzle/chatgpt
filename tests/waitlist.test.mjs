@@ -31,3 +31,13 @@ test('supports native browser submission and rejects GET',async()=>{
  const unavailable=await createHandler({env:{}})(native);assert.equal(unavailable.headers.Location,'/signup-unavailable.html');
  assert.equal((await handler(event({}, {httpMethod:'GET'}))).statusCode,405);
 });
+test('native English signup keeps success and failure redirects in English',async()=>{
+ const native=event({}, {headers:{'content-type':'application/x-www-form-urlencoded',accept:'text/html'},body:'email=person%40example.com&consent=true&lang=en'});
+ const success=await createHandler({env,fetchImpl:async()=>new Response('{"ok":true}')})(native);
+ assert.equal(success.statusCode,303);
+ assert.equal(success.headers.Location,'/en/thanks.html');
+ const failure=await createHandler({env:{}})(native);
+ assert.equal(failure.headers.Location,'/en/signup-unavailable.html');
+ const invalid=await createHandler({env:{}})({...native,body:native.body.replace('person%40example.com','invalid')});
+ assert.equal(invalid.headers.Location,'/en/signup-unavailable.html');
+});
