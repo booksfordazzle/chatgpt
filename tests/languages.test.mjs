@@ -20,7 +20,7 @@ test('every Greek page has a complete English counterpart and reciprocal languag
   const relative=path.relative('public/en',englishFile);
   const greekFile=path.join('public',relative);
   const [english,greek]=await Promise.all([readFile(englishFile,'utf8'),readFile(greekFile,'utf8')]);
-  assert.match(english,/<html lang="en">/);
+  assert.match(english,/<html lang="en-US">/);
   assert.match(greek,/<html lang="el">/);
   for(const [html,file,counterpart] of [[english,englishFile,greekFile],[greek,greekFile,englishFile]]){
    const link=html.match(/<a data-language-link="" href="([^"]+)"/);

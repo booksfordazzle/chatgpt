@@ -1,4 +1,9 @@
 const EMAIL = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
+const SOURCES = new Set(['primal-core-waitlist', 'primal-core-hero', 'primal-core-footer']);
+const CAMPAIGN_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+const clean = (value, limit) => typeof value === 'string'
+  ? value.trim().replace(/[\x00-\x1f\x7f]/g, '').slice(0, limit) : null;
+
 export function createHandler({ env = process.env, fetchImpl = fetch } = {}) {
   return async function handler(event) {
     const headers = { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', 'X-Content-Type-Options': 'nosniff' };
@@ -11,7 +16,7 @@ export function createHandler({ env = process.env, fetchImpl = fetch } = {}) {
     const origin = event.headers?.origin;
     const host = event.headers?.host;
     if (origin && host) { try { if (new URL(origin).host !== host) return reply(403, false, 'origin_rejected'); } catch { return reply(403, false, 'origin_rejected'); } }
-    if (event.isBase64Encoded || !event.body || Buffer.byteLength(event.body) > 4096) return reply(400, false, 'invalid_request');
+    if (event.isBase64Encoded || typeof event.body !== 'string' || !event.body || Buffer.byteLength(event.body) > 4096) return reply(400, false, 'invalid_request');
     let data;
     try {
       const type = event.headers?.['content-type'] || '';
@@ -20,24 +25,42 @@ export function createHandler({ env = process.env, fetchImpl = fetch } = {}) {
       else return reply(415, false, 'unsupported_content_type');
     } catch { return reply(400, false, 'invalid_request'); }
     if (!data || typeof data !== 'object' || Array.isArray(data)) return reply(400, false, 'invalid_request');
-    languagePrefix = data.lang === 'en' ? '/en' : '';
-    // Silently discard the honeypot; never write bot submissions to Sheets.
+    const locale = data.lang === 'en' || data.lang === 'en-US' ? 'en-US' : 'el';
+    languagePrefix = locale === 'en-US' ? '/en' : '';
     if (data.website) return reply(400, false, 'invalid_request');
     const email = typeof data.email === 'string' ? data.email.trim() : '';
     if (email.length > 254 || !EMAIL.test(email) || /[\r\n\x00]/.test(email)) return reply(400, false, 'invalid_email');
     if (data.consent !== true && data.consent !== 'true') return reply(400, false, 'consent_required');
+
     let endpoint;
-    try { endpoint = new URL(env.GOOGLE_APPS_SCRIPT_URL); } catch { return reply(503, false, 'not_configured'); }
-    if (endpoint.protocol !== 'https:' || endpoint.hostname !== 'script.google.com' || !/^\/macros\/s\/[^/]+\/exec$/.test(endpoint.pathname) || !env.WAITLIST_SHARED_SECRET) return reply(503, false, 'not_configured');
+    const key = env.SUPABASE_SECRET_KEY || env.SUPABASE_SERVICE_ROLE_KEY;
+    try {
+      const url = new URL(env.SUPABASE_URL);
+      if (url.protocol !== 'https:' || !/^[a-z0-9-]+\.supabase\.co$/.test(url.hostname)
+        || url.port || url.username || url.password || url.pathname !== '/' || url.search || url.hash || !key) throw Error();
+      endpoint = new URL('/rest/v1/rpc/capture_waitlist', url);
+    } catch { return reply(503, false, 'not_configured'); }
+
+    const utm = {};
+    for (const name of CAMPAIGN_KEYS) { const value = clean(data[name], 128); if (value) utm[name] = value; }
+    let referrerOrigin = null;
+    try { const url = new URL(data.referrer_origin); if (url.protocol === 'https:' || url.protocol === 'http:') referrerOrigin = url.origin.slice(0, 256); } catch {}
+    const landing = clean(data.landing_path, 256);
+    // Only the pathname is retained, never potentially identifying queries/fragments.
+    const landingPath = landing?.startsWith('/') && !landing.startsWith('//') ? landing.split(/[?#]/)[0] : null;
+    const source = SOURCES.has(data.source) ? data.source : 'primal-core-waitlist';
+    const requestHeaders = { 'Content-Type': 'application/json', apikey: key };
+    // Modern sb_secret_ keys use apikey only; legacy service-role JWTs also support Bearer.
+    if (key.split('.').length === 3) requestHeaders.Authorization = `Bearer ${key}`;
     try {
       const response = await fetchImpl(endpoint.href, {
-        method: 'POST', redirect: 'follow', signal: AbortSignal.timeout(18000),
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, consent: true, token: env.WAITLIST_SHARED_SECRET, policyVersion: '2026-11-14', source: 'primal-core-waitlist' })
+        method: 'POST', redirect: 'error', signal: AbortSignal.timeout(18000), headers: requestHeaders,
+        body: JSON.stringify({ p_email: email, p_consent: true, p_locale: locale, p_source: source,
+          p_utm: utm, p_referrer_origin: referrerOrigin, p_landing_path: landingPath })
       });
       if (!response.ok) return reply(502, false, 'storage_unavailable');
       const result = await response.json();
-      if (result.ok !== true) return reply(502, false, 'storage_unconfirmed');
+      if (!result || result.ok !== true) return reply(502, false, 'storage_unconfirmed');
       return reply(200, true);
     } catch { return reply(502, false, 'storage_unavailable'); }
   };

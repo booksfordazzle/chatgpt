@@ -1,5 +1,5 @@
 'use strict';
-const english = document.documentElement.lang === 'en';
+const english = document.documentElement.lang.startsWith('en');
 const messages = {
   "Η εγγραφή δεν είναι διαθέσιμη σε αυτό το αρχείο. Άνοιξε τον δημοσιευμένο ιστότοπο για να εγγραφείς.": "Signup is not available in this file preview. Open the published website to join.",
   "Αποθήκευση εγγραφής…": "Saving your registration…",
@@ -47,7 +47,7 @@ form.addEventListener('submit', async event => {
   try {
     const response = await fetch('/api/waitlist', {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ email: email.value.trim(), consent: form.elements.consent.checked, lang: document.documentElement.lang, website: form.elements.website.value }),
+      body: JSON.stringify({ email: email.value.trim(), consent: form.elements.consent.checked, lang: document.documentElement.lang, website: form.elements.website.value, source: form.elements.source.value, landing_path: form.elements.landing_path?.value, referrer_origin: form.elements.referrer_origin?.value, ...Object.fromEntries(campaignKeys.filter(key => form.elements[key]).map(key => [key, form.elements[key].value])) }),
       signal: AbortSignal.timeout(25000)
     });
     const result = await response.json();
@@ -62,6 +62,20 @@ form.addEventListener('submit', async event => {
     button.disabled = false; button.innerHTML = originalLabel; form.removeAttribute('aria-busy');
   }
 });
+});
+// Capture only allowlisted campaign values; no tracking cookies or storage.
+const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+const campaignQuery = new URLSearchParams(location.search);
+let referrerOrigin = '';
+try { referrerOrigin = new URL(document.referrer).origin; } catch {}
+document.querySelectorAll('.waitlist-form').forEach(form => {
+  const fields = { landing_path: location.pathname, referrer_origin: referrerOrigin };
+  campaignKeys.forEach(key => { if (campaignQuery.has(key)) fields[key] = campaignQuery.get(key).slice(0, 128); });
+  Object.entries(fields).forEach(([name, value]) => {
+    const input = document.createElement('input');
+    input.type = 'hidden'; input.name = name; input.value = value;
+    form.append(input);
+  });
 });
 // Scroll controls the desktop film; mobile and reduced-motion visitors see the poster.
 const film = document.querySelector('[data-film]');
