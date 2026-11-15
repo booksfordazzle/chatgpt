@@ -302,3 +302,7 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 .site-header nav .language-switch{margin-left:0}
 @media(max-width:1100px){.header-inner>.menu-toggle{margin-left:auto}.site-header nav .language-switch{align-self:flex-start;margin-left:8px}}
 @media(max-width:760px){.ingredient-film .ingredient-film-title{top:max(64px,calc(50% - 400px))}}
+
+/* Hero type increased by 50%, keeping the same responsive scale. */
+.hero-content #hero-title{font-size:clamp(48px,6.3vw,96px)}
+@media(max-width:760px){.hero-content #hero-title{font-size:clamp(24px,6.75vw,51px)}}

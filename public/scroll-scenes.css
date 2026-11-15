@@ -42,3 +42,10 @@
  .history-navigation a span{font-size:13px}
 }
 @media(prefers-reduced-motion:reduce){.scroll-chapter .chapter-image,.scroll-chapter .chapter-body{transform:none!important;clip-path:none!important;opacity:1!important}}
+
+/* A concluding headline follows its setup instead of repeating it above. */
+.scroll-chapter .chapter-conclusion .chapter-body{margin-top:0;margin-bottom:var(--heading-content-gap)}
+.scroll-chapter .chapter-footnote{width:56%;max-width:620px;margin-top:var(--heading-content-gap);color:var(--muted)}
+.scroll-chapter .chapter-footnote p{font-size:15px;line-height:1.75;margin:0 0 24px}
+.scroll-chapter .chapter-footnote .button{margin-top:0}
+@media(max-width:760px){.scroll-chapter .chapter-footnote{width:100%;max-width:36ch;margin-top:32px}.scroll-chapter .chapter-footnote p{font-size:14px}}
