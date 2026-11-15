@@ -277,3 +277,12 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
  .hero-poster,.hero-video{object-position:center}
 }
 @media(max-width:760px){.ingredient-film video{aspect-ratio:9/16;object-fit:cover}.ingredient-film .ingredient-film-title{font-size:clamp(28px,7vw,40px)}}
+
+/* Latest owner refinements: lighter hero, larger mobile film headline, audible testimonial. */
+.hero-shade{background:rgba(0,0,0,.432)}
+@media(max-width:760px){.ingredient-film .ingredient-film-title{font-size:clamp(32.2px,8.05vw,46px)}}
+.testimonial-film{position:relative;overflow:hidden;border-radius:16px;background:#0b0c0a;isolation:isolate}
+.testimonial-film video{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:16px}
+.testimonial-play{display:none;position:absolute;inset:50% auto auto 50%;transform:translate(-50%,-50%);align-items:center;justify-content:center;width:76px;height:76px;border:1px solid rgba(241,240,233,.7);border-radius:50%;background:rgba(8,9,8,.78);color:var(--text);cursor:pointer}
+.js .testimonial-play{display:flex}.testimonial-play:hover{background:#080908}.testimonial-play svg{margin-left:4px}.testimonial-play[hidden]{display:none}
+.testimonial-status{position:absolute;bottom:48px;left:20px;right:20px;margin:0;padding:12px;background:#080908;color:var(--text);font-size:14px}

@@ -109,59 +109,66 @@ if (film) {
   desktop.addEventListener('change', configure); reduced.addEventListener('change', configure); configure();
 }
 
-// Ingredient film retains muted autoplay and independent pause.
+// Muted, audio-free ingredient film. Retry on media readiness and natural interaction.
 document.querySelectorAll('[data-loop-video]').forEach(video => {
   const frame = video.closest('[data-video-frame]');
   const toggle = frame.querySelector('.media-toggle');
   const status = document.getElementById(video.dataset.statusId);
   const name = video.dataset.videoName;
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let userPaused = false, nearViewport = false, playPending = false;
-  video.muted = true;
-  video.controls = false;
+  video.defaultMuted = true; video.muted = true;
+  video.setAttribute('muted', ''); video.setAttribute('playsinline', '');
+  video.autoplay = true; video.loop = true; video.controls = false;
+  // Pick the source explicitly: some mobile WebKit versions ignore <source media>.
+  const source = [...video.querySelectorAll('source')].find(source => !source.media || matchMedia(source.media).matches);
   if (matchMedia('(max-width: 760px)').matches && video.dataset.mobilePoster) video.poster = video.dataset.mobilePoster;
+  if (source) { video.src = source.getAttribute('src'); video.load(); }
   function sync() {
     toggle.setAttribute('aria-label', (video.paused ? translate("Αναπαραγωγή βίντεο ") : translate("Παύση βίντεο ")) + name);
     toggle.innerHTML = video.paused
       ? '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z" fill="currentColor"/></svg>'
       : '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="M7 5h3v14H7zM14 5h3v14h-3z" fill="currentColor"/></svg>';
   }
-  async function play(explicit = false) {
-    if (playPending || (!explicit && (userPaused || reduced.matches || !nearViewport || document.hidden))) return;
-    playPending = true;
-    if (explicit) { video.classList.add('explicit-playback'); nearViewport = true; }
-    status.textContent = '';
+  async function play() {
+    if (playPending || userPaused || !nearViewport || document.hidden) return;
+    playPending = true; status.textContent = ''; video.muted = true;
     try { await video.play(); }
-    catch (error) { if (error.name !== 'AbortError') status.textContent = translate("Πάτησε το κουμπί κάτω δεξιά για αναπαραγωγή."); }
-    finally {
-      playPending = false;
-      if (userPaused || document.hidden || !nearViewport) video.pause();
-      sync();
-    }
+    catch (error) {
+      // Autoplay policy failures retry on readiness/visibility/ordinary gestures.
+      // Keep the poster and pause/play control without asking visitors to press play.
+      if (error.name !== 'AbortError' && error.name !== 'NotAllowedError') status.textContent = translate("Το βίντεο δεν είναι διαθέσιμο αυτή τη στιγμή.");
+    } finally { playPending = false; if (userPaused || document.hidden || !nearViewport) video.pause(); sync(); }
   }
   toggle.addEventListener('click', () => {
     if (!video.paused || playPending) { userPaused = true; video.pause(); sync(); }
-    else { userPaused = false; play(true); }
+    else { userPaused = false; nearViewport = true; play(); }
   });
   ['play', 'pause', 'ended'].forEach(event => video.addEventListener(event, sync));
-  video.addEventListener('loadeddata', () => video.classList.add('is-ready'));
-  if (video.readyState >= 2) video.classList.add('is-ready');
-  video.addEventListener('error', () => {
-    video.classList.remove('is-ready');
-    status.textContent = translate("Το βίντεο δεν είναι διαθέσιμο αυτή τη στιγμή.");
-    sync();
-  });
+  ['loadeddata', 'canplay'].forEach(event => video.addEventListener(event, () => { video.classList.add('is-ready'); play(); }));
+  video.addEventListener('error', () => { video.classList.remove('is-ready'); status.textContent = translate("Το βίντεο δεν είναι διαθέσιμο αυτή τη στιγμή."); sync(); });
   new IntersectionObserver(entries => {
     nearViewport = entries[0].isIntersecting;
     if (nearViewport) play(); else video.pause();
-  }, { rootMargin: '600px 0px' }).observe(video);
-  new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) { nearViewport = true; play(); }
   }, { threshold: .01 }).observe(video);
   document.addEventListener('visibilitychange', () => { if (document.hidden) video.pause(); else play(); });
-  reduced.addEventListener('change', () => { if (reduced.matches) video.pause(); else play(); });
-  video.pause();
+  ['touchstart', 'touchend', 'pointerdown'].forEach(event => document.addEventListener(event, () => { if (video.paused) play(); }, { passive: true }));
+  addEventListener('pageshow', play);
   sync();
+});
+
+// The testimonial waits for a deliberate click, then plays inline with audio.
+document.querySelectorAll('[data-testimonial]').forEach(frame => {
+  const video = frame.querySelector('video');
+  const button = frame.querySelector('.testimonial-play');
+  const status = frame.querySelector('.testimonial-status');
+  video.controls = false;
+  button.addEventListener('click', async () => {
+    video.controls = true; video.muted = false; video.volume = 1; status.hidden = true;
+    try { await video.play(); button.hidden = true; }
+    catch { status.hidden = false; button.hidden = false; }
+  });
+  video.addEventListener('play', () => { button.hidden = true; status.hidden = true; });
+  video.addEventListener('ended', () => { button.hidden = false; });
 });
 
 const slider = document.querySelector('.ingredient-slider');
