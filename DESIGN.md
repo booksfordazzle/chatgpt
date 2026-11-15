@@ -77,3 +77,7 @@ Use the Philosophy complexity scene as the shared sticky-frame motion model. Ori
 The homepage full-bleed product shot is the unchanged owner-supplied product-jar-closeup.jpg (2448×1024), extracted from the latest ZIP. Preserve its full-bleed square corners, responsive cover treatment and existing caption. The homepage hero title scale is 50% larger than before across desktop and mobile: clamp(48px, 6.3vw, 96px), and clamp(24px, 6.75vw, 51px) on mobile. Retain the headline wording and scroll video. Remove only the PRIMAL CORE footer-name home link, across both languages and all pages; keep the header logo and footer navigation/privacy links.
 
 The five story sections combine the former personal opening/changes, search, tallow discovery, year of exploration/product origin, and final product principle. The last three are conclusion compositions with body before H1. Do not repeat the heading thought as another body paragraph. The tallow closing heading is “Η απλότητά του μου κέρδισε την περιέργεια.” Preserve the remaining narrative, development note and launch CTA.
+
+## Latest homepage and footer copy
+
+Homepage hero: “Το πρόσωπό σου,<br>πιο απαλό από ποτέ”, mirrored as “Your face,<br>softer than ever” in English. Preserve the explicit two-line break and current type scale. All footers show only the copyright text without the under-development suffix. The product-development disclosure remains in the relevant content. Mobile footer links stay together on one row, with compact readable labels (Απόρρητο / Privacy), no wrapping, and 44px-high link targets.
