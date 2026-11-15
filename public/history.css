@@ -27,3 +27,7 @@
 @media(max-width:760px){.history-copy{padding-block:80px 120px}.history-copy h1,.history-copy h2{width:72%;font-size:clamp(38px,10vw,54px)}.history-copy h1{font-size:clamp(42px,11vw,58px)}.history-intro,.history-reading{width:72%;margin-top:40px}.history-intro{font-size:21px}.history-reading p{font-size:17px;line-height:1.75}.history-reading .history-development-note{font-size:14px;margin-top:32px}.history-visual img{left:48%;width:65%;object-position:75% center}.history-shade{background:linear-gradient(90deg,#050605 0%,#050605 72%,rgba(5,6,5,.3) 92%,rgba(5,6,5,.05))}.history-beliefs{padding-block:80px 120px}.history-principles li{font-size:25px}.history-owner{font-size:13px;line-height:1.7}.history-navigation{bottom:12px;gap:18px;padding:8px 16px}.history-navigation a{font-size:0;justify-content:center;min-width:40px;min-height:40px}.history-navigation a span{font-size:14px}.history-route .site-footer{padding-bottom:110px}}
 @media(prefers-reduced-motion:reduce){.history-visual img{transform:none!important}}
 @media(max-width:760px){.history-copy h1{font-size:clamp(30px,9.7vw,42px);max-width:none}.history-development .history-copy h2{font-size:clamp(25px,7vw,34px)}}
+
+.history-principle{font-size:clamp(26px,3.2vw,42px);line-height:1.45;letter-spacing:-.02em;max-width:32ch;margin:var(--heading-content-gap) auto 56px;color:var(--text)}
+.history-principle strong{font-weight:550}
+@media(max-width:760px){.history-principle{font-size:28px}}
