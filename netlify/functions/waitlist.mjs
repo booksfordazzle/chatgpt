@@ -4,6 +4,21 @@ const CAMPAIGN_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', '
 const clean = (value, limit) => typeof value === 'string'
   ? value.trim().replace(/[\x00-\x1f\x7f]/g, '').slice(0, limit) : null;
 
+
+// Recognise only fixed Google error-page signatures. Never return excerpts/titles.
+function nonJsonDiagnostic(body) {
+  const text = body.replace(/<[^>]*>/g, ' ').replace(/&(?:nbsp|quot|#39|amp);/g, ' ').replace(/\s+/g, ' ');
+  if (/script function not found\s*:?\s*doPost/i.test(text)) return 'google_do_post_missing';
+  if (/script completed but did not return|did not return anything/i.test(text)) return 'google_return_missing';
+  if (/authorization is required|authorization required|hasn.t verified this app|access blocked.*app/i.test(text)) return 'google_authorization_required';
+  if (/you need permission|request access|access denied/i.test(text)) return 'google_access_denied';
+  if (/unable to open the file|file you have requested does not exist|deployment not found/i.test(text)) return 'google_deployment_unavailable';
+  if (/our systems have detected unusual traffic|too many requests/i.test(text)) return 'google_traffic_blocked';
+  if (/(?:ReferenceError|TypeError|SyntaxError|Exception)\s*:/i.test(text)) return 'google_script_error';
+  if (/userHtmlFrame|google\.script\.run/i.test(body)) return 'google_html_service_response';
+  return 'google_non_json_response';
+}
+
 export function createHandler({ env = process.env, fetchImpl = fetch, report = entry => console.warn('[waitlist]', JSON.stringify(entry)) } = {}) {
   return async function handler(event) {
     const headers = { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', 'X-Content-Type-Options': 'nosniff' };
@@ -76,9 +91,10 @@ export function createHandler({ env = process.env, fetchImpl = fetch, report = e
         response = await fetchImpl(target.href, { method: 'GET', redirect: 'error', signal });
       }
       if (!response.ok) return storageFailure(`google_http_${response.status}`, 'storage_unavailable', response.status);
+      const responseBody = await response.text();
       let result;
-      try { result = await response.json(); }
-      catch { return storageFailure('google_non_json_response'); }
+      try { result = JSON.parse(responseBody); }
+      catch { return storageFailure(nonJsonDiagnostic(responseBody)); }
       if (!result || result.ok !== true) return storageFailure('receiver_not_confirmed', 'storage_unconfirmed');
       return reply(200, true);
     } catch (error) {

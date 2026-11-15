@@ -73,3 +73,5 @@ The browser's generic retry message is unchanged. For troubleshooting, the POST 
 | `google_timeout` / `google_network_error` | Review connectivity, Google service health, quotas and Apps Script execution duration. |
 
 These codes guide diagnosis, not proof of a specific root cause. Test a controlled submission only after the new production deployment is Ready; do not rotate a working secret or recreate a Sheet without evidence.
+
+Recognised HTML error pages are additionally mapped to fixed safe codes: `google_do_post_missing` (deployed code lacks doPost), `google_return_missing`, `google_authorization_required`, `google_access_denied`, `google_deployment_unavailable`, `google_traffic_blocked`, `google_script_error`, or `google_html_service_response` (HTML-service UI rather than a JSON receiver). These are signature-based hints, not verification of a particular root cause; unknown HTML retains `google_non_json_response`. No raw HTML, page title, exception detail or personal data is exposed. If HTML cannot be classified, compare the exact active deployment URL with the Vercel value and inspect Apps Script Executions for the matching doPost attempt.

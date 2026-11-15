@@ -106,3 +106,25 @@ test('safe storage diagnostics distinguish access, redirects, HTTP, invalid resp
     for (const privateText of ['do-not-expose', 'person@example.com', env.WAITLIST_SHARED_SECRET]) assert.ok(!output.includes(privateText));
   }
 });
+
+test('Google HTML signatures produce bounded diagnostic codes, never page contents', async () => {
+  const scenarios = [
+    ['google_do_post_missing', '<html>Script function not found: <b>doPost</b></html>'],
+    ['google_return_missing', '<html>The script completed but did not return anything.</html>'],
+    ['google_authorization_required', '<html>Authorization is required to perform that action.</html>'],
+    ['google_access_denied', '<html>You need permission</html>'],
+    ['google_deployment_unavailable', '<html>Sorry, unable to open the file at this time.</html>'],
+    ['google_traffic_blocked', '<html>Our systems have detected unusual traffic</html>'],
+    ['google_script_error', '<html>ReferenceError: privateData is not defined</html>'],
+    ['google_html_service_response', '<html><iframe id="userHtmlFrame"></iframe></html>'],
+    ['google_non_json_response', '<html>Other page</html>']
+  ];
+  for (const [diagnostic, page] of scenarios) {
+    const entries = [];
+    const result = await createHandler({ env, fetchImpl: async () => new Response(page + '<p>private@example.com ' + env.WAITLIST_SHARED_SECRET + '</p>'), report: entry => entries.push(entry) })(event());
+    assert.equal(result.statusCode, 502); assert.equal(JSON.parse(result.body).diagnostic, diagnostic);
+    assert.deepEqual(Object.keys(JSON.parse(result.body)).sort(), ['diagnostic','error','ok']);
+    const output = result.body + JSON.stringify(entries);
+    assert.ok(!output.includes('private@example.com')); assert.ok(!output.includes(env.WAITLIST_SHARED_SECRET)); assert.ok(!output.includes('privateData'));
+  }
+});
