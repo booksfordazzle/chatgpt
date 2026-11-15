@@ -30,7 +30,7 @@ The active waitlist uses the previous Google Sheet through a server-only Apps Sc
 
 The Sheet stays private. A dedicated Waitlist tab records emails, timestamped/versioned consent and minimal attribution. Duplicates are case-insensitive and preserve old records. Existing five-column headers are upgraded additively. Success requires a confirmed write; without configuration the API returns 503 and retains the entered email. Local dev does not automatically load `.env`.
 
-Supabase is no longer called by the active handler. Its source/migrations remain for historical reference; no records have been deleted/imported, and `npm run test:db` exercises only that inactive historical schema. No welcome email, automated unsubscribe or priority ranking is implemented.
+Supabase is no longer called by the active handler. Its source/migrations remain for historical reference; no records have been deleted/imported, and `npm run test:db` exercises only that inactive historical schema. Optional welcome emails from the owner’s Google account are included; authorize/run setupWelcomeEmails and publish the latest Apps Script version per GOOGLE_SHEETS_SETUP.md. Automated unsubscribe and priority ranking are not implemented.
 
 ## Publish on Vercel (current requested host)
 

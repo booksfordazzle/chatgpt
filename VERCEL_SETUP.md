@@ -15,7 +15,7 @@ Under the new project's **Environment Variables** (or Project Settings → Envir
 
 | Name | Value |
 | --- | --- |
-| `GOOGLE_APPS_SCRIPT_URL` | `https://script.google.com/macros/s/AKfycbx15PTdNLGS6DSlt2Xjui9OKjz0FgXx5So0jGEbi18Gi2TSGEkPDb6ZsN95cfPo-cHW/exec` |
+| `GOOGLE_APPS_SCRIPT_URL` | `https://script.google.com/macros/s/AKfycbwuvbi7_oRABZeIeYcTYojKTO8tH3APWf-vxHrnDPCISVOtWTsyX-LUMCxPcjAqEuuX/exec` |
 | `WAITLIST_SHARED_SECRET` | Copy directly from your Apps Script **Project Settings → Script properties**. Store as a sensitive/secret server variable. Do not paste it in chat, GitHub, public code or screenshots. |
 
 The owner reported `setupWaitlist` completed successfully; that does not yet prove a hosted website can save a row. Use the same current secret on both sides. If editing environment variables after a deployment, redeploy Production so its function receives them. Do not expose variables with a `NEXT_PUBLIC_`/`VITE_` prefix; the browser must never call Apps Script directly. Preview deployments need their own intentional credential choice; do not enable production-sheet writes on untrusted pull requests by default.
@@ -26,7 +26,7 @@ The Apps Script deployment must be **Web app → Execute as Me → Anyone**. The
 
 1. Open the successful Vercel deployment URL, not a downloaded `file:` preview.
 2. Verify the Greek homepage, flag switch, English page, blog navigation/assets and privacy page. Directory trailing slashes are configured intentionally because the HTML uses relative links; retain `cleanUrls:false` so `.html` links continue to work.
-3. Submit one email you control with consent. Confirm a new row in the existing private Sheet's **Waitlist** tab. Verify timestamp, locale/source and consent versions. The site does not send an automatic welcome email.
+3. Submit one email you control with consent. Confirm a new row in the existing private Sheet's **Waitlist** tab. Verify timestamp, locale/source and consent versions. Welcome emails require the optional Apps Script setupWelcomeEmails activation; see GOOGLE_SHEETS_SETUP.md.
 4. Submit the same email and an uppercase variant. Confirm one row and unchanged original consent time. Test the other form and US English/native submission. Errors must retain the email and must not claim a save.
 5. A normal browser GET to `/api/waitlist` should return HTTP 405, not a static 404. A 503 after a valid POST means the runtime variables are missing/invalid; a 502 requires checking Apps Script deployment/version/permissions/shared secret. Inspect provider logs without exposing credentials or emails.
 
@@ -44,4 +44,4 @@ Local validation available: `npm test` (shared handler, Sheets receiver and Verc
 
 ## What remains before acquisition
 
-The original audit's claim/formula, offer terms, retention/withdrawal, verified product imagery, mobile headline/performance and rate-limit tasks remain. Hosting the site does not validate its skin claims or launch offer. No analytics/pixel, welcome-mail delivery, automated unsubscribe, queue or referrals are implemented. Use [GOOGLE_SHEETS_SETUP.md](GOOGLE_SHEETS_SETUP.md) for receiver details and [AUDIT_REPORT.md](AUDIT_REPORT.md) for the historical audit.
+The original audit's claim/formula, offer terms, retention/withdrawal, verified product imagery, mobile headline/performance and rate-limit tasks remain. Hosting the site does not validate its skin claims or launch offer. No analytics/pixel, automated unsubscribe, queue or referrals are implemented. Optional Google-account welcome delivery requires owner activation and a real delivery test. Use [GOOGLE_SHEETS_SETUP.md](GOOGLE_SHEETS_SETUP.md) for receiver details and [AUDIT_REPORT.md](AUDIT_REPORT.md) for the historical audit.

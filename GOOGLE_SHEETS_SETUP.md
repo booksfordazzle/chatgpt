@@ -1,6 +1,6 @@
 # Activate Google Sheets signup storage
 
-The active waitlist now uses the existing Google Sheet, not Supabase. Code/tests are prepared; live Google storage is **not yet configured or verified**. No existing Sheet or Supabase records have been copied/deleted. No welcome email is sent.
+The active waitlist now uses the existing Google Sheet, not Supabase. Code/tests are prepared; live Google storage is **not yet configured or verified**. No existing Sheet or Supabase records have been copied/deleted. Welcome email code is now included but must be explicitly authorized/enabled in Apps Script; no real delivery has been verified.
 
 Target: [the existing PRIMAL CORE spreadsheet](https://docs.google.com/spreadsheets/d/1ptOmDxONI9KD_rLRZp0xGsjJezsOyIP0H3gd5HgleRg/edit).
 
@@ -42,7 +42,7 @@ For this cloud environment, save/review its Google URL/secret requirements and n
 1. On the **deployed** site, use an email address you control and check consent.
 2. Confirm a row appears in the dedicated **Waitlist** tab and only then regard the signup as verified.
 3. Submit the same email again, then a different-case variant. Confirm there is only one row and the original receipt time stays unchanged.
-4. Test Greek and US English forms and native/no-JavaScript submission. Invalid/unconfirmed storage must show an error and must not claim success. No automatic email will arrive.
+4. Test Greek and US English forms and native/no-JavaScript submission. Invalid/unconfirmed storage must show an error and must not claim success. A welcome is queued only after the optional email feature is authorized/enabled; see the welcome setup below.
 5. Confirm the Sheet remains private and only authorized staff can access its email records. Remove controlled test rows after validation.
 
 The receiver records email, registration/consent UTC times, consent text/policy versions, locale, form source, bounded UTM fields, referrer origin and landing path. Each row is written under a script lock; formula-like text is escaped. Existing tabs are preserved. The previous five-column Waitlist layout is upgraded by appending missing column headings, leaving old rows/timestamps unchanged. Unexpected/custom header layouts fail safely instead of overwriting data. Empty new fields on old records remain empty; do not invent historical consent evidence.
@@ -51,7 +51,7 @@ Current versions: consent `launch-updates-v1`; privacy `2026-11-15-sheets-v1`. E
 
 ## Important remaining audit work
 
-Before real acquisition, validate live saving and access permissions, review unsettled formula/skin claims, confirm 15% offer terms, retention/withdrawal operations and processor arrangements. Google Apps Script/Sheets has quotas and the public endpoint has no rate limit/captcha beyond its honeypot/input checks; add suitable rate limiting before scaling traffic. This integration does not implement mail delivery, automated unsubscribe/suppression, priority ranking, referrals or rewards.
+Before real acquisition, validate live saving and access permissions, review unsettled formula/skin claims, confirm 15% offer terms, retention/withdrawal operations and processor arrangements. Google Apps Script/Sheets has quotas and the public endpoint has no rate limit/captcha beyond its honeypot/input checks; add suitable rate limiting before scaling traffic. This integration includes an optional Google-account welcome worker. It does not implement newsletter campaigns, automated unsubscribe, priority ranking, referrals or rewards.
 
 ## Developer checks
 
@@ -75,3 +75,22 @@ The browser's generic retry message is unchanged. For troubleshooting, the POST 
 These codes guide diagnosis, not proof of a specific root cause. Test a controlled submission only after the new production deployment is Ready; do not rotate a working secret or recreate a Sheet without evidence.
 
 Recognised HTML error pages are additionally mapped to fixed safe codes: `google_do_post_missing` (deployed code lacks doPost), `google_return_missing`, `google_authorization_required`, `google_access_denied`, `google_deployment_unavailable`, `google_traffic_blocked`, `google_script_error`, or `google_html_service_response` (HTML-service UI rather than a JSON receiver). These are signature-based hints, not verification of a particular root cause; unknown HTML retains `google_non_json_response`. No raw HTML, page title, exception detail or personal data is exposed. If HTML cannot be classified, compare the exact active deployment URL with the Vercel value and inspect Apps Script Executions for the matching doPost attempt.
+
+## Find the saved record
+
+Emails go into the **Waitlist worksheet/tab inside the same spreadsheet**, not into the original blank Sheet1 tab. Use the sheet tabs along the bottom (or the All sheets menu at bottom left) to select Waitlist. A blank original tab does not establish that a signup was not saved. If Waitlist is absent, compare the spreadsheet URL/ID with the agreed target above and the private Apps Script SPREADSHEET_ID property; do not share a screenshot of secrets or subscriber data.
+
+## Enable welcome emails from your Google account
+
+The owner selected Google-account sending for now. Mail is sent by the Google account that owns/runs this script, with display name PRIMAL CORE. It is **not** sent from hello@primalcore.gr. Messages are plain text, Greek or US English according to the signup language, and contain registration confirmation, development status and instructions to reply to request removal. No queue rank, launch date, discount entitlement or product efficacy is invented.
+
+1. Copy the complete latest `google-apps-script/Code.gs` into the **same bound Apps Script project**, save, and preserve existing Script Properties/secret.
+2. Select **setupWelcomeEmails** from the function dropdown and click Run. Approve the new mail and trigger permissions for your own script. This setup preserves the spreadsheet/secret, enables the mail worker and installs only one recurring trigger; it does not send messages itself.
+3. Publish the code via **Deploy → Manage deployments → Edit → New version → Deploy**, keeping Me / Anyone. Prefer updating the currently working deployment so its URL stays unchanged; update Vercel + redeploy only if the URL changes.
+4. Submit a controlled signup again. An existing record that has never had welcome sending enabled can be queued once by that repeat submission, without changing the original consent timestamp. Existing subscribers are **not** mass-enrolled by setup alone.
+5. In Waitlist, inspect **Welcome email status** and **Welcome email sent at (UTC)**. The scheduled worker runs approximately every five minutes and processes at most ten per run, subject to your Google account's quota. For the controlled test you can manually Run **sendPendingWelcomeEmails** after capture instead of waiting. This function sends actual pending messages; do not repeatedly run it to force a retry.
+6. Check the receiving inbox/spam. `sent` means MailApp accepted the send, not proof that it reached the inbox. `pending` may mean waiting/quota exhausted; `not_enabled` means setup has not enabled it; `failed` requires owner review. `sending` after an interrupted run needs manual reconciliation before retrying, because MailApp does not provide an exactly-once delivery/idempotency guarantee.
+
+Storage and email are independent: signup success requires a post-flush readback of the saved email, but does not wait for welcome delivery. An email-service failure leaves the saved signup intact. Duplicate submissions do not re-send entries marked sent/sending/failed/suppressed. There is no automatic retry for ambiguous/failed sends; after checking the actual send outcome an owner may explicitly set a confirmed-unsent entry back to pending. Rows marked **suppressed** are not queued/sent by this welcome worker. Handle reply-based withdrawal requests, mark suppression and exclude them from any future campaigns; this is an owner process, not a complete automated unsubscribe system.
+
+New status columns are appended without rewriting old data. Mail provider calls occur outside the signup lock; each claim/result update uses a short lock. The welcome worker is locally mocked/tested only; actual Google authorization, trigger scheduling, quota and inbox delivery need the owner's live controlled test. No real email was sent from this development workspace.
