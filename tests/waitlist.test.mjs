@@ -84,3 +84,25 @@ test('untrusted metadata is bounded and cannot select locale, source or arbitrar
   assert.equal(saved.referrerOrigin, null); assert.equal(saved.landingPath, null);
   assert.equal(saved.consent_text_version, undefined); assert.equal(saved.privacy_version, undefined);
 });
+
+test('safe storage diagnostics distinguish access, redirects, HTTP, invalid responses and timeout without leaking data', async () => {
+  const scenarios = [
+    ['google_login_required', async () => new Response('', { status: 302, headers: { location: 'https://accounts.google.com/signin?private=do-not-expose' } })],
+    ['google_redirect_invalid', async () => new Response('', { status: 302 })],
+    ['google_redirect_rejected', async () => new Response('', { status: 302, headers: { location: 'https://attacker.test/?secret=do-not-expose' } })],
+    ['google_http_403', async () => new Response('do-not-expose', { status: 403 })],
+    ['google_http_404', async () => new Response('do-not-expose', { status: 404 })],
+    ['google_non_json_response', async () => new Response('<html>do-not-expose</html>')],
+    ['receiver_not_confirmed', async () => new Response('{"ok":false,"detail":"do-not-expose"}')],
+    ['google_timeout', async () => { throw new DOMException('do-not-expose', 'TimeoutError'); }],
+    ['google_network_error', async () => { throw Error('do-not-expose'); }]
+  ];
+  for (const [diagnostic, fetchImpl] of scenarios) {
+    const entries = [];
+    const result = await createHandler({ env, fetchImpl, report: entry => entries.push(entry) })(event());
+    assert.equal(result.statusCode, 502); assert.equal(JSON.parse(result.body).diagnostic, diagnostic);
+    assert.equal(entries.length, 1); assert.equal(entries[0].code, diagnostic);
+    const output = result.body + JSON.stringify(entries);
+    for (const privateText of ['do-not-expose', 'person@example.com', env.WAITLIST_SHARED_SECRET]) assert.ok(!output.includes(privateText));
+  }
+});

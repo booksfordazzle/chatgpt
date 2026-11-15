@@ -4,13 +4,13 @@ const CAMPAIGN_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', '
 const clean = (value, limit) => typeof value === 'string'
   ? value.trim().replace(/[\x00-\x1f\x7f]/g, '').slice(0, limit) : null;
 
-export function createHandler({ env = process.env, fetchImpl = fetch } = {}) {
+export function createHandler({ env = process.env, fetchImpl = fetch, report = entry => console.warn('[waitlist]', JSON.stringify(entry)) } = {}) {
   return async function handler(event) {
     const headers = { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', 'X-Content-Type-Options': 'nosniff' };
     const json = /application\/json/i.test(event.headers?.accept || '');
     let languagePrefix = '';
-    const reply = (statusCode, ok, error) => json || event.httpMethod !== 'POST'
-      ? { statusCode, headers, body: JSON.stringify({ ok, ...(error ? { error } : {}) }) }
+    const reply = (statusCode, ok, error, diagnostic) => json || event.httpMethod !== 'POST'
+      ? { statusCode, headers, body: JSON.stringify({ ok, ...(error ? { error } : {}), ...(diagnostic ? { diagnostic } : {}) }) }
       : { statusCode: 303, headers: { ...headers, Location: languagePrefix + (ok ? '/thanks.html' : '/signup-unavailable.html') }, body: '' };
     if (event.httpMethod !== 'POST') return { ...reply(405, false, 'method_not_allowed'), headers: { ...headers, Allow: 'POST' } };
     const origin = event.headers?.origin;
@@ -49,6 +49,12 @@ export function createHandler({ env = process.env, fetchImpl = fetch } = {}) {
     // Only the pathname is retained, never potentially identifying queries/fragments.
     const landingPath = landing?.startsWith('/') && !landing.startsWith('//') ? landing.split(/[?#]/)[0] : null;
     const source = SOURCES.has(data.source) ? data.source : 'primal-core-waitlist';
+    const storageFailure = (diagnostic, error = 'storage_unavailable', upstreamStatus) => {
+      // Only fixed reason codes and HTTP status numbers are emitted. Never log URLs,
+      // response bodies, exception messages, emails or the shared secret.
+      try { report({ code: diagnostic, ...(upstreamStatus ? { upstreamStatus } : {}) }); } catch {}
+      return reply(502, false, error, diagnostic);
+    };
     try {
       const signal = AbortSignal.timeout(18000);
       let response = await fetchImpl(endpoint.href, {
@@ -61,16 +67,23 @@ export function createHandler({ env = process.env, fetchImpl = fetch } = {}) {
       // Apps Script ContentService serves its JSON through this Google-only redirect.
       // Never forward the POST body/shared secret to the redirect destination.
       if (response.status === 302 || response.status === 303) {
-        const target = new URL(response.headers.get('location'));
+        let target;
+        try { target = new URL(response.headers.get('location')); }
+        catch { return storageFailure('google_redirect_invalid'); }
+        if (target.hostname === 'accounts.google.com') return storageFailure('google_login_required');
         if (target.protocol !== 'https:' || target.hostname !== 'script.googleusercontent.com'
-          || target.port || target.username || target.password || target.pathname !== '/macros/echo') throw Error();
+          || target.port || target.username || target.password || target.pathname !== '/macros/echo') return storageFailure('google_redirect_rejected');
         response = await fetchImpl(target.href, { method: 'GET', redirect: 'error', signal });
       }
-      if (!response.ok) return reply(502, false, 'storage_unavailable');
-      const result = await response.json();
-      if (!result || result.ok !== true) return reply(502, false, 'storage_unconfirmed');
+      if (!response.ok) return storageFailure(`google_http_${response.status}`, 'storage_unavailable', response.status);
+      let result;
+      try { result = await response.json(); }
+      catch { return storageFailure('google_non_json_response'); }
+      if (!result || result.ok !== true) return storageFailure('receiver_not_confirmed', 'storage_unconfirmed');
       return reply(200, true);
-    } catch { return reply(502, false, 'storage_unavailable'); }
+    } catch (error) {
+      return storageFailure(error?.name === 'TimeoutError' || error?.name === 'AbortError' ? 'google_timeout' : 'google_network_error');
+    }
   };
 }
 export const handler = createHandler();

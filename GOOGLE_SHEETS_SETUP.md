@@ -56,3 +56,20 @@ Before real acquisition, validate live saving and access permissions, review uns
 ## Developer checks
 
 `npm test` covers server/receiver validation, additive legacy headers, case-insensitive duplicates, versioned consent/attribution, formula escaping, Google redirect safety and truthful UI/locale contracts. `npm run build` generates the static site. These checks use mocks and do not establish Google account permissions, deployment validity or live row persistence. The retained Supabase migration/test files are historical/inactive; they are not part of Google setup.
+
+## Safe error diagnosis
+
+The browser's generic retry message is unchanged. For troubleshooting, the POST JSON response includes a fixed `diagnostic` code on upstream failures; Vercel runtime logs record the same code and, if applicable, the numeric upstream HTTP status. No email, secret, Google redirect URL/query, raw provider body or exception message is logged/returned.
+
+| Diagnostic | What to verify |
+| --- | --- |
+| `google_login_required` | Google redirects to account sign-in. Verify the exact active deployment executes as the owner and permits Anyone, without requiring a Google login. |
+| `google_http_403` | Google denied access. Check deployment permissions and account/organization restrictions. |
+| `google_http_404` | Verify the current deployment's exact `/exec` URL; the ID may be wrong, disabled or obsolete. |
+| `google_http_429` | Google throttling/quota; check the account's current quotas and traffic. |
+| `google_redirect_invalid` / `google_redirect_rejected` | Inspect deployment/account configuration; redirect handling deliberately stays restricted. Do not forward the shared secret to arbitrary destinations. |
+| `google_non_json_response` | Google returned a non-JSON page; check public deployment access, deployed code version and Apps Script executions. |
+| `receiver_not_confirmed` | Google JSON did not confirm saving. Check the matching secret, current policy/code versions, script properties, Sheet access and supported Waitlist headers. |
+| `google_timeout` / `google_network_error` | Review connectivity, Google service health, quotas and Apps Script execution duration. |
+
+These codes guide diagnosis, not proof of a specific root cause. Test a controlled submission only after the new production deployment is Ready; do not rotate a working secret or recreate a Sheet without evidence.
