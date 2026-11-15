@@ -26,14 +26,14 @@ After subsequent source edits, publish a new deployment version. Saving Code.gs 
 
 ## 3. Configure the website's server
 
-In Netlify's secure function environment settings, add:
+In your hosting provider's secure server environment settings (Vercel is the current choice), add:
 
 | Variable | Value |
 | --- | --- |
 | `GOOGLE_APPS_SCRIPT_URL` | The deployment URL ending in `/exec`. |
 | `WAITLIST_SHARED_SECRET` | Exactly the secret from Apps Script's Script properties. Mark sensitive/secret; server runtime only. |
 
-Deploy the updated `codex/bilingual-site` branch with the existing `netlify.toml`. Restart/redeploy after changing runtime variables. The function accepts only the Google Apps Script HTTPS endpoint and follows Google's ContentService redirect as a GET without forwarding the secret/body. The browser never receives either server setting.
+Deploy the updated `codex/bilingual-site` branch. Vercel uses `vercel.json` and `api/waitlist.js`; see [VERCEL_SETUP.md](VERCEL_SETUP.md). The retained Netlify configuration is an alternative. Restart/redeploy after changing runtime variables. The function accepts only the Google Apps Script HTTPS endpoint and follows Google's ContentService redirect as a GET without forwarding the secret/body. The browser never receives either server setting.
 
 For this cloud environment, save/review its Google URL/secret requirements and network additions (`script.google.com`, `script.googleusercontent.com`). Saving a draft does not apply it. Local `npm run dev` does not automatically load `.env` files. Old Supabase variables/secret requirements are no longer needed by the active code; remove obsolete requirements from environment settings if they continue to prompt for a value. Do not delete Supabase tables or data merely to switch providers.
 

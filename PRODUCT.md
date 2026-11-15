@@ -20,7 +20,7 @@ Five ingredients, with beef tallow and Chios mastic oil as the two central mater
 
 ## Operating Context
 
-Domain: primalcore.gr. Owner-supplied identity: MMTX E.E, Φιλικής Εταιρείας 12. Contact: hello@primalcore.gr. The website uses static HTML/CSS/JavaScript with a Netlify server-side receiver and an authenticated Google Apps Script receiver writing to the existing private Google Sheet. No checkout is implemented.
+Domain: primalcore.gr. Owner-supplied identity: MMTX E.E, Φιλικής Εταιρείας 12. Contact: hello@primalcore.gr. The website uses static HTML/CSS/JavaScript with a Vercel-compatible server-side receiver (with a retained Netlify adapter) and an authenticated Google Apps Script receiver writing to the existing private Google Sheet. No checkout is implemented.
 
 ## Capabilities and Constraints
 

@@ -32,6 +32,10 @@ The Sheet stays private. A dedicated Waitlist tab records emails, timestamped/ve
 
 Supabase is no longer called by the active handler. Its source/migrations remain for historical reference; no records have been deleted/imported, and `npm run test:db` exercises only that inactive historical schema. No welcome email, automated unsubscribe or priority ranking is implemented.
 
+## Publish on Vercel (current requested host)
+
+Follow [VERCEL_SETUP.md](VERCEL_SETUP.md). Import `booksfordazzle/chatgpt` from branch `codex/bilingual-site`, framework Other, repository root. `vercel.json` builds `dist`, and `api/waitlist.js` adapts the same validated Google Sheets handler to Vercel Node requests. Set server-only `GOOGLE_APPS_SCRIPT_URL` and `WAITLIST_SHARED_SECRET`, deploy, verify a real Sheet row, then add `primalcore.gr` and `www.primalcore.gr` in Vercel Domains using the exact DNS records Vercel provides. No deployment or DNS change has been performed here.
+
 ## Publish on Netlify
 
 1. Deploy this repository with the included `netlify.toml`: build `npm run build`, publish `dist`, functions directory `netlify/functions`.
