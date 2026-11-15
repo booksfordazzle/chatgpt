@@ -14,7 +14,7 @@ test('Sheets receiver gets consent and bounded attribution; only confirmed stora
   assert.equal(result.statusCode, 200);
   assert.deepEqual(JSON.parse(result.body), { ok: true });
   assert.equal(sent.url, env.GOOGLE_APPS_SCRIPT_URL); assert.equal(sent.redirect, 'manual');
-  assert.deepEqual(sent.body, { email: 'Person@example.com', consent: true, token: env.WAITLIST_SHARED_SECRET, locale: 'en-US', source: 'primal-core-hero', policyVersion: '2026-11-15-sheets-v1', consentTextVersion: 'launch-updates-v1', utm: { utm_campaign: 'launch' }, referrerOrigin: 'https://referrer.test', landingPath: '/en/' });
+  assert.deepEqual(sent.body, { email: 'Person@example.com', consent: true, token: env.WAITLIST_SHARED_SECRET, locale: 'en-US', source: 'primal-core-hero', policyVersion: '2026-11-15-sheets-v1', consentTextVersion: 'launch-updates-v1', utm: { utm_campaign: 'launch' }, referrerOrigin: 'https://referrer.test', landingPath: '/en/', deviceType: 'unknown' });
   assert.ok(!result.body.includes(env.WAITLIST_SHARED_SECRET));
 });
 
@@ -127,4 +127,13 @@ test('Google HTML signatures produce bounded diagnostic codes, never page conten
     const output = result.body + JSON.stringify(entries);
     assert.ok(!output.includes('private@example.com')); assert.ok(!output.includes(env.WAITLIST_SHARED_SECRET)); assert.ok(!output.includes('privateData'));
   }
+});
+
+test('coarse device class survives both JS and native form requests without persisting the user agent', async () => {
+ let saved; const handler=createHandler({env,fetchImpl:async(_,options)=>{saved=JSON.parse(options.body);return confirmed();}});
+ await handler(event({device_type:'mobile'})); assert.equal(saved.deviceType,'mobile');
+ const request=event(); request.headers['user-agent']='Mozilla iPhone Mobile private-browser-details';
+ await handler(request); assert.equal(saved.deviceType,'mobile'); assert.ok(!JSON.stringify(saved).includes('private-browser-details'));
+ request.headers['user-agent']='Mozilla Windows NT desktop'; await handler(request); assert.equal(saved.deviceType,'desktop');
+ await handler(event({device_type:'=unsafe'})); assert.equal(saved.deviceType,'unknown');
 });

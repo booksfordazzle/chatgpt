@@ -1,6 +1,6 @@
 # Activate Google Sheets signup storage
 
-The active waitlist now uses the existing Google Sheet, not Supabase. Code/tests are prepared; live Google storage is **not yet configured or verified**. No existing Sheet or Supabase records have been copied/deleted. Welcome email code is now included but must be explicitly authorized/enabled in Apps Script; no real delivery has been verified.
+The active waitlist now uses the existing Google Sheet, not Supabase. The owner has reported successful live Google storage and receipt of the previous optional welcome emails. Live device-column rollout still requires the Apps Script update below. No existing Sheet or Supabase records have been copied/deleted. The current owner preference is an on-page confirmation redirect only; automatic welcome sending is disabled in the current source.
 
 Target: [the existing PRIMAL CORE spreadsheet](https://docs.google.com/spreadsheets/d/1ptOmDxONI9KD_rLRZp0xGsjJezsOyIP0H3gd5HgleRg/edit).
 
@@ -42,7 +42,7 @@ For this cloud environment, save/review its Google URL/secret requirements and n
 1. On the **deployed** site, use an email address you control and check consent.
 2. Confirm a row appears in the dedicated **Waitlist** tab and only then regard the signup as verified.
 3. Submit the same email again, then a different-case variant. Confirm there is only one row and the original receipt time stays unchanged.
-4. Test Greek and US English forms and native/no-JavaScript submission. Invalid/unconfirmed storage must show an error and must not claim success. A welcome is queued only after the optional email feature is authorized/enabled; see the welcome setup below.
+4. Test Greek and US English forms and native/no-JavaScript submission. Invalid/unconfirmed storage must show an error and must not claim success. After a confirmed save, JavaScript and native forms open the localized thanks.html confirmation page. Failed saves must not redirect to success.
 5. Confirm the Sheet remains private and only authorized staff can access its email records. Remove controlled test rows after validation.
 
 The receiver records email, registration/consent UTC times, consent text/policy versions, locale, form source, bounded UTM fields, referrer origin and landing path. Each row is written under a script lock; formula-like text is escaped. Existing tabs are preserved. The previous five-column Waitlist layout is upgraded by appending missing column headings, leaving old rows/timestamps unchanged. Unexpected/custom header layouts fail safely instead of overwriting data. Empty new fields on old records remain empty; do not invent historical consent evidence.
@@ -51,7 +51,7 @@ Current versions: consent `launch-updates-v1`; privacy `2026-11-15-sheets-v1`. E
 
 ## Important remaining audit work
 
-Before real acquisition, validate live saving and access permissions, review unsettled formula/skin claims, confirm 15% offer terms, retention/withdrawal operations and processor arrangements. Google Apps Script/Sheets has quotas and the public endpoint has no rate limit/captcha beyond its honeypot/input checks; add suitable rate limiting before scaling traffic. This integration includes an optional Google-account welcome worker. It does not implement newsletter campaigns, automated unsubscribe, priority ranking, referrals or rewards.
+Before real acquisition, validate live saving and access permissions, review unsettled formula/skin claims, confirm 15% offer terms, retention/withdrawal operations and processor arrangements. Google Apps Script/Sheets has quotas and the public endpoint has no rate limit/captcha beyond its honeypot/input checks; add suitable rate limiting before scaling traffic. Automatic welcome sending is disabled; the confirmation is shown on the website. It does not implement newsletter campaigns, automated unsubscribe, priority ranking, referrals or rewards.
 
 ## Developer checks
 
@@ -80,17 +80,26 @@ Recognised HTML error pages are additionally mapped to fixed safe codes: `google
 
 Emails go into the **Waitlist worksheet/tab inside the same spreadsheet**, not into the original blank Sheet1 tab. Use the sheet tabs along the bottom (or the All sheets menu at bottom left) to select Waitlist. A blank original tab does not establish that a signup was not saved. If Waitlist is absent, compare the spreadsheet URL/ID with the agreed target above and the private Apps Script SPREADSHEET_ID property; do not share a screenshot of secrets or subscriber data.
 
-## Enable welcome emails from your Google account
+## Confirmation page instead of a welcome email (current owner preference)
 
-The owner selected Google-account sending for now. Mail is sent by the Google account that owns/runs this script, with display name PRIMAL CORE. It is **not** sent from hello@primalcore.gr. Messages are plain text, Greek or US English according to the signup language, and contain registration confirmation, development status and instructions to reply to request removal. No queue rank, launch date, discount entitlement or product efficacy is invented.
+After a successful Google save, both forms redirect to `/thanks.html` (Greek) or `/en/thanks.html` (US English). Native/no-JavaScript submissions already use the same localized confirmation pages. A rejected/unconfirmed save keeps the JavaScript form and entered email with an error. No email address or other personal data is added to the redirect URL.
 
-1. Copy the complete latest `google-apps-script/Code.gs` into the **same bound Apps Script project**, save, and preserve existing Script Properties/secret.
-2. Select **setupWelcomeEmails** from the function dropdown and click Run. Approve the new mail and trigger permissions for your own script. This setup preserves the spreadsheet/secret, enables the mail worker and installs only one recurring trigger; it does not send messages itself.
-3. Publish the code via **Deploy → Manage deployments → Edit → New version → Deploy**, keeping Me / Anyone. Prefer updating the currently working deployment so its URL stays unchanged; update Vercel + redeploy only if the URL changes.
-4. Submit a controlled signup again. An existing record that has never had welcome sending enabled can be queued once by that repeat submission, without changing the original consent timestamp. Existing subscribers are **not** mass-enrolled by setup alone.
-5. In Waitlist, inspect **Welcome email status** and **Welcome email sent at (UTC)**. The scheduled worker runs approximately every five minutes and processes at most ten per run, subject to your Google account's quota. For the controlled test you can manually Run **sendPendingWelcomeEmails** after capture instead of waiting. This function sends actual pending messages; do not repeatedly run it to force a retry.
-6. Check the receiving inbox/spam. `sent` means MailApp accepted the send, not proof that it reached the inbox. `pending` may mean waiting/quota exhausted; `not_enabled` means setup has not enabled it; `failed` requires owner review. `sending` after an interrupted run needs manual reconciliation before retrying, because MailApp does not provide an exactly-once delivery/idempotency guarantee.
+The Greek page reads exactly:
 
-Storage and email are independent: signup success requires a post-flush readback of the saved email, but does not wait for welcome delivery. An email-service failure leaves the saved signup intact. Duplicate submissions do not re-send entries marked sent/sending/failed/suppressed. There is no automatic retry for ambiguous/failed sends; after checking the actual send outcome an owner may explicitly set a confirmed-unsent entry back to pending. Rows marked **suppressed** are not queued/sent by this welcome worker. Handle reply-based withdrawal requests, mark suppression and exclude them from any future campaigns; this is an owner process, not a complete automated unsubscribe system.
+> Μπήκες.
+>
+> Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση
 
-New status columns are appended without rewriting old data. Mail provider calls occur outside the signup lock; each claim/result update uses a short lock. The welcome worker is locally mocked/tested only; actual Google authorization, trigger scheduling, quota and inbox delivery need the owner's live controlled test. No real email was sent from this development workspace.
+The current Apps Script source does not call MailApp, queue welcome messages or send mail from the historical sendPendingWelcomeEmails entry point. It preserves prior subscriber rows and email-history columns; new records have welcome status disabled. The historical setupWelcomeEmails helper only calls the new disableWelcomeEmails helper, so it cannot reactivate sending.
+
+**Stop a previously installed live welcome worker now:** Apps Script → Project Settings → Script properties → change `WELCOME_EMAIL_ENABLED` to the literal string `false` → Save. The old deployed worker reads this property, so no new secret or web-app deployment is needed for that switch. A message already sent/in flight cannot be recalled. Optionally remove only the sendPendingWelcomeEmails time trigger from the clock/Triggers screen. Do not delete spreadsheet rows/history or unrelated triggers.
+
+To fully install the current source, replace Code.gs with the current file, save, optionally Run disableWelcomeEmails (removes only that worker's triggers), and publish a new version of the existing web-app deployment. Keep the current URL/secret unchanged. A Vercel deployment alone does not edit Apps Script or remove its installed Google triggers.
+
+There is no Brevo integration or paid email service in this flow. The requested promise concerns a future launch update; sending that future campaign will require a separately configured, consent-respecting delivery process when the product becomes available. Website confirmation is not evidence of inbox delivery. Directly opening the static confirmation URL does not itself register an email.
+
+## Device type column (latest update)
+
+New registrations include a coarse `Device type`: `mobile` (including tablets), `desktop`, or `unknown` when there is no usable browser context. JavaScript uses device hints with a browser fallback, and native forms use the request User-Agent transiently. The raw User-Agent is never forwarded to Sheets or stored. This is an approximate device category, not a verified identity. Existing duplicate registrations and historical rows are preserved. The receiver adds the new column without replacing existing data.
+
+To activate the new column in the live spreadsheet: copy the full current `google-apps-script/Code.gs` into the existing Apps Script project's Code.gs, save, run `disableWelcomeEmails` once to stop the old welcome trigger, then choose **Deploy → Manage deployments → Edit (pencil) → Version: New version → Deploy**. Keep the same deployment URL and existing `SPREADSHEET_ID`/`WAITLIST_SHARED_SECRET`. Vercel updates alone do not update Apps Script. Test with a new email, since existing duplicate rows are deliberately not rewritten. Old rows have no device history and should not be guessed.

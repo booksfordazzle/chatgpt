@@ -63,6 +63,10 @@ export function createHandler({ env = process.env, fetchImpl = fetch, report = e
     const landing = clean(data.landing_path, 256);
     // Only the pathname is retained, never potentially identifying queries/fragments.
     const landingPath = landing?.startsWith('/') && !landing.startsWith('//') ? landing.split(/[?#]/)[0] : null;
+    // Coarse device class only; never persist the raw User-Agent. Tablets count as mobile.
+    const agent = event.headers?.['user-agent'] || '';
+    const deviceType = ['mobile', 'desktop'].includes(data.device_type) ? data.device_type
+      : agent ? (/Android|iPhone|iPad|iPod|Mobile/i.test(agent) ? 'mobile' : 'desktop') : 'unknown';
     const source = SOURCES.has(data.source) ? data.source : 'primal-core-waitlist';
     const storageFailure = (diagnostic, error = 'storage_unavailable', upstreamStatus) => {
       // Only fixed reason codes and HTTP status numbers are emitted. Never log URLs,
@@ -77,7 +81,7 @@ export function createHandler({ env = process.env, fetchImpl = fetch, report = e
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, consent: true, token: secret, locale, source,
           policyVersion: '2026-11-15-sheets-v1', consentTextVersion: 'launch-updates-v1',
-          utm, referrerOrigin, landingPath })
+          utm, referrerOrigin, landingPath, deviceType })
       });
       // Apps Script ContentService serves its JSON through this Google-only redirect.
       // Never forward the POST body/shared secret to the redirect destination.

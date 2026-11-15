@@ -4,7 +4,6 @@ const messages = {
   "Η εγγραφή δεν είναι διαθέσιμη σε αυτό το αρχείο. Άνοιξε τον δημοσιευμένο ιστότοπο για να εγγραφείς.": "Signup is not available in this file preview. Open the published website to join.",
   "Αποθήκευση εγγραφής…": "Saving your registration…",
   "Αποθήκευση…": "Saving…",
-  "Η εγγραφή σου ολοκληρώθηκε. Θα λάβεις νέα για την κυκλοφορία!": "You are on the list. You will receive launch updates!",
   "Η εγγραφή δεν επιβεβαιώθηκε. Δοκίμασε ξανά αργότερα ή ": "Registration could not be confirmed. Try again later or ",
   "γράψε μας στο hello@primalcore.gr": "write to hello@primalcore.gr",
   "Αναπαραγωγή βίντεο ": "Play video: ",
@@ -44,22 +43,23 @@ form.addEventListener('submit', async event => {
   status.classList.remove('error');
   status.textContent = translate("Αποθήκευση εγγραφής…");
   button.textContent = translate("Αποθήκευση…");
+  let redirecting = false;
   try {
     const response = await fetch('/api/waitlist', {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ email: email.value.trim(), consent: form.elements.consent.checked, lang: document.documentElement.lang, website: form.elements.website.value, source: form.elements.source.value, landing_path: form.elements.landing_path?.value, referrer_origin: form.elements.referrer_origin?.value, ...Object.fromEntries(campaignKeys.filter(key => form.elements[key]).map(key => [key, form.elements[key].value])) }),
+      body: JSON.stringify({ email: email.value.trim(), consent: form.elements.consent.checked, lang: document.documentElement.lang, device_type: form.elements.device_type?.value, website: form.elements.website.value, source: form.elements.source.value, landing_path: form.elements.landing_path?.value, referrer_origin: form.elements.referrer_origin?.value, ...Object.fromEntries(campaignKeys.filter(key => form.elements[key]).map(key => [key, form.elements[key].value])) }),
       signal: AbortSignal.timeout(25000)
     });
     const result = await response.json();
     if (!response.ok || result.ok !== true) throw new Error('Not confirmed');
-    status.textContent = translate("Η εγγραφή σου ολοκληρώθηκε. Θα λάβεις νέα για την κυκλοφορία!");
-    form.reset();
+    location.assign(english ? '/en/thanks.html' : '/thanks.html');
+    redirecting = true;
   } catch {
     status.classList.add('error');
     status.textContent = translate("Η εγγραφή δεν επιβεβαιώθηκε. Δοκίμασε ξανά αργότερα ή ");
     const link = document.createElement('a'); link.href = 'mailto:hello@primalcore.gr'; link.textContent = translate("γράψε μας στο hello@primalcore.gr"); status.append(link, '.');
   } finally {
-    button.disabled = false; button.innerHTML = originalLabel; form.removeAttribute('aria-busy');
+    if (!redirecting) { button.disabled = false; button.innerHTML = originalLabel; form.removeAttribute('aria-busy'); }
   }
 });
 });
@@ -69,7 +69,8 @@ const campaignQuery = new URLSearchParams(location.search);
 let referrerOrigin = '';
 try { referrerOrigin = new URL(document.referrer).origin; } catch {}
 document.querySelectorAll('.waitlist-form').forEach(form => {
-  const fields = { landing_path: location.pathname, referrer_origin: referrerOrigin };
+  const mobileDevice = navigator.userAgentData?.mobile === true || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const fields = { device_type: mobileDevice ? 'mobile' : 'desktop', landing_path: location.pathname, referrer_origin: referrerOrigin };
   campaignKeys.forEach(key => { if (campaignQuery.has(key)) fields[key] = campaignQuery.get(key).slice(0, 128); });
   Object.entries(fields).forEach(([name, value]) => {
     const input = document.createElement('input');
@@ -77,7 +78,7 @@ document.querySelectorAll('.waitlist-form').forEach(form => {
     form.append(input);
   });
 });
-// Scroll controls the desktop film; mobile and reduced-motion visitors see the poster.
+// A sticky scroll scene on both desktop and mobile; reduced motion keeps the poster.
 const film = document.querySelector('[data-film]');
 if (film) {
   const desktop = matchMedia('(min-width: 761px)');
@@ -85,22 +86,23 @@ if (film) {
   let loaded = false, scheduled = false;
   function scrub() {
     scheduled = false;
-    if (!desktop.matches || reduced.matches || !Number.isFinite(film.duration) || film.seeking) return;
+    if (reduced.matches || !Number.isFinite(film.duration) || film.seeking) return;
     const stage = film.closest('.hero-film');
     const distance = stage.offsetHeight - film.parentElement.offsetHeight;
-    const progress = Math.min(1, Math.max(0, (scrollY - stage.offsetTop) / Math.max(1, distance)));
+    const progress = Math.min(1, Math.max(0, (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header')) - stage.getBoundingClientRect().top) / Math.max(1, distance)));
     const time = progress * Math.max(0, film.duration - .05);
     if (Math.abs(film.currentTime - time) > .06) film.currentTime = time;
   }
   function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(scrub); } }
   function configure() {
     film.pause();
-    if (!desktop.matches || reduced.matches) { film.classList.remove('is-ready'); return; }
-    if (!loaded) { loaded = true; film.preload = 'auto'; film.load(); }
+    if (reduced.matches) { film.classList.remove('is-ready'); return; }
+    const source = desktop.matches ? film.dataset.desktopSrc : film.dataset.mobileSrc;
+    if (!loaded || film.getAttribute('src') !== source) { loaded = true; film.classList.remove('is-ready'); film.src = source; film.preload = 'auto'; film.load(); }
     else if (film.readyState >= 2) film.classList.add('is-ready');
     schedule();
   }
-  film.addEventListener('loadeddata', () => { if (desktop.matches && !reduced.matches) film.classList.add('is-ready'); schedule(); });
+  film.addEventListener('loadeddata', () => { if (!reduced.matches) film.classList.add('is-ready'); schedule(); });
   film.addEventListener('seeked', schedule);
   film.addEventListener('error', () => film.classList.remove('is-ready'));
   addEventListener('scroll', schedule, { passive: true }); addEventListener('resize', schedule, { passive: true });
@@ -117,6 +119,7 @@ document.querySelectorAll('[data-loop-video]').forEach(video => {
   let userPaused = false, nearViewport = false, playPending = false;
   video.muted = true;
   video.controls = false;
+  if (matchMedia('(max-width: 760px)').matches && video.dataset.mobilePoster) video.poster = video.dataset.mobilePoster;
   function sync() {
     toggle.setAttribute('aria-label', (video.paused ? translate("Αναπαραγωγή βίντεο ") : translate("Παύση βίντεο ")) + name);
     toggle.innerHTML = video.paused

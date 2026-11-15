@@ -260,5 +260,20 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 @media(max-width:359px){.waitlist-form .email-row{flex-direction:column;align-items:stretch;border-radius:26px}.waitlist-form .email-row input[type="email"],.waitlist-form .email-row .button{width:100%}}
 
 /* A bare flag after Contact; artwork also renders correctly without emoji fonts. */
-.site-header nav .language-switch{margin-left:0}.language-flag .flag-emoji{display:block;width:40px;height:34px;object-fit:contain;border-radius:0}
+.site-header nav .language-switch{margin-left:0}.language-flag .flag-emoji{display:block;width:32px;height:27.2px;object-fit:contain;border-radius:0}
 @media(max-width:1100px){.site-header nav .language-switch{align-self:flex-start;margin-left:8px}}
+
+/* Quiet confirmation screen after a confirmed Google Sheets save. */
+.confirmation-page{min-height:calc(100svh - var(--header) - 240px);padding-block:clamp(80px,12vh,160px)}
+.confirmation-page h1{font-size:clamp(60px,7vw,88px);line-height:1.05;margin-bottom:32px}
+.confirmation-page .lead{font-size:clamp(22px,2.5vw,30px);line-height:1.55;max-width:34ch;margin:0 0 var(--heading-content-gap)}
+.confirmation-page .button{margin-top:0}
+@media(max-width:760px){.confirmation-page{min-height:62svh}.confirmation-page h1{font-size:60px}.confirmation-page .lead{font-size:23px}}
+
+/* Mobile uses the same tall scene / sticky frame structure as Philosophy. */
+@media(max-width:760px) and (prefers-reduced-motion:no-preference){
+ .js .hero-film{height:280svh}
+ .js .hero-sticky,.js .hero-sticky:has(.hero-signup){position:sticky;top:var(--header);height:calc(100svh - var(--header));min-height:0}
+ .hero-poster,.hero-video{object-position:center}
+}
+@media(max-width:760px){.ingredient-film video{aspect-ratio:9/16;object-fit:cover}.ingredient-film .ingredient-film-title{font-size:clamp(28px,7vw,40px)}}

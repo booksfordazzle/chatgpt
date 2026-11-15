@@ -23,7 +23,7 @@ function receiver(initialRows = [], options = {}) {
     SpreadsheetApp: { openById: id => { assert.equal(id, props.SPREADSHEET_ID); return { getSheetByName: () => rows.length ? sheet : null, insertSheet: () => sheet }; }, getActiveSpreadsheet: () => ({ getId: () => '1ptOmDxONI9KD_rLRZp0xGsjJezsOyIP0H3gd5HgleRg' }), flush: () => { flushed++; } },
     Utilities: { getUuid: () => 'test-generated-uuid' },
     MailApp: { getRemainingDailyQuota: () => options.quota ?? 100, sendEmail: message => { assert.equal(locked, false); assert.ok(flushed > 0); if (options.mailFails) throw Error('private provider error'); messages.push(message); } },
-    ScriptApp: { getProjectTriggers: () => triggers, newTrigger: name => ({ timeBased() { return this; }, everyMinutes(minutes) { assert.equal(minutes, 5); return this; }, create() { triggers.push({ getHandlerFunction: () => name }); } }) },
+    ScriptApp: { getProjectTriggers: () => triggers, deleteTrigger: trigger => { triggers.splice(triggers.indexOf(trigger), 1); }, newTrigger: name => ({ timeBased() { return this; }, everyMinutes(minutes) { assert.equal(minutes, 5); return this; }, create() { triggers.push({ getHandlerFunction: () => name }); } }) },
     ContentService: { MimeType: { JSON: 'json' }, createTextOutput: text => ({ setMimeType: () => JSON.parse(text) }) }
   };
   vm.createContext(context); vm.runInContext(source, context);
@@ -40,7 +40,7 @@ test('Sheets saves email, receipt/version/locale/source/attribution and case-ins
 test('Sheets upgrades old five-column headers without overwriting existing rows or consent dates', () => {
   const old = ["'old@example.com", '2026-01-01T00:00:00Z', 'true', '2026-11-14', 'old-source'];
   const r = receiver([legacyHeaders, old]); assert.equal(r.submit({}).ok, true);
-  assert.deepEqual(r.rows[1], old); assert.equal(r.rows[0].length, 17); assert.equal(r.rows[2].length, 17);
+  assert.deepEqual(r.rows[1], old); assert.equal(r.rows[0].length, 18); assert.equal(r.rows[2].length, 18);
 });
 test('unknown sheet layouts fail safely without overwriting data', () => {
   const initial = [['Customer','Email'],['User','existing@example.com']]; const r = receiver(initial);
@@ -63,34 +63,26 @@ test('Sheets does not claim success when a signup cannot be read back', () => {
   assert.equal(r.submit({}).ok, false); assert.equal(r.rows.length, 1); assert.equal(r.state().locked, false);
 });
 
-test('welcome setup is repeatable and sends no messages itself', () => {
-  const r = receiver(); r.setupMail(); r.setupMail();
-  assert.equal(r.triggers.length, 1); assert.equal(r.props.WELCOME_EMAIL_ENABLED, 'true'); assert.equal(r.messages.length, 0);
-});
-test('welcome worker sends Greek/US mail once, only after confirmed storage and without holding signup lock', () => {
+
+test('new signups remain saved and no welcome is queued or sent, even with the old enabled property', () => {
   const r = receiver([], { props: { WELCOME_EMAIL_ENABLED: 'true' } });
-  assert.equal(r.submit({}).ok, true); assert.equal(r.messages.length, 0); assert.equal(r.rows[1][15], 'pending');
-  r.sendMail(); assert.equal(r.messages.length, 1); assert.match(r.messages[0].subject, /Είσαι στη λίστα/); assert.equal(r.rows[1][15], 'sent'); assert.ok(r.rows[1][16]);
-  r.submit({}); r.sendMail(); assert.equal(r.messages.length, 1);
-  r.submit({ email: 'english@example.com', locale: 'en-US' }); r.sendMail(); assert.equal(r.messages.length, 2); assert.equal(r.messages[1].subject, 'You are on the PRIMAL CORE waitlist');
+  assert.equal(r.submit({}).ok, true); assert.equal(r.rows[1][15], 'disabled');
+  r.sendMail(); assert.equal(r.messages.length, 0);
+  assert.equal(r.submit({}).ok, true); assert.equal(r.rows.length, 2);
 });
-test('mail failures or exhausted quota preserve saved signups and do not cause automatic retries', () => {
-  const failed = receiver([], { props: { WELCOME_EMAIL_ENABLED: 'true' }, mailFails: true });
-  assert.equal(failed.submit({}).ok, true); failed.sendMail(); assert.equal(failed.rows.length, 2); assert.equal(failed.rows[1][15], 'failed'); failed.submit({}); failed.sendMail(); assert.equal(failed.rows[1][15], 'failed');
-  const quota = receiver([], { props: { WELCOME_EMAIL_ENABLED: 'true' }, quota: 0 }); quota.submit({}); quota.sendMail(); assert.equal(quota.rows[1][15], 'pending'); assert.equal(quota.messages.length, 0);
-});
-test('duplicate after later activation queues one welcome; suppressed status is preserved', () => {
-  const r = receiver(); r.submit({}); assert.equal(r.rows[1][15], 'not_enabled');
-  r.props.WELCOME_EMAIL_ENABLED = 'true'; r.submit({}); assert.equal(r.rows[1][15], 'pending');
-  r.rows[1][15] = 'suppressed'; r.submit({}); r.sendMail(); assert.equal(r.rows[1][15], 'suppressed'); assert.equal(r.messages.length, 0);
-});
-test('a failed readback never queues or sends a welcome', () => {
-  const r = receiver([], { props: { WELCOME_EMAIL_ENABLED: 'true' }, dropSignupWrite: true });
-  assert.equal(r.submit({}).ok, false); r.sendMail(); assert.equal(r.messages.length, 0);
+test('disable helper removes only the welcome trigger, preserves records and cannot re-enable mail', () => {
+  const r = receiver([], { props: { WELCOME_EMAIL_ENABLED: 'true' } }); r.submit({});
+  const own = { getHandlerFunction: () => 'sendPendingWelcomeEmails' };
+  const other = { getHandlerFunction: () => 'otherBusinessTask' };
+  r.triggers.push(own, other); r.setupMail(); r.setupMail();
+  assert.equal(r.props.WELCOME_EMAIL_ENABLED, 'false'); assert.deepEqual(r.triggers, [other]);
+  assert.equal(r.rows.length, 2); assert.equal(r.props.WAITLIST_SHARED_SECRET, 'test-secret'); assert.equal(r.messages.length, 0);
 });
 
-test('optional welcome enqueue failure cannot invalidate an already verified signup', () => {
-  const old = ["'person@example.com", '2026-01-01T00:00:00Z', 'true', '2026-11-14', 'old-source'];
-  const r = receiver([legacyHeaders, old], { props: { WELCOME_EMAIL_ENABLED: 'true' }, queueWriteFails: true });
-  assert.equal(r.submit({}).ok, true); assert.deepEqual(r.rows[1], old); assert.equal(r.messages.length, 0);
+test('device class appends safely to legacy sheets and rejects arbitrary device text', () => {
+ const r = receiver([legacyHeaders, ["'old@example.com", 'old-date', 'true', 'old-policy', 'old-source']]);
+ assert.equal(r.submit({deviceType:'mobile'}).ok,true);
+ const column=r.rows[0].indexOf('Device type'); assert.equal(column,17); assert.equal(r.rows[2][column],'mobile');
+ assert.equal(r.rows[1].length,5);
+ assert.equal(r.submit({email:'second@example.com',deviceType:'=unsafe'}).ok,true); assert.equal(r.rows[3][column],'unknown');
 });
