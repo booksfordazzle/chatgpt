@@ -412,3 +412,6 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 .contact-actions .button:hover{box-shadow:0 5px 24px rgba(255,255,255,.55),0 10px 38px rgba(255,255,255,.28)}
 .contact-actions .button:disabled::before{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){.contact-actions .button::before{animation:none;opacity:.5}}
+
+/* Both hero chapter headings share the same vertical center. */
+.hero-film.has-timed-reveal #hero-title{top:calc(50% + var(--hero-heading-offset,0px))}

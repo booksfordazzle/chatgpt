@@ -185,3 +185,7 @@ Start the first hero headline fade 1.25 video seconds earlier while retaining it
 ## Rounded contact controls
 
 Contact name/email fields and send buttons use pill corners; the message area uses 16px corners. Give the send button the same soft moving white glow as signup CTAs, with static reduced-motion styling and paused animation during submission. Preserve labels and submission behavior in both languages.
+
+## Aligned hero chapter headings
+
+Align the first hero headline’s vertical center with the vertical center of “Μπες στην λίστα αναμονής” / “Join the waitlist”, retaining the centered signup group. Measure the signup heading offset and refresh after fonts, resizing and form-size changes. Preserve the existing fade sequence.

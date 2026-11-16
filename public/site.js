@@ -104,6 +104,11 @@ if (film) {
   const heroContent = heroScene.querySelector('.hero-content');
   const heroTitle = heroScene.querySelector('#hero-title');
   const heroSignup = heroScene.querySelector('.hero-signup');
+  function alignHeroHeadings() {
+    const heading = heroSignup.querySelector('#hero-waitlist-title');
+    const offset = heading.offsetTop + heading.offsetHeight / 2 - heroSignup.offsetHeight / 2;
+    heroScene.style.setProperty('--hero-heading-offset', `${offset}px`);
+  }
   function scrub() {
     scheduled = false;
     if (reduced.matches || !Number.isFinite(film.duration)) return;
@@ -130,6 +135,7 @@ if (film) {
   function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(scrub); } }
   function configure() {
     film.pause();
+    alignHeroHeadings();
     heroScene.classList.toggle('has-timed-reveal', !reduced.matches);
     for (const name of ['title', 'signup', 'shade']) heroScene.style.setProperty(`--hero-${name}-opacity`, '0');
     heroContent.inert = false;
@@ -145,7 +151,9 @@ if (film) {
   film.addEventListener('seeked', schedule);
   film.addEventListener('error', () => { film.classList.remove('is-ready'); heroScene.classList.remove('has-timed-reveal'); heroContent.inert = false; heroSignup.inert = false; heroTitle.removeAttribute('aria-hidden'); });
   addEventListener('scroll', schedule, { passive: true }); addEventListener('resize', schedule, { passive: true });
-  document.fonts.ready.then(schedule);
+  addEventListener('resize', alignHeroHeadings, { passive: true });
+  new ResizeObserver(alignHeroHeadings).observe(heroSignup);
+  document.fonts.ready.then(() => { alignHeroHeadings(); schedule(); });
   desktop.addEventListener('change', configure); reduced.addEventListener('change', configure); configure();
 }
 
