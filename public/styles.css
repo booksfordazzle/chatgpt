@@ -435,4 +435,4 @@ html.has-confirmation-video{overflow:hidden}
 @media(max-width:1100px){.header-inner>.menu-toggle{width:48px;height:48px;padding:7px;border:0;background:transparent}.header-inner>.menu-toggle svg{width:32px;height:32px}.header-inner>.menu-toggle svg path{stroke-width:1.75}}
 
 /* V.1: desktop waitlist heading matches the main hero headline size. */
-@media(min-width:1101px){.hero-signup #hero-waitlist-title{font-size:clamp(52.8px,6.93vw,105.6px)}}
+@media(min-width:1101px){.hero-signup #hero-waitlist-title{font-size:clamp(52.8px,6.93vw,105.6px);width:max-content;max-width:none;position:relative;left:50%;transform:translateX(-50%);white-space:nowrap}}

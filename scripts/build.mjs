@@ -13,8 +13,12 @@ async function visit(dir) {
   const relative = path.relative(out,file).split(path.sep).join('/');
   const url = SITE_URL + canonicalPath(relative);
   let html = (await readFile(file,'utf8')).replaceAll('__SITE_URL__', SITE_URL);
+  const readMeta = key => html.match(new RegExp('<meta\\b(?=[^>]*(?:property|name)="'+key+'")(?=[^>]*content="([^\"]+)")[^>]*>', 'i'))?.[1];
+  const imageUrl = new URL(readMeta('og:image') || SOCIAL_IMAGE.path, SITE_URL);
+  if (imageUrl.origin !== SITE_URL) throw new Error('Social images must use SITE_URL: ' + relative);
+  const socialImage = { url: imageUrl.href, width: readMeta('og:image:width') || SOCIAL_IMAGE.width, height: readMeta('og:image:height') || SOCIAL_IMAGE.height, alt: readMeta('og:image:alt') || SOCIAL_IMAGE.alt };
   html = html.replace(/<link\b(?=[^>]*rel="canonical")[^>]*>/gi,'').replace(/<meta\b(?=[^>]*(?:name|property)="(?:og:url|og:image(?::(?:alt|width|height))?|twitter:image(?::alt)?)")[^>]*>/gi,'');
-  const metadata = `<link rel="canonical" href="${escape(url)}"><meta property="og:url" content="${escape(url)}"><meta property="og:image" content="${escape(SITE_URL+SOCIAL_IMAGE.path)}"><meta property="og:image:width" content="${SOCIAL_IMAGE.width}"><meta property="og:image:height" content="${SOCIAL_IMAGE.height}"><meta property="og:image:alt" content="${escape(SOCIAL_IMAGE.alt)}"><meta name="twitter:image" content="${escape(SITE_URL+SOCIAL_IMAGE.path)}"><meta name="twitter:image:alt" content="${escape(SOCIAL_IMAGE.alt)}">`;
+  const metadata = `<link rel="canonical" href="${escape(url)}"><meta property="og:url" content="${escape(url)}"><meta property="og:image" content="${escape(socialImage.url)}"><meta property="og:image:width" content="${socialImage.width}"><meta property="og:image:height" content="${socialImage.height}"><meta property="og:image:alt" content="${escape(socialImage.alt)}"><meta name="twitter:image" content="${escape(socialImage.url)}"><meta name="twitter:image:alt" content="${escape(socialImage.alt)}">`;
   // Clean directory indexes such as /en and /blog have file-like URL bases.
   // Rebase relative navigation from the source filename to its published route.
   html = html.replace(/<a\b[^>]*href="([^"]+)"[^>]*>/gi, (tag, value) => {
