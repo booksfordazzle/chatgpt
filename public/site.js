@@ -414,3 +414,30 @@ document.querySelectorAll('[data-contact-form]').forEach(form => {
     }
   });
 });
+
+// Open the confirmation film only after the visitor explicitly chooses to watch.
+const confirmationVideoLink = document.querySelector('[data-confirmation-video-open]');
+const confirmationVideoDialog = document.querySelector('#confirmation-video-dialog');
+if (confirmationVideoLink && confirmationVideoDialog && typeof confirmationVideoDialog.showModal === 'function') {
+  const video = confirmationVideoDialog.querySelector('[data-confirmation-video]');
+  const status = confirmationVideoDialog.querySelector('.confirmation-video-status');
+  confirmationVideoLink.addEventListener('click', event => {
+    event.preventDefault();
+    if (!video.getAttribute('src')) video.src = video.dataset.src;
+    confirmationVideoDialog.showModal();
+    document.documentElement.classList.add('has-confirmation-video');
+    status.hidden = true;
+    video.play().catch(() => {
+      status.textContent = english ? 'Select Play in the video controls to start.' : 'Πάτησε αναπαραγωγή στα χειριστήρια του βίντεο.';
+      status.hidden = false;
+    });
+  });
+  confirmationVideoDialog.querySelector('.confirmation-video-close').addEventListener('click', () => confirmationVideoDialog.close());
+  confirmationVideoDialog.addEventListener('click', event => { if (event.target === confirmationVideoDialog) confirmationVideoDialog.close(); });
+  confirmationVideoDialog.addEventListener('close', () => {
+    video.pause();
+    if (Number.isFinite(video.duration)) video.currentTime = 0;
+    document.documentElement.classList.remove('has-confirmation-video');
+    confirmationVideoLink.focus({ preventScroll: true });
+  });
+}

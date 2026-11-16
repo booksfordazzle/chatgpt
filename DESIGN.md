@@ -193,3 +193,7 @@ Align the first hero headline’s vertical center with the vertical center of �
 ## Icon-only compact menu
 
 Replace the visible Menu word on every Greek and English header with a three-line hamburger SVG. Keep a 44×44px target, localized accessible name, aria-expanded state and existing dropdown/keyboard behavior. Desktop expanded navigation remains intact.
+
+## Confirmation video and mobile zoom
+
+Confirmation CTA becomes “Δες το βίντεο!” / “Watch the video!”, with pill corners. Open the owner-supplied portrait waitlist-confirmation.mp4 in a native modal on explicit activation, with native playback controls, accessible close button, Escape/backdrop closing and playback paused/reset on close. Keep a direct MP4 link fallback without JavaScript or dialog support. Do not preload video before opening. Per explicit owner request, disallow pinch zoom using viewport maximum-scale/user-scalable settings and root pan-only touch-action; browser accessibility overrides may still permit zoom.
