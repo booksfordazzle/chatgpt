@@ -129,3 +129,5 @@ Below each homepage email field, keep only “Συμφωνώ να λαμβάνω
 Place the owner-supplied transparent bull-trans.png above the hero headline in both languages on desktop and mobile. Preserve the source bytes and transparency. A clipped presentation wrapper removes the PNG’s transparent padding, keeping the visible bull centered at 84–120px wide with 20–24px of space before the headline. The decorative mark has an empty alt; preserve the hero video, copy and signup form.
 
 Latest hero emblem positioning: move the bull mark 32px upward visually on desktop and mobile, keeping the headline and email form in their existing positions.
+
+Latest owner adjustment doubles the hero emblem upward offset from 32px to 64px on desktop and mobile. Headline and form positions remain unchanged.
