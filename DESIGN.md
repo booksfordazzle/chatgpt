@@ -87,3 +87,7 @@ Latest sizing adjustment: increase the current hero title font by a further 10% 
 All shared footers include the credit “Website by Ermitikos” linking directly to https://www.instagram.com/ermitikos, beside the copyright on wide screens and wrapping as one unit on narrow screens. Preserve the five-link mobile navigation row.
 
 Current consent label, both homepage forms: “Συμφωνώ να λαμβάνω ενημερώσεις και έχω διαβάσει την πολιτική απορρήτου.” English: “I agree to receive updates and have read the privacy policy.” Keep the policy link and required, initially unchecked checkbox.
+
+## Product slideshow and CTA punctuation
+
+Greek CTAs now say “Θέλω να μπώ” without an exclamation mark; English stays “Let me in!”. The full-bleed product area is a three-photo slideshow: existing product-jar-closeup.jpg plus the two JPEGs extracted unchanged from the latest supplied ZIPs. No third new ZIP was attached. Preserve the existing caption and square-corner frame. Crossfade every six seconds only while visible, with explicit pause/play, previous/next, keyboard and horizontal swipe controls. Pause on hover/focus/document hiding and preserve user pause. Reduced motion starts manually (explicit play may opt in); no-JavaScript displays every photo in order. Keep full compositions of the wide new photographs on mobile rather than cropping away the jars.

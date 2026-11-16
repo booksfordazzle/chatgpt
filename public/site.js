@@ -284,3 +284,50 @@ if (parallaxFrames.length) {
   reducedPhotoMotion.addEventListener('change', configurePhotoMotion);
   configurePhotoMotion();
 }
+
+// Product photographs crossfade only while visible; pause, keyboard and swipe stay independent.
+document.querySelectorAll('[data-product-gallery]').forEach(gallery => {
+  const slides = [...gallery.querySelectorAll('.product-slide')];
+  const previous = gallery.querySelector('[data-gallery-prev]');
+  const next = gallery.querySelector('[data-gallery-next]');
+  const toggle = gallery.querySelector('[data-gallery-toggle]');
+  const counter = gallery.querySelector('.product-gallery-count');
+  const status = gallery.querySelector('[data-gallery-status]');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let index = 0, timer, visible = false, userPaused = false, hovered = false, focused = false, motionOptIn = false;
+  let touchStart = null;
+  function syncTimer() {
+    clearTimeout(timer);
+    const paused = userPaused || (reduced.matches && !motionOptIn);
+    toggle.setAttribute('aria-label', english ? (paused ? 'Play slideshow' : 'Pause slideshow') : (paused ? 'Αναπαραγωγή παρουσίασης' : 'Παύση παρουσίασης'));
+    toggle.innerHTML = paused
+      ? '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z" fill="currentColor"/></svg>'
+      : '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+    if (visible && !paused && !hovered && !focused && !document.hidden) timer = setTimeout(() => show(index + 1), 6000);
+  }
+  function show(nextIndex, manual = false) {
+    index = (nextIndex + slides.length) % slides.length;
+    slides.forEach((slide, i) => { slide.classList.toggle('is-active', i === index); slide.setAttribute('aria-hidden', String(i !== index)); });
+    counter.textContent = `${index + 1} / ${slides.length}`;
+    if (manual) status.textContent = english ? `Photo ${index + 1} of ${slides.length}` : `Φωτογραφία ${index + 1} από ${slides.length}`;
+    syncTimer();
+  }
+  gallery.classList.add('is-product-slideshow');
+  previous.addEventListener('click', () => show(index - 1, true));
+  next.addEventListener('click', () => show(index + 1, true));
+  toggle.addEventListener('click', () => { if (reduced.matches && !motionOptIn) { motionOptIn = true; userPaused = false; } else userPaused = !userPaused; focused = false; hovered = false; syncTimer(); });
+  gallery.addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault(); show(event.key === 'Home' ? 0 : event.key === 'End' ? slides.length - 1 : index + (event.key === 'ArrowLeft' ? -1 : 1), true);
+  });
+  gallery.addEventListener('touchstart', event => { touchStart = { x: event.touches[0].clientX, y: event.touches[0].clientY }; }, { passive: true });
+  gallery.addEventListener('touchend', event => { if (!touchStart) return; const x = event.changedTouches[0].clientX - touchStart.x, y = event.changedTouches[0].clientY - touchStart.y; if (Math.abs(x) > 45 && Math.abs(x) > Math.abs(y)) show(index + (x < 0 ? 1 : -1), true); touchStart = null; }, { passive: true });
+  gallery.addEventListener('mouseenter', () => { hovered = true; syncTimer(); });
+  gallery.addEventListener('mouseleave', () => { hovered = false; syncTimer(); });
+  gallery.addEventListener('focusin', () => { focused = true; syncTimer(); });
+  gallery.addEventListener('focusout', event => { if (!gallery.contains(event.relatedTarget)) { focused = false; syncTimer(); } });
+  new IntersectionObserver(entries => { visible = entries[0].isIntersecting; if (visible) slides.forEach(slide => { slide.querySelector('img').loading = 'eager'; }); syncTimer(); }, { threshold: .15 }).observe(gallery);
+  document.addEventListener('visibilitychange', syncTimer);
+  reduced.addEventListener('change', () => { motionOptIn = false; syncTimer(); });
+  show(0);
+});

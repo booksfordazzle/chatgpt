@@ -311,3 +311,19 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 @media(max-width:760px){.site-footer>div{flex-wrap:nowrap;justify-content:space-between;gap:6px;font-size:clamp(12px,3.2vw,14px)}.site-footer>div>a{display:inline-flex;align-items:center;min-height:44px;white-space:nowrap;flex:none}}
 
 .site-footer .footer-meta{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px}.footer-credit{white-space:nowrap}
+
+/* Full-bleed product slideshow; static markup keeps all photographs readable. */
+.product-gallery{position:relative;background:#000;touch-action:pan-y}
+.product-gallery-stage{position:relative}
+.is-product-slideshow .product-gallery-stage{display:grid;grid-template-columns:minmax(0,1fr)}
+.is-product-slideshow .product-slide{grid-area:1/1;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .7s ease,visibility 0s .7s}
+.is-product-slideshow .product-slide.is-active{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
+.product-gallery-controls{display:none}
+.is-product-slideshow .product-gallery-controls{position:absolute;bottom:20px;right:var(--page-gutter);display:flex;gap:4px;align-items:center;padding:4px;background:rgba(8,9,8,.9);border:1px solid #65695f;border-radius:999px;color:var(--text)}
+.product-gallery-controls button{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:50%;background:transparent;color:inherit}
+.product-gallery-controls button:hover{background:#34382f}
+.product-gallery-count{font-size:13px;font-variant-numeric:tabular-nums;min-width:40px;text-align:center}
+@media(max-width:760px){.is-product-slideshow .product-gallery-controls{bottom:12px;right:12px}.product-image .gallery-wide-image{object-fit:contain;background:#000}}
+@media(prefers-reduced-motion:reduce){.is-product-slideshow .product-slide{transition:none}}
+
+.product-gallery [data-gallery-status]{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
