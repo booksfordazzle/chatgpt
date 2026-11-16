@@ -145,3 +145,5 @@ Allow vertical scrolling inside the hero content when the lowered signup exceeds
 Remove the bull emblem from the homepage hero in both languages. Restore the headline and signup form to their original centered positions, with no 100px/200px relative offsets or inner scrolling. Preserve the white headline, 30% dark overlay, original headline-to-form spacing, visible email field and required consent checkbox. This supersedes previous bull and lowered-content positioning instructions.
 
 Latest owner hero adjustment: move only the headline 50px upward, in both languages and viewport sizes; keep the email form in its restored position.
+
+Latest hero positioning: raise the headline another 50px (100px total above the restored position) and lower the complete email signup form by 90px. Applies to both languages and desktop/mobile. Keep the consent with its form.
