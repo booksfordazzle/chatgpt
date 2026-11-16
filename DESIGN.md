@@ -123,3 +123,7 @@ The latest owner request supersedes the unshaded video and black headline: use a
 ## Current signup consent copy
 
 Below each homepage email field, keep only “Συμφωνώ να λαμβάνω ενημερώσεις.” / “I agree to receive updates.” beside the required, initially unchecked checkbox. Remove the policy-reading sentence from this label; the privacy page remains available through the footer.
+
+## Hero bull emblem
+
+Place the owner-supplied transparent bull-trans.png above the hero headline in both languages on desktop and mobile. Preserve the source bytes and transparency. A clipped presentation wrapper removes the PNG’s transparent padding, keeping the visible bull centered at 84–120px wide with 20–24px of space before the headline. The decorative mark has an empty alt; preserve the hero video, copy and signup form.
