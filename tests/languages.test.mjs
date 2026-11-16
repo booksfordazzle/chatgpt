@@ -15,7 +15,7 @@ async function pages(dir) {
 
 test('every Greek page has a complete English counterpart and reciprocal language links',async()=>{
  const englishPages=await pages('public/en');
- assert.equal(englishPages.length,17);
+ assert.equal(englishPages.length,18);
  for(const englishFile of englishPages){
   const relative=path.relative('public/en',englishFile);
   const greekFile=path.join('public',relative);

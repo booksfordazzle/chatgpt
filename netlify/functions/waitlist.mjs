@@ -1,3 +1,4 @@
+import { createSubmissionLimiter, rejectsBrowserOrigin } from './lib/request-guard.mjs';
 const EMAIL = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
 const SOURCES = new Set(['primal-core-waitlist', 'primal-core-hero', 'primal-core-footer']);
 const CAMPAIGN_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
@@ -20,6 +21,7 @@ function nonJsonDiagnostic(body) {
 }
 
 export function createHandler({ env = process.env, fetchImpl = fetch, report = entry => console.warn('[waitlist]', JSON.stringify(entry)) } = {}) {
+  const limitSubmission = createSubmissionLimiter();
   return async function handler(event) {
     const headers = { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', 'X-Content-Type-Options': 'nosniff' };
     const json = /application\/json/i.test(event.headers?.accept || '');
@@ -28,9 +30,7 @@ export function createHandler({ env = process.env, fetchImpl = fetch, report = e
       ? { statusCode, headers, body: JSON.stringify({ ok, ...(error ? { error } : {}), ...(diagnostic ? { diagnostic } : {}) }) }
       : { statusCode: 303, headers: { ...headers, Location: languagePrefix + (ok ? '/thanks.html' : '/signup-unavailable.html') }, body: '' };
     if (event.httpMethod !== 'POST') return { ...reply(405, false, 'method_not_allowed'), headers: { ...headers, Allow: 'POST' } };
-    const origin = event.headers?.origin;
-    const host = event.headers?.host;
-    if (origin && host) { try { if (new URL(origin).host !== host) return reply(403, false, 'origin_rejected'); } catch { return reply(403, false, 'origin_rejected'); } }
+    if (rejectsBrowserOrigin(event.headers)) return reply(403, false, 'origin_rejected');
     if (event.isBase64Encoded || typeof event.body !== 'string' || !event.body || Buffer.byteLength(event.body) > 4096) return reply(400, false, 'invalid_request');
     let data;
     try {
@@ -55,6 +55,13 @@ export function createHandler({ env = process.env, fetchImpl = fetch, report = e
         || endpoint.port || endpoint.username || endpoint.password || endpoint.search || endpoint.hash
         || !/^\/macros\/s\/[^/]+\/exec$/.test(endpoint.pathname) || !secret) throw Error();
     } catch { return reply(503, false, 'not_configured'); }
+
+    const limit = limitSubmission(email, event.headers);
+    if (!limit.allowed) {
+      const result = reply(429, false, 'rate_limited');
+      result.headers['Retry-After'] = String(limit.retryAfter);
+      return result;
+    }
 
     const utm = {};
     for (const name of CAMPAIGN_KEYS) { const value = clean(data[name], 128); if (value) utm[name] = value; }

@@ -5,7 +5,7 @@ const messages = {
   "Αποθήκευση εγγραφής…": "Saving your registration…",
   "Αποθήκευση…": "Saving…",
   "Η εγγραφή δεν επιβεβαιώθηκε. Δοκίμασε ξανά αργότερα ή ": "Registration could not be confirmed. Try again later or ",
-  "γράψε μας στο hello@primalcore.gr": "write to hello@primalcore.gr",
+  "γράψε μας στο ermitikos@gmail.com": "write to ermitikos@gmail.com",
   "Αναπαραγωγή βίντεο ": "Play video: ",
   "Παύση βίντεο ": "Pause video: ",
   "Πάτησε το κουμπί κάτω δεξιά για αναπαραγωγή.": "Select the button at the bottom right to play.",
@@ -51,13 +51,18 @@ form.addEventListener('submit', async event => {
       signal: AbortSignal.timeout(25000)
     });
     const result = await response.json();
+    if (response.status === 429) {
+      status.classList.add('error');
+      status.textContent = english ? 'Too many attempts. Please wait 10 minutes before trying again.' : 'Πολλές προσπάθειες. Περίμενε 10 λεπτά πριν δοκιμάσεις ξανά.';
+      return;
+    }
     if (!response.ok || result.ok !== true) throw new Error('Not confirmed');
     location.assign(english ? '/en/thanks.html' : '/thanks.html');
     redirecting = true;
   } catch {
     status.classList.add('error');
     status.textContent = translate("Η εγγραφή δεν επιβεβαιώθηκε. Δοκίμασε ξανά αργότερα ή ");
-    const link = document.createElement('a'); link.href = 'mailto:hello@primalcore.gr'; link.textContent = translate("γράψε μας στο hello@primalcore.gr"); status.append(link, '.');
+    const link = document.createElement('a'); link.href = 'mailto:ermitikos@gmail.com'; link.textContent = translate("γράψε μας στο ermitikos@gmail.com"); status.append(link, '.');
   } finally {
     if (!redirecting) { button.disabled = false; button.innerHTML = originalLabel; form.removeAttribute('aria-busy'); }
   }
@@ -366,52 +371,20 @@ document.querySelectorAll('[data-product-gallery]').forEach(gallery => {
   show(0);
 });
 
-// Submit contact messages without taking visitors away from the page.
+// Contact spam verification runs on FormSubmit, followed by a branded return page.
 document.querySelectorAll('[data-contact-form]').forEach(form => {
-  const status = form.querySelector('[data-contact-status]');
-  const button = form.querySelector('button[type="submit"]');
-  const label = button.innerHTML;
-  let sending = false;
-  form.addEventListener('submit', async event => {
-    event.preventDefault();
-    if (sending || !form.reportValidity()) return;
-    const report = (state, text) => { status.dataset.state = state; status.textContent = text; };
-    if (form.querySelector('[name="_honey"]').value) return;
-    sending = true;
-    button.disabled = true;
-    form.setAttribute('aria-busy', 'true');
-    button.textContent = english ? 'Sending…' : 'Αποστολή…';
-    report('pending', english ? 'Sending your message…' : 'Το μήνυμά σου αποστέλλεται…');
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 20000);
-    try {
-      const response = await fetch('https://formsubmit.co/ajax/ermitikos@gmail.com', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(Object.fromEntries(new FormData(form))), signal: controller.signal,
-        credentials: 'omit', redirect: 'error'
-      });
-      const result = await response.json();
-      const providerMessage = typeof result.message === 'string' ? result.message : '';
-      // An activation response is never evidence that a message was accepted.
-      if (/activat|confirm.{0,30}email|check.{0,20}email/i.test(providerMessage)) throw new Error('activation_required');
-      if (!response.ok || ![true, 'true'].includes(result.success)) throw new Error('not_confirmed');
-      report('success', english ? 'Your message was submitted. Thank you for getting in touch.' : 'Το μήνυμά σου υποβλήθηκε. Ευχαριστούμε για την επικοινωνία.');
-      form.reset();
-    } catch (error) {
-      report('error', error.message === 'activation_required'
-        ? (english ? 'The contact form is not ready yet. Please email us directly at ' : 'Η φόρμα δεν είναι ακόμη διαθέσιμη. Γράψε μας απευθείας στο ')
-        : (english ? 'We could not confirm submission. Your message is still here. Try again or email ' : 'Η αποστολή δεν επιβεβαιώθηκε. Το μήνυμά σου διατηρήθηκε. Δοκίμασε ξανά ή γράψε στο '));
-      const link = document.createElement('a');
-      link.href = 'mailto:ermitikos@gmail.com';
-      link.textContent = 'ermitikos@gmail.com';
-      status.append(link, '.');
-    } finally {
-      clearTimeout(timeout);
-      sending = false;
-      button.disabled = false;
-      button.innerHTML = label;
-      form.removeAttribute('aria-busy');
+  const next = form.querySelector('[name="_next"]');
+  if (next && /^https?:$/.test(location.protocol)) next.value = new URL(english ? '/en/contact-sent.html' : '/contact-sent.html', location.origin).href;
+  form.addEventListener('submit', event => {
+    const status = form.querySelector('[data-contact-status]');
+    if (form.querySelector('[name="_honey"]').value) {
+      event.preventDefault();
+      status.dataset.state = 'error';
+      status.textContent = english ? 'Please reload the page and try again.' : 'Ανανέωσε τη σελίδα και δοκίμασε ξανά.';
+      return;
     }
+    status.dataset.state = 'pending';
+    status.textContent = english ? 'Continuing to spam verification…' : 'Συνέχεια στον έλεγχο ανεπιθύμητων μηνυμάτων…';
   });
 });
 

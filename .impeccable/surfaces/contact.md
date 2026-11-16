@@ -11,3 +11,5 @@ Delivery must be verified after activation on the deployed domain. Until then, i
 Latest owner refinement: use AJAX with inline Greek/English feedback and no external confirmation screen for JavaScript visitors. Disable provider CAPTCHA; keep honeypot and native form fallback. Preserve input on failure and explicitly reject activation responses. CSP permits FormSubmit in connect-src too. No-JavaScript visitors still use native provider navigation.
 
 Current owner revision: replace the business sidebar with the supplied portrait contact-product.jpg, retaining full composition. Overlay existing FAQ help in the dark upper section. Closing H1 is now “Είμαστε εδώ για να σε ακούσουμε.” / “We’re here to listen.” Remove the reply-email explanatory sentence. Stack portrait below form on mobile.
+
+Security revision: native FormSubmit POST with CAPTCHA enabled, honeypot retained and localized contact-sent return pages. This supersedes the AJAX/no-CAPTCHA flow. No inbox delivery claim is made by the branded return page.

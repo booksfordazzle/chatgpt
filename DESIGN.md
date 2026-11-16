@@ -201,3 +201,7 @@ Confirmation CTA becomes “Δες το βίντεο!” / “Watch the video!�
 Latest compact menu preference: remove the outer border/background, use a 32px three-line SVG inside a 48px touch target, and retain the keyboard focus outline and accessible menu label.
 
 Latest confirmation video replacement: use the unchanged owner-supplied download (47).mp4 as waitlist-confirmation-v2.mp4 and remove the previous video asset. Keep the bilingual watch buttons, popup and direct-link fallback. The new asset URL prevents the previous cached film from being reused.
+
+## Security revision of contact submission
+
+Restore real FormSubmit CAPTCHA through native POST; AJAX previously bypassed it. After provider acceptance return to a localized contact-sent page. Preserve the contact layout and form fields. Waitlist requests are throttled server-side with localized retry feedback. This supersedes prior CAPTCHA-disabled inline contact submission decisions.

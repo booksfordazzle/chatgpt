@@ -6,6 +6,15 @@ export function createVercelHandler(waitlistHandler = sharedWaitlistHandler) {
     const headers = Object.fromEntries(Object.entries(req.headers || {}).map(([key, value]) => [key.toLowerCase(), Array.isArray(value) ? value.join(',') : value]));
     let body = '';
     try {
+      const length = headers['content-length'];
+      if (length && (!/^\d+$/.test(length) || Number(length) > 4096)) {
+        res.statusCode = 413;
+        res.setHeader('Cache-Control', 'no-store');
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.end('{"ok":false,"error":"invalid_request"}');
+        return;
+      }
       if (req.body !== undefined) {
         if (Buffer.isBuffer(req.body)) body = req.body.toString('utf8');
         else if (typeof req.body === 'string') body = req.body;
