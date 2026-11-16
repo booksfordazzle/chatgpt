@@ -360,3 +360,6 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
  .product-slide[data-gallery-viewport="desktop"]{display:none}
  .product-slide[data-gallery-viewport="mobile"]{display:block}
 }
+
+/* Owner preference: black headline over the unshaded hero film. */
+.hero-content #hero-title{color:#000}

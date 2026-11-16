@@ -113,3 +113,5 @@ At widths up to 760px, use the three unchanged 1122×1402 portrait PNGs from the
 ## Hero video brightness
 
 The owner requests the scrollable homepage hero video fully visible, without a dark overlay. The shared hero-shade background is none on desktop and mobile, in both languages. Preserve the video, sticky scroll seeking, headline and signup controls.
+
+The homepage hero headline uses black (#000) in both Greek and English, on desktop and mobile, per the owner request.
