@@ -367,8 +367,8 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 
 
 /* Soft moving glow behind signup buttons; keep the button face and text still. */
-.waitlist-form .email-row .button{position:relative;isolation:isolate;background:linear-gradient(180deg,#ffe9a2,#d8a839);color:#201607;box-shadow:0 4px 18px rgba(238,180,46,.48),0 8px 32px rgba(218,151,24,.25)}
-.waitlist-form .email-row .button::before{content:"";position:absolute;z-index:-1;inset:-7px -10px;border-radius:inherit;background:radial-gradient(ellipse at center,rgba(255,211,92,.85),rgba(232,163,28,.5) 45%,transparent 72%);filter:blur(9px);pointer-events:none;animation:signup-moving-glow 4s ease-in-out infinite}
+.waitlist-form .email-row .button{position:relative;isolation:isolate;background:#fff;color:#10120f;box-shadow:0 4px 18px rgba(255,255,255,.4),0 8px 32px rgba(255,255,255,.2)}
+.waitlist-form .email-row .button::before{content:"";position:absolute;z-index:-1;inset:-7px -10px;border-radius:inherit;background:radial-gradient(ellipse at center,rgba(255,255,255,.8),rgba(255,255,255,.35) 45%,transparent 72%);filter:blur(9px);pointer-events:none;animation:signup-moving-glow 4s ease-in-out infinite}
 .waitlist-form .email-row .button:disabled::before{animation-play-state:paused}
 @keyframes signup-moving-glow{0%,100%{transform:translateX(-9px);opacity:.45}50%{transform:translateX(9px);opacity:.85}}
 @media(prefers-reduced-motion:reduce){.waitlist-form .email-row .button::before{animation:none;opacity:.5}}
@@ -391,7 +391,7 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 .hero-film.has-timed-reveal .hero-signup{opacity:var(--hero-signup-opacity,0)}
 .hero-film.has-timed-reveal .hero-shade{background:rgba(0,0,0,.3);opacity:var(--hero-shade-opacity,0)}
 
-.waitlist-form .email-row .button:hover{background:linear-gradient(180deg,#fff0b8,#e7b644);box-shadow:0 5px 24px rgba(238,180,46,.62),0 10px 38px rgba(218,151,24,.32)}
+.waitlist-form .email-row .button:hover{background:#fff;box-shadow:0 5px 24px rgba(255,255,255,.55),0 10px 38px rgba(255,255,255,.28)}
 
 /* Contact FAQ sits in the supplied portrait's dark upper negative space. */
 .contact-photo{position:relative;align-self:start;overflow:hidden;background:#080908}

@@ -114,7 +114,9 @@ if (film) {
     const revealStart = Math.max(0, film.duration - 200 / fps);
     const phase = Math.min(1, Math.max(0, (time - revealStart) / Math.max(.01, film.duration - .05 - revealStart)));
     const ease = value => { const t = Math.min(1, Math.max(0, value)); return t * t * (3 - 2 * t); };
-    const titleIn = ease(phase / .18);
+    const earlierTitleStart = Math.max(0, revealStart - 1.25);
+    const titleFadeDuration = .18 * Math.max(.01, film.duration - .05 - revealStart);
+    const titleIn = ease((time - earlierTitleStart) / titleFadeDuration);
     const titleOut = ease((phase - .4) / .15);
     const titleOpacity = titleIn * (1 - titleOut);
     const signupOpacity = ease((phase - .62) / .2);

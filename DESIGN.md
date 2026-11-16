@@ -177,3 +177,7 @@ During the final 200 source video frames, fade in the headline at the absolute f
 ## Contact portrait and FAQ overlay
 
 Replace the contact H1 closing “Γράψε μας.” with “Είμαστε εδώ για να σε ακούσουμε.” and English “We’re here to listen.” Remove the business-name/address block and the sentence explaining use of the email to reply. Display the unchanged owner-supplied 1408×1760 contact-product.jpg vertically beside the form (below it on mobile). Superimpose the existing FAQ heading, description and link in its dark upper negative space, without covering the jar. Preserve native FAQ links and working bilingual contact submission.
+
+## Earlier headline and white signup CTA
+
+Start the first hero headline fade 1.25 video seconds earlier while retaining its fade duration and the existing fade-out/signup timing; the extra time becomes a longer readable hold. Keep the video unshaded initially and dim it with the headline. Both Greek signup CTAs now say “Βάλε με”; the English equivalent remains “Let me in!”. Use white CTA faces and a soft moving white glow, replacing gold.
