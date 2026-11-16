@@ -99,3 +99,9 @@ The homepage carousel contains two photographs: the supplied closed-jar closeup 
 ## Contact form
 
 Greek and English contact pages now use required name, email and message fields, with horizontal labels on desktop and stacked labels on smaller screens. Preserve the existing dark identity, business sidebar and FAQ. Native POST to FormSubmit forwards to ermitikos@gmail.com after recipient activation; keep provider spam verification, privacy disclosure and truthful provider-owned results. See CONTACT_SETUP.md.
+
+## Carousel photo bounds and inline contact feedback
+
+Source dimensions: closed jar 1920×819, five jars 2352×1008 with baked black bands above row 128 and below row 879. The shared visible frame is 2352:752. Centered cover removes the bands without editing the supplied images; the closed-jar photograph crops vertically to the same stable frame. Apply the same treatment to the no-JavaScript sequence. Controls stay over the photo.
+
+Contact uses FormSubmit AJAX with inline localized pending, submitted and error states. Keep entered text on errors, reject activation responses as success, prevent duplicate pending submissions and offer the real Gmail address on failure. Disable provider CAPTCHA to remove the extra step; retain the provider honeypot. Activation by the recipient remains a one-time service prerequisite, never a task for visitors. Do not claim inbox delivery from API acceptance.

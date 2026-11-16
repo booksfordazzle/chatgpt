@@ -9,7 +9,7 @@ test('downloaded HTML resolves navigation and media relative to each file',async
   for(const match of html.matchAll(/(?:href|src|poster)="([^"]+)"/g)){
    const url=match[1];if(/^(https?:|mailto:|#)/.test(url))continue;
    assert.ok(!url.startsWith('/'),`${file} uses a server-root path: ${url}`);
-   await access(path.resolve(path.dirname(file),url.split('#')[0]));
+   await access(path.resolve(path.dirname(file),url.split(/[?#]/)[0]));
   }
  }
  const css=await readFile('public/styles.css','utf8');

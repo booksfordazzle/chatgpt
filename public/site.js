@@ -313,3 +313,52 @@ document.querySelectorAll('[data-product-gallery]').forEach(gallery => {
   reduced.addEventListener('change', () => { motionOptIn = false; syncTimer(); });
   show(0);
 });
+
+// Submit contact messages without taking visitors away from the page.
+document.querySelectorAll('[data-contact-form]').forEach(form => {
+  const status = form.querySelector('[data-contact-status]');
+  const button = form.querySelector('button[type="submit"]');
+  const label = button.innerHTML;
+  let sending = false;
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (sending || !form.reportValidity()) return;
+    const report = (state, text) => { status.dataset.state = state; status.textContent = text; };
+    if (form.querySelector('[name="_honey"]').value) return;
+    sending = true;
+    button.disabled = true;
+    form.setAttribute('aria-busy', 'true');
+    button.textContent = english ? 'Sending…' : 'Αποστολή…';
+    report('pending', english ? 'Sending your message…' : 'Το μήνυμά σου αποστέλλεται…');
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
+    try {
+      const response = await fetch('https://formsubmit.co/ajax/ermitikos@gmail.com', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(Object.fromEntries(new FormData(form))), signal: controller.signal,
+        credentials: 'omit', redirect: 'error'
+      });
+      const result = await response.json();
+      const providerMessage = typeof result.message === 'string' ? result.message : '';
+      // An activation response is never evidence that a message was accepted.
+      if (/activat|confirm.{0,30}email|check.{0,20}email/i.test(providerMessage)) throw new Error('activation_required');
+      if (!response.ok || ![true, 'true'].includes(result.success)) throw new Error('not_confirmed');
+      report('success', english ? 'Your message was submitted. Thank you for getting in touch.' : 'Το μήνυμά σου υποβλήθηκε. Ευχαριστούμε για την επικοινωνία.');
+      form.reset();
+    } catch (error) {
+      report('error', error.message === 'activation_required'
+        ? (english ? 'The contact form is not ready yet. Please email us directly at ' : 'Η φόρμα δεν είναι ακόμη διαθέσιμη. Γράψε μας απευθείας στο ')
+        : (english ? 'We could not confirm submission. Your message is still here. Try again or email ' : 'Η αποστολή δεν επιβεβαιώθηκε. Το μήνυμά σου διατηρήθηκε. Δοκίμασε ξανά ή γράψε στο '));
+      const link = document.createElement('a');
+      link.href = 'mailto:ermitikos@gmail.com';
+      link.textContent = 'ermitikos@gmail.com';
+      status.append(link, '.');
+    } finally {
+      clearTimeout(timeout);
+      sending = false;
+      button.disabled = false;
+      button.innerHTML = label;
+      form.removeAttribute('aria-busy');
+    }
+  });
+});

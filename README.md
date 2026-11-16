@@ -1,6 +1,6 @@
 # PRIMAL CORE
 
-A Greek prelaunch site for primalcore.gr. Greek/English static, server-renderable HTML, self-hosted fonts, responsive WebP images, a supplied 60fps hero film and ingredient film with muted autoplay/loop and independent pause controls, a manually operated ingredient slider, and a full-bleed cinematic product image. No frontend dependencies, analytics, cookies or third-party browser requests.
+A Greek prelaunch site for primalcore.gr. Greek/English static, server-renderable HTML, self-hosted fonts, responsive WebP images, a supplied 60fps hero film and ingredient film with muted autoplay/loop and independent pause controls, a manually operated ingredient slider, and a full-bleed cinematic product image. No frontend dependencies, analytics or advertising cookies. The contact form uses FormSubmit to forward enquiries to Gmail; see CONTACT_SETUP.md for required one-time recipient activation.
 
 ## Preview by double-clicking (no installation)
 

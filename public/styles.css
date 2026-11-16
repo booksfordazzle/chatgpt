@@ -314,9 +314,10 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 
 /* Full-bleed product slideshow; static markup keeps all photographs readable. */
 .product-gallery{position:relative;background:#000;touch-action:pan-y}
-.product-gallery-stage{position:relative}
-.product-gallery .product-slide img{aspect-ratio:auto}
-.is-product-slideshow .product-gallery-stage{aspect-ratio:1920/819}
+.product-gallery-stage{position:relative;overflow:hidden;aspect-ratio:2352/752}
+.product-gallery .product-slide{aspect-ratio:2352/752;overflow:hidden}
+.product-gallery .product-slide img{width:100%;height:100%;aspect-ratio:auto;object-fit:cover;object-position:center}
+.is-product-slideshow .product-gallery-stage{aspect-ratio:2352/752}
 .is-product-slideshow .product-slide img{width:100%;height:100%;object-fit:cover}
 .is-product-slideshow .product-slide{position:absolute;inset:0;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .7s ease,visibility 0s .7s}
 .is-product-slideshow .product-slide.is-active{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
@@ -348,3 +349,6 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 .contact-actions .button{gap:20px;min-height:52px}
 @media(max-width:1100px){.contact-page .contact-layout{grid-template-columns:minmax(0,1.5fr) minmax(220px,.8fr);gap:48px}.contact-field{grid-template-columns:1fr;gap:8px}.contact-field label{padding-top:0}.contact-form>.note{margin-left:0}}
 @media(max-width:760px){.contact-page .contact-layout{grid-template-columns:1fr;gap:64px}.contact-actions .button{width:100%;justify-content:space-between}.contact-intro{margin-bottom:32px}}
+
+.contact-form .contact-status{margin:24px 0 0 156px;min-height:1.7em;font-size:15px;overflow-wrap:anywhere}.contact-status[data-state="error"]{color:#ffb9ad}.contact-status[data-state="success"]{color:var(--accent)}
+@media(max-width:1100px){.contact-form .contact-status{margin-left:0}}
