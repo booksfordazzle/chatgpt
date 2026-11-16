@@ -165,3 +165,7 @@ Capture hero viewport height and height-based spacing categories on entry; retai
 ## Timed centered hero reveal
 
 Supersede previous manual headline/form offsets. Center the headline precisely in the sticky film frame and place the email form below. Start with text/form hidden and no dark overlay. Begin a smooth 0.75-second fade at duration minus 200 actual video frames (desktop ia.mp4: 24fps, mobile: 60fps). As they appear, increase the black overlay to 30%, leaving video 70% visible. Reverse on scroll back. Hide unrevealed form from interaction. Reduced motion, no JavaScript and video errors show static readable text and a usable form. Preserve stable viewport geometry during mobile toolbar changes.
+
+## Latest contact copy and golden signup action
+
+Contact introduction now reads “Δεν θα σε σπαμάρουμε ποτέ.” / “We’ll never spam you.” Remove the inline FormSubmit/Gmail privacy paragraph below the form; retain the full privacy policy and footer link. Signup CTA buttons use a gold face with dark text and the existing soft moving glow in gold, with a static reduced-motion fallback.
