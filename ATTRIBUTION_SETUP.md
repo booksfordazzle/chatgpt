@@ -80,3 +80,9 @@ For launch, replace `launch_test` with a consistent campaign label and use a dis
 5. Confirm an existing row/consent timestamp was not overwritten. Duplicate emails intentionally retain their original record.
 
 Automated coverage includes session persistence, blocked storage, device/browser classification, actual browser payloads for both forms, Node→Apps Script append logic, preserved records/consent, and desktop video playback. Intercepted browser submissions are not evidence of a live Sheet write.
+
+## Live browser result — 16 November 2026
+
+Vercel successfully deployed implementation commit `95d160a`. A real desktop-browser signup using the Instagram test URL, navigating through Blog and returning to the form without UTMs, submitted `codex-attribution-test-20261116@example.com` through the original footer form. The live endpoint returned HTTP 200 and the page reached the existing waitlist confirmation. The observed payload retained `utm_source=instagram`, `utm_campaign=launch_test`, `source=primal-core-footer`, the first landing query, `device_type=desktop`, `os=Linux`, `browser=Chrome`, and `screen_width=1440`. The uploaded confirmation video then played on desktop.
+
+The test used one reserved example.com email; retries use the existing duplicate protection, not additional subscriber identities. **No live Sheet cells were read back and no Apps Script deployment was performed.** API acceptance/confirmation does not establish that an old Apps Script version stored the six new columns. The required receiver rollout and private Sheet verification remain outstanding.
