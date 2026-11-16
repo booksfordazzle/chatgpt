@@ -133,3 +133,5 @@ Latest hero emblem positioning: move the bull mark 32px upward visually on deskt
 Latest owner adjustment doubles the hero emblem upward offset from 32px to 64px on desktop and mobile. Headline and form positions remain unchanged.
 
 On mobile viewports at most 650px tall, cap the upward offset at 48px so the bull stays clear of the fixed header.
+
+Latest owner hero adjustment: visually lower the headline and the whole signup form (including consent and status) by 100px, preserving the bull position and the existing space between headline and email field. Applies to both languages and viewport sizes.
