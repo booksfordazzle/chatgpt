@@ -205,3 +205,7 @@ Latest confirmation video replacement: use the unchanged owner-supplied download
 ## Security revision of contact submission
 
 Restore real FormSubmit CAPTCHA through native POST; AJAX previously bypassed it. After provider acceptance return to a localized contact-sent page. Preserve the contact layout and form fields. Waitlist requests are throttled server-side with localized retry feedback. This supersedes prior CAPTCHA-disabled inline contact submission decisions.
+
+## V.1 desktop heading size
+
+At desktop widths above 1100px, “Μπες στην λίστα αναμονής” / “Join the waitlist” uses the same font-size clamp as the main hero headline: clamp(52.8px,6.93vw,105.6px). Preserve mobile/tablet sizes, existing centered alignment, fade sequence and signup controls. This snapshot is named V.1.
