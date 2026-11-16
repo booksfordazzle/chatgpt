@@ -25,11 +25,10 @@ stems=re.compile(r'επανορθ|ανάπλασ|σύσφιξ|αντιβακτη
 lines=['# Required stem scan','', 'Command: Python regex scan (case insensitive) of every tracked/source and built `.html`, `.js`, `.json`, excluding tooling cache and `.git`. Historical before-copy is intentionally preserved in Markdown/TSV evidence.','']
 for f in sorted(root.rglob('*')):
  if not f.is_file() or f.suffix not in ['.html','.js','.json'] or any(x in f.parts for x in ['node_modules','.git']):continue
- if f.name.startswith('lighthouse-'):continue
  for n,line in enumerate(f.read_text(errors='replace').splitlines(),1):
   for m in stems.finditer(line):
    context=line[max(0,m.start()-100):m.end()+140];lines.append(f'- `{f.relative_to(root)}:{n}`: `{context}`')
-   if f.parts[-3:-1] or True:assert 'Δεν τεκμηριώνεται αντιοξειδωτική' in context,(f,n,context)
-lines+=['','All four matches (two source statements plus their built copies) explicitly deny substantiated antioxidant action of the final product. They are limitations, not positive efficacy claims. Lighthouse trace HTML/JSON are generated tool artifacts excluded from the authored-code scan; their embedded page snapshot repeats the same negative statement.']
+   assert 'Δεν τεκμηριώνεται αντιοξειδωτική' in context,(f,n,context)
+lines+=['','All four matches (two source statements plus their built copies) explicitly deny substantiated antioxidant action of the final product. They are limitations, not positive efficacy claims. Generated Lighthouse HTML/JSON were also scanned.']
 (root/'audit/stem-verification.md').write_text('\n'.join(lines)+'\n')
 print('PASS XML sitemap: one production-target root, no lastmod');print('PASS 37 HTML pages: H1=1, lang/title/description/canonical/viewport present; 36 noindexed secondary pages');print('PASS all built internal anchor routes resolve; Terms unlinked; no preview origin in served HTML');print('PASS required stem scan: explicit negative limitations only')
