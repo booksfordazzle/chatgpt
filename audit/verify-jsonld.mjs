@@ -1,0 +1,3 @@
+import fs from 'node:fs';import path from 'node:path';let blocks=0;
+function walk(dir){for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const file=path.join(dir,entry.name);if(entry.isDirectory())walk(file);else if(file.endsWith('.html'))for(const m of fs.readFileSync(file,'utf8').matchAll(/<script\b[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)){const parsed=JSON.parse(m[1]);if(parsed['@graph'].map(x=>x['@type']).join(',')!=='Organization,WebSite')throw Error(file);blocks++}}}
+walk('dist');console.log('PASS JSON.parse every JSON-LD block:',blocks,'Organization/WebSite only');
