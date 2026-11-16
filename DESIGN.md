@@ -119,3 +119,7 @@ The homepage hero headline uses black (#000) in both Greek and English, on deskt
 ## Current hero contrast
 
 The latest owner request supersedes the unshaded video and black headline: use a white (#fff) hero headline and a 30% black overlay (70% video visibility) on desktop and mobile in both languages. Preserve scroll seeking and signup behavior.
+
+## Current signup consent copy
+
+Below each homepage email field, keep only “Συμφωνώ να λαμβάνω ενημερώσεις.” / “I agree to receive updates.” beside the required, initially unchecked checkbox. Remove the policy-reading sentence from this label; the privacy page remains available through the footer.
