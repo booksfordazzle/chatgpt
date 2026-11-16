@@ -1,0 +1,72 @@
+
+> primal-core@1.0.0 test
+> node --test tests/*.test.mjs
+
+✔ UTMs and the full entry URLs survive navigation without being emptied or replaced by internal referrers (13.135566ms)
+✔ blocked, corrupt or unavailable sessionStorage never prevents submission (2.40147ms)
+✔ device/OS/browser categories distinguish tablets, iOS Chrome, Safari, Firefox, Edge and Brave (1.173385ms)
+✔ viewport reflects the current screen and only requested fields are retained (0.475576ms)
+✔ every Greek page has a complete English counterpart and reciprocal language links (23.610444ms)
+✔ preview noindex is host-scoped and cannot match the intended production host (10.81355ms)
+✔ canonical paths use the one HTTPS target with clean routes (0.943386ms)
+✔ Greek landing page has one descriptive H1, six H3 FAQs, controlled videos and safe schema (6.605226ms)
+✔ published clean-route directory indexes keep relative links in their own language and folder (236.838932ms)
+✔ built homepage sets JS state before first paint and uses canonical absolute hreflang metadata (1.217525ms)
+✔ downloaded HTML resolves navigation and media relative to each file (73.633026ms)
+✔ top-level index opens the bundled site (1.920317ms)
+✔ Sheets saves email, receipt/version/locale/source/attribution and case-insensitive duplicates do not overwrite (10.182472ms)
+✔ Sheets upgrades old five-column headers without overwriting existing rows or consent dates (1.953432ms)
+✔ unknown sheet layouts fail safely without overwriting data (1.52803ms)
+✔ Sheets rejects invalid secret, consent, policy and email without writes (1.995229ms)
+✔ Sheets escapes formula-like emails and campaign values and bounds attribution (1.795236ms)
+✔ bound-sheet setup preserves existing secret and can be repeated safely (1.552446ms)
+✔ Sheets does not claim success when a signup cannot be read back (1.658219ms)
+✔ new signups remain saved and no welcome is queued or sent, even with the old enabled property (2.859245ms)
+✔ disable helper removes only the welcome trigger, preserves records and cannot re-enable mail (2.002467ms)
+✔ device class appends safely to legacy sheets and rejects arbitrary device text (1.663615ms)
+✔ six new columns append after existing columns and duplicates cannot overwrite existing attribution or consent (2.479969ms)
+✔ Vercel handler payload appends all new fields through the real Apps Script logic (57.555728ms)
+✔ rate limits are case-insensitive, expire, and cannot be bypassed by changing email on the same verified IP (2.366605ms)
+✔ rate limiter has bounded memory and does not drop active guards on key churn (10.762719ms)
+✔ cross-site fetch metadata and malformed origins cannot bypass origin checks (1.490321ms)
+✔ blocked waitlist attempts return a retry interval and never reach the receiver (28.662111ms)
+✔ hosting policies protect transport, frame embedding and script execution consistently (10.167185ms)
+✔ contact normal submission flow enables hosted CAPTCHA instead of the AJAX bypass (4.867326ms)
+✔ oversized declared request bodies are rejected before parsing or invoking storage (5.010467ms)
+✔ Vercel parsed JSON reaches the shared confirmed-storage handler (39.043642ms)
+✔ Vercel parsed native US form preserves localised redirects (3.742657ms)
+✔ Vercel raw streams and buffers are supported without bypassing validation (5.849056ms)
+✔ Vercel caps request bodies and rejects wrong origins and GET (1.774531ms)
+✔ Vercel never claims success without configured storage and does not expose unexpected errors (0.511854ms)
+[waitlist] {"code":"google_redirect_rejected"}
+[waitlist] {"code":"receiver_not_confirmed"}
+[waitlist] {"code":"google_http_400","upstreamStatus":400}
+[waitlist] {"code":"google_non_json_response"}
+[waitlist] {"code":"receiver_not_confirmed"}
+[waitlist] {"code":"receiver_not_confirmed"}
+[waitlist] {"code":"google_network_error"}
+✔ Sheets receiver gets consent and bounded attribution; only confirmed storage succeeds (35.281768ms)
+✔ follows only Google ContentService redirect with a credential-free GET (4.914597ms)
+✔ invalid requests never reach storage (0.786178ms)
+✔ unconfigured form fails honestly, including obsolete Supabase-only settings (0.848757ms)
+✔ rejects arbitrary endpoints, URL credentials/paths and cross-origin requests (1.047489ms)
+✔ storage errors never expose SQL/credentials or claim success (6.007713ms)
+✔ native browser submissions preserve Greek and US English redirects (3.178966ms)
+✔ untrusted metadata is bounded and cannot select locale, source or arbitrary URLs (0.75216ms)
+✔ safe storage diagnostics distinguish access, redirects, HTTP, invalid responses and timeout without leaking data (4.041443ms)
+✔ Google HTML signatures produce bounded diagnostic codes, never page contents (23.353874ms)
+✔ coarse device class survives both JS and native form requests without persisting the user agent (2.356478ms)
+✔ new technical attribution reaches the receiver with unchanged consent and source and empty missing strings (1.97809ms)
+ℹ tests 48
+ℹ suites 0
+ℹ pass 48
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1350.720798
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
