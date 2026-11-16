@@ -27,8 +27,14 @@ document.addEventListener('click', event => { if (!event.target.closest('.site-h
 const localPreview = location.protocol === 'file:';
 let attributionStorage;
 try { attributionStorage = window.sessionStorage; } catch {}
-const attribution = PrimalAttribution.create({ location, document, navigator, window, storage: attributionStorage });
-const campaignKeys = PrimalAttribution.campaignKeys;
+// Optional attribution must not prevent the hero, navigation or forms from working.
+const attribution = (() => {
+  try {
+    if (globalThis.PrimalAttribution?.create) return globalThis.PrimalAttribution.create({ location, document, navigator, window, storage: attributionStorage });
+  } catch {}
+  const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'referrer_full', 'referrer_origin', 'landing_page', 'landing_path', 'device_type', 'os', 'browser', 'screen_width', 'viewport'];
+  return { snapshot: () => Object.fromEntries(keys.map(key => [key, ''])), ready: Promise.resolve() };
+})();
 function populateAttributionFields(form) {
   const fields = attribution.snapshot();
   for (const [name, value] of Object.entries(fields)) {
@@ -122,16 +128,19 @@ if (film) {
   }
   function scrub() {
     scheduled = false;
-    if (reduced.matches || !Number.isFinite(film.duration)) return;
+    if (reduced.matches) return;
+    // The supplied films are 10s / 602 mobile frames. Keep text responsive while
+    // metadata or decoding is delayed by a mobile browser or data-saving mode.
+    const duration = Number.isFinite(film.duration) && film.duration > 0 ? film.duration : (desktop.matches ? 10 : 602 / 60);
     const distance = heroScene.offsetHeight - film.parentElement.offsetHeight;
     const progress = Math.min(1, Math.max(0, (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header')) - heroScene.getBoundingClientRect().top) / Math.max(1, distance)));
-    const time = progress * Math.max(0, film.duration - .05);
+    const time = progress * Math.max(0, duration - .05);
     const fps = Number(desktop.matches ? film.dataset.desktopFps : film.dataset.mobileFps);
-    const revealStart = Math.max(0, film.duration - 200 / fps);
-    const phase = Math.min(1, Math.max(0, (time - revealStart) / Math.max(.01, film.duration - .05 - revealStart)));
+    const revealStart = Math.max(0, duration - 200 / fps);
+    const phase = Math.min(1, Math.max(0, (time - revealStart) / Math.max(.01, duration - .05 - revealStart)));
     const ease = value => { const t = Math.min(1, Math.max(0, value)); return t * t * (3 - 2 * t); };
     const earlierTitleStart = Math.max(0, revealStart - 1.25);
-    const titleFadeDuration = .18 * Math.max(.01, film.duration - .05 - revealStart);
+    const titleFadeDuration = .18 * Math.max(.01, duration - .05 - revealStart);
     const titleIn = ease((time - earlierTitleStart) / titleFadeDuration);
     const titleOut = ease((phase - .4) / .15);
     const titleOpacity = titleIn * (1 - titleOut);
@@ -141,11 +150,14 @@ if (film) {
     heroScene.style.setProperty('--hero-shade-opacity', String(titleIn));
     heroSignup.inert = signupOpacity < .05;
     heroTitle.setAttribute('aria-hidden', String(titleOpacity < .01));
-    if (!film.seeking && Math.abs(film.currentTime - time) > .06) film.currentTime = time;
+    if (film.readyState >= 1 && !film.seeking && Math.abs(film.currentTime - time) > .06) {
+      try { film.currentTime = time; } catch {} // Retry on media readiness, never hide the form.
+    }
   }
   function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(scrub); } }
   function configure() {
     film.pause();
+    film.muted = true; film.playsInline = true;
     alignHeroHeadings();
     heroScene.classList.toggle('has-timed-reveal', !reduced.matches);
     for (const name of ['title', 'signup', 'shade']) heroScene.style.setProperty(`--hero-${name}-opacity`, '0');
@@ -158,12 +170,26 @@ if (film) {
     else if (film.readyState >= 2) film.classList.add('is-ready');
     schedule();
   }
+  film.addEventListener('loadedmetadata', schedule);
   film.addEventListener('loadeddata', () => { if (!reduced.matches) film.classList.add('is-ready'); schedule(); });
+  film.addEventListener('canplay', schedule);
   film.addEventListener('seeked', schedule);
-  film.addEventListener('error', () => { film.classList.remove('is-ready'); heroScene.classList.remove('has-timed-reveal'); heroContent.inert = false; heroSignup.inert = false; heroTitle.removeAttribute('aria-hidden'); });
+  film.addEventListener('error', () => { film.classList.remove('is-ready'); schedule(); });
+  // Some mobile media policies require one real gesture before paused-frame seeking.
+  // Prime the muted decoder once, then immediately return to scroll-controlled playback.
+  let primed = false;
+  function primeMobileDecoder() {
+    if (primed || desktop.matches || reduced.matches || film.readyState >= 2) return;
+    primed = true;
+    film.play().then(() => { film.pause(); schedule(); }).catch(() => { primed = false; schedule(); });
+  }
+  heroScene.addEventListener('touchstart', primeMobileDecoder, { passive: true });
+  heroScene.addEventListener('pointerdown', primeMobileDecoder, { passive: true });
+  addEventListener('pageshow', () => { scheduled = false; alignHeroHeadings(); schedule(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) schedule(); });
   addEventListener('scroll', schedule, { passive: true }); addEventListener('resize', schedule, { passive: true });
   addEventListener('resize', alignHeroHeadings, { passive: true });
-  new ResizeObserver(alignHeroHeadings).observe(heroSignup);
+  if (typeof ResizeObserver === 'function') new ResizeObserver(alignHeroHeadings).observe(heroSignup);
   document.fonts.ready.then(() => { alignHeroHeadings(); schedule(); });
   desktop.addEventListener('change', configure); reduced.addEventListener('change', configure); configure();
 }
