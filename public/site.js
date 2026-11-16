@@ -423,3 +423,11 @@ if (confirmationVideoLink && confirmationVideoDialog && typeof confirmationVideo
     confirmationVideoLink.focus({ preventScroll: true });
   });
 }
+
+// Responsive static posters do not trigger video downloads or autoplay.
+document.querySelectorAll('[data-audit-mobile-poster]').forEach(video => {
+  const desktopPoster = video.poster;
+  const mobile = matchMedia('(max-width: 760px)');
+  const updatePoster = () => { video.poster = mobile.matches ? video.dataset.auditMobilePoster : desktopPoster; };
+  mobile.addEventListener('change', updatePoster); updatePoster();
+});

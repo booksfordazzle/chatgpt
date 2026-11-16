@@ -13,6 +13,17 @@ async function visit(dir) {
   let html = (await readFile(file,'utf8')).replaceAll('__SITE_URL__', SITE_URL);
   html = html.replace(/<link\b(?=[^>]*rel="canonical")[^>]*>/gi,'').replace(/<meta\b(?=[^>]*(?:name|property)="(?:og:url|og:image(?::(?:alt|width|height))?|twitter:image(?::alt)?)")[^>]*>/gi,'');
   const metadata = `<link rel="canonical" href="${escape(url)}"><meta property="og:url" content="${escape(url)}"><meta property="og:image" content="${escape(SITE_URL+SOCIAL_IMAGE.path)}"><meta property="og:image:width" content="${SOCIAL_IMAGE.width}"><meta property="og:image:height" content="${SOCIAL_IMAGE.height}"><meta property="og:image:alt" content="${escape(SOCIAL_IMAGE.alt)}"><meta name="twitter:image" content="${escape(SITE_URL+SOCIAL_IMAGE.path)}"><meta name="twitter:image:alt" content="${escape(SOCIAL_IMAGE.alt)}">`;
+  // Clean directory indexes such as /en and /blog have file-like URL bases.
+  // Rebase relative navigation from the source filename to its published route.
+  html = html.replace(/<a\b[^>]*href="([^"]+)"[^>]*>/gi, (tag, value) => {
+    if (value.startsWith('#')) return tag;
+    let target;
+    try { target = new URL(value.replaceAll('&amp;', '&'), SITE_URL + '/' + relative); } catch { return tag; }
+    if (target.origin !== SITE_URL) return tag;
+    const destination = target.pathname.endsWith('.html') ? canonicalPath(target.pathname.slice(1)) : target.pathname;
+    const rebased = path.posix.relative(path.posix.dirname(canonicalPath(relative)), destination) || './';
+    return tag.replace(/href="[^"]*"/, `href="${escape(rebased + target.search + target.hash)}"`);
+  });
   html = html.replace('</head>',metadata+'</head>');
   // Only the reviewed Greek landing page is ready for the production sitemap.
   if(relative==='index.html'&&!/<meta\b(?=[^>]*name="robots")(?=[^>]*content="[^"]*noindex)/i.test(html))pages.push(url);

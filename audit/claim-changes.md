@@ -1,6 +1,6 @@
 # Changed-claim ledger
 
-Every semantic copy/metadata change is recorded by block. Line numbers identify the source before that block. Added safety copy is identified explicitly.
+Source line numbers refer to the content immediately before each block. Original public-copy inventory is retained separately.
 
 | Block | File:line | Before | After | Reason |
 |---|---|---|---|---|
@@ -97,3 +97,18 @@ Every semantic copy/metadata change is recorded by block. Line numbers identify 
 | B | public/blog/ancestral-ingredients.html:3 | Να προσφέρει έναν απλό τρόπο να φροντίζεις το πρόσωπό σου. | Η υπό ανάπτυξη σύνθεση αφορά καλλυντική περιποίηση. Μπορεί να βοηθήσει την ξηρή επιδερμίδα να δείχνει πιο απαλή και λεία, χωρίς να αποτελεί θεραπεία δερματικής πάθησης. | Appearance-only qualified wording; no biological, clinical or sensory promise |
 | B | public/blog/hippocrates-tallow-mastic.html:3 | Η καταγραφή του Διοσκουρίδη. Στο Περί ύλης ιατρικής (Λόγος Α', κεφ. 70, λήμμα Σχίνος και Μαστίχη), ο Διοσκουρίδης εξυμνεί τη ρητίνη της Χίου για τις στυπτικές, μαλακτικές και καθαριστικές της ιδιότητες, σημειώνοντας ότι «χαρίζει λάμψη στο δέρμα». | Η υπό ανάπτυξη σύνθεση αφορά καλλυντική περιποίηση. Μπορεί να βοηθήσει την ξηρή επιδερμίδα να δείχνει πιο απαλή και λεία, χωρίς να αποτελεί θεραπεία δερματικής πάθησης. | Appearance-only qualified wording; no biological, clinical or sensory promise |
 | B | public/blog/hippocrates-tallow-mastic.html:3 | Μετά το ξύρισμα. Καταπραΰνει άμεσα τους μικροερεθισμούς χάρη στη ρητίνη της μαστίχας. | Η υπό ανάπτυξη σύνθεση αφορά καλλυντική περιποίηση. Μπορεί να βοηθήσει την ξηρή επιδερμίδα να δείχνει πιο απαλή και λεία, χωρίς να αποτελεί θεραπεία δερματικής πάθησης. | Appearance-only qualified wording; no biological, clinical or sensory promise |
+| C | public/index.html:3 | Περιποίηση με απλότητα \| PRIMAL CORE | Ανδρικό balm με βόειο στέαρ & μαστιχέλαιο Χίου \| PRIMAL CORE | Greek cosmetic-only title, no size or price |
+| C | public/index.html:3 | Ένα ανδρικό face balm υπό ανάπτυξη, με βάση το βόειο στέαρ. Γνώρισε τη φιλοσοφία και τα συστατικά του PRIMAL CORE. | Ανδρικό balm προσώπου με βόειο στέαρ και μαστιχέλαιο Χίου, υπό ανάπτυξη για καλλυντική περιποίηση. | Greek cosmetic-only metadata |
+| C | public/index.html:3 | Περιποίηση με απλότητα \| PRIMAL CORE | Ανδρικό balm με βόειο στέαρ & μαστιχέλαιο Χίου \| PRIMAL CORE | Greek cosmetic-only metadata |
+| C | public/index.html:3 | Ένα ανδρικό face balm υπό ανάπτυξη, με βάση το βόειο στέαρ. Γνώρισε τη φιλοσοφία και τα συστατικά του PRIMAL CORE. | Ανδρικό balm προσώπου με βόειο στέαρ και μαστιχέλαιο Χίου, υπό ανάπτυξη για καλλυντική περιποίηση. | Greek cosmetic-only metadata |
+| C | public/index.html:3 | Το πρόσωπό σου, πιο απαλό από ποτέ | Ανδρικό balm προσώπου με βόειο στέαρ και μαστιχέλαιο Χίου | One descriptive H1; requested emotional line retained as subtitle |
+| C | public/index.html:1 | [new] | Το πρόσωπό σου, πιο απαλό από ποτέ | Owner-requested intro, development status, planned size or subtitle |
+| C | public/index.html:1 | [new] | Αναπτύσσουμε ένα ανδρικό balm με βόειο στέαρ, γνωστό και ως ταλόου, και μαστιχέλαιο Χίου. | Owner-requested intro, development status, planned size or subtitle |
+| C | public/index.html:1 | [new] | Το προϊόν είναι υπό ανάπτυξη. Προβλεπόμενο μέγεθος: 50 ml. Τα τελικά χαρακτηριστικά και η καταλληλότητα χρειάζονται επιβεβαίωση. | Owner-requested intro, development status, planned size or subtitle |
+| C | public/index.html:3 | Μπες στην λίστα αναμονής | Ενημέρωση κυκλοφορίας | Neutral waitlist heading |
+| C | public/index.html:1 | [new lightweight fallback] | Οπτική παρουσίαση του υπό ανάπτυξη προϊόντος. Το βίντεο δεν τεκμηριώνει αποτελεσματικότητα ή καταλληλότητα. Οι βασικές πληροφορίες και οι οδηγίες υπάρχουν στο κείμενο της σελίδας. | User-controlled video and text alternative; no pre-content autoplay |
+| C | public/index.html:3 | Τα οφέλη στην επιδερμίδα σου | Καλλυντική φροντίδα υπό ανάπτυξη | Qualified section heading |
+| C | public/index.html:1 | [new] | Τα παρακάτω συστατικά αφορούν σύνθεση υπό ανάπτυξη. Η τελική λίστα συστατικών θα επιβεβαιωθεί από το εργαστήριο. | Provisional ingredient list; no final INCI claim |
+| C | public/index.html:3 | FAQ | Συχνές ερωτήσεις | Greek FAQ H2 |
+| C | public/index.html:3 | PRIMAL CORE | Λογότυπο PRIMAL CORE, αρχική σελίδα | Descriptive Greek alt |
+| C | public/404.html:3 | Αυτή η σελίδα δεν βρέθηκε. Μπορείς να επιστρέψεις στην αρχική ή να διαβάσεις το blog μας. Επιστροφή στην αρχική | Η σελίδα δεν βρέθηκε. Η διεύθυνση που ζήτησες δεν υπάρχει σε αυτή την προεπισκόπηση. Επιστροφή στην αρχική | Greek custom 404 template; hosting keeps missing-route status 404 |
