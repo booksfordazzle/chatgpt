@@ -147,3 +147,7 @@ Remove the bull emblem from the homepage hero in both languages. Restore the hea
 Latest owner hero adjustment: move only the headline 50px upward, in both languages and viewport sizes; keep the email form in its restored position.
 
 Latest hero positioning: raise the headline another 50px (100px total above the restored position) and lower the complete email signup form by 90px. Applies to both languages and desktop/mobile. Keep the consent with its form.
+
+## Current hero positioning and signup shine
+
+Raise the headline another 50px (150px total) and lower the signup another 90px (180px total). At heights at most 800px retain the prior -100px/+90px offsets to keep headline and consent visible. Both signup CTA pills glow softly with a 3.5-second highlight circulating only around their perimeter. Keep the text stationary, focus outline visible, shine noninteractive and reduced-motion rendering static. Apply to Greek and English.

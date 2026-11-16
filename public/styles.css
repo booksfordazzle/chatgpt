@@ -365,6 +365,16 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 .hero-content #hero-title{color:#fff}
 
 /* Raise only the hero headline; preserve the signup position. */
-.hero-content #hero-title{position:relative;top:-100px}
+.hero-content #hero-title{position:relative;top:-150px}
 
-.hero-content .hero-signup{position:relative;top:90px}
+.hero-content .hero-signup{position:relative;top:180px}
+
+/* Luminous signup action with a travelling highlight confined to its perimeter. */
+@property --signup-shine-angle{syntax:"<angle>";initial-value:0deg;inherits:false}
+.waitlist-form .email-row .button{position:relative;isolation:isolate;box-shadow:0 4px 18px rgba(223,221,181,.35),0 8px 32px rgba(223,221,181,.18)}
+.waitlist-form .email-row .button::before{content:"";position:absolute;inset:-2px;border-radius:inherit;padding:2px;background:conic-gradient(from var(--signup-shine-angle),rgba(223,221,181,.15) 0deg 245deg,#dfddb5 285deg,#fff 315deg,rgba(223,221,181,.15) 350deg);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;pointer-events:none;animation:signup-perimeter-shine 3.5s linear infinite}
+.waitlist-form .email-row .button:hover{box-shadow:0 5px 22px rgba(223,221,181,.5),0 10px 36px rgba(223,221,181,.25)}
+.waitlist-form .email-row .button:disabled::before{animation-play-state:paused}
+@keyframes signup-perimeter-shine{to{--signup-shine-angle:360deg}}
+@media(prefers-reduced-motion:reduce){.waitlist-form .email-row .button::before{animation:none}}
+@media(max-height:800px){.hero-content #hero-title{top:-100px}.hero-content .hero-signup{top:90px}}
