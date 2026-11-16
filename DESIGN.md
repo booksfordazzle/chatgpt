@@ -105,3 +105,7 @@ Greek and English contact pages now use required name, email and message fields,
 Source dimensions: closed jar 1920×819, five jars 2352×1008 with baked black bands above row 128 and below row 879. The shared visible frame is 2352:752. Centered cover removes the bands without editing the supplied images; the closed-jar photograph crops vertically to the same stable frame. Apply the same treatment to the no-JavaScript sequence. Controls stay over the photo.
 
 Contact uses FormSubmit AJAX with inline localized pending, submitted and error states. Keep entered text on errors, reject activation responses as success, prevent duplicate pending submissions and offer the real Gmail address on failure. Disable provider CAPTCHA to remove the extra step; retain the provider honeypot. Activation by the recipient remains a one-time service prerequisite, never a task for visitors. Do not claim inbox delivery from API acceptance.
+
+## Mobile product carousel photography
+
+At widths up to 760px, use the three unchanged 1122×1402 portrait PNGs from the owner ZIP in this order: dramatic-light single jar, floating five-jar stack, bull-horn lid. Preserve each full composition in a matching 1122:1402 frame with overlaid controls and a three-photo counter. Wider screens retain the existing two landscape photos and bar-free framing. On breakpoint changes, reset to the first photo of the appropriate set while preserving user pause. No-JavaScript shows only the relevant photo set in sequence.

@@ -269,7 +269,10 @@ if (parallaxFrames.length) {
 
 // Product photographs crossfade only while visible; pause, keyboard and swipe stay independent.
 document.querySelectorAll('[data-product-gallery]').forEach(gallery => {
-  const slides = [...gallery.querySelectorAll('.product-slide')];
+  const allSlides = [...gallery.querySelectorAll('.product-slide')];
+  const mobileViewport = matchMedia('(max-width: 760px)');
+  const currentSlides = () => allSlides.filter(slide => !slide.dataset.galleryViewport || slide.dataset.galleryViewport === (mobileViewport.matches ? 'mobile' : 'desktop'));
+  let slides = currentSlides();
   const previous = gallery.querySelector('[data-gallery-prev]');
   const next = gallery.querySelector('[data-gallery-next]');
   const toggle = gallery.querySelector('[data-gallery-toggle]');
@@ -289,7 +292,7 @@ document.querySelectorAll('[data-product-gallery]').forEach(gallery => {
   }
   function show(nextIndex, manual = false) {
     index = (nextIndex + slides.length) % slides.length;
-    slides.forEach((slide, i) => { slide.classList.toggle('is-active', i === index); slide.setAttribute('aria-hidden', String(i !== index)); });
+    allSlides.forEach(slide => { const active = slide === slides[index]; slide.classList.toggle('is-active', active); slide.setAttribute('aria-hidden', String(!active)); });
     counter.textContent = `${index + 1} / ${slides.length}`;
     if (manual) status.textContent = english ? `Photo ${index + 1} of ${slides.length}` : `Φωτογραφία ${index + 1} από ${slides.length}`;
     syncTimer();
@@ -311,6 +314,7 @@ document.querySelectorAll('[data-product-gallery]').forEach(gallery => {
   new IntersectionObserver(entries => { visible = entries[0].isIntersecting; if (visible) slides.forEach(slide => { slide.querySelector('img').loading = 'eager'; }); syncTimer(); }, { threshold: .15 }).observe(gallery);
   document.addEventListener('visibilitychange', syncTimer);
   reduced.addEventListener('change', () => { motionOptIn = false; syncTimer(); });
+  mobileViewport.addEventListener('change', () => { slides = currentSlides(); if (visible) slides.forEach(slide => { slide.querySelector('img').loading = 'eager'; }); show(0); });
   show(0);
 });
 
