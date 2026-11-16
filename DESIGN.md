@@ -1,4 +1,4 @@
-> Current preview audit takes precedence over historical preferences below: the Greek homepage uses a static photographic introduction with one descriptive H1 and an emotional subtitle. Both films require native controls, preload none and static posters; no autoplay. Use qualified cosmetic wording and the audit claim ledger, pending owner-approved INCI and sensory evidence. Keep one visible evidence box, six H3 FAQs, unchecked launch-only consent and both existing forms. Secondary pages remain noindexed drafts. Earlier scroll-video, autoplay and verbatim ingredient-copy instructions are historical.
+> Latest owner instruction: restore the visual design and behavior from tag V.1. Preserve the scroll-driven hero, sequential centered title/signup reveals, original sections, media, carousel, typography and spacing. SEO, crawlability and security improvements must be technical and visually neutral; the previous static audit-home redesign is superseded.
 
 # PRIMAL CORE interface
 

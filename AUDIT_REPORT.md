@@ -1,3 +1,5 @@
+> Historical audit of the superseded static redesign. The latest owner instruction restores V.1 visually. See V1_RESTORATION.md for the currently shipped scope and verification. Prior claim/layout/Lighthouse assertions below do not describe the restored version.
+
 # PRIMAL CORE — preview audit, 16 November 2026
 
 Scope: https://chatgpt-weld-mu-98.vercel.app/ only. Intended production target: https://primalcore.gr. **Production deployment is not verified and is not claimed live.** Baseline `e768db9` / tag `V.1` remains untouched.
