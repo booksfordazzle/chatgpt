@@ -157,3 +157,7 @@ Raise the headline another 50px (150px total) and lower the signup another 90px 
 Replace the circulating perimeter shine with a soft blurred glow moving horizontally behind each signup button. Keep button text stationary and honor reduced motion. Raise the headline another 50px and lower the email form another 50px: main offsets -200px/+230px, shorter-view offsets -150px/+140px, subject to visibility safeguards.
 
 Visibility safeguards cap headline offsets at -180px on desktop up to 950px tall, -120px up to 800px tall, and -85px on mobile up to 650px tall, preventing overlap with the fixed header.
+
+## Stable hero during mobile scrolling
+
+Capture hero viewport height and height-based spacing categories on entry; retain them when coarse-pointer browser chrome changes only viewport height. Refresh on width/orientation changes and desktop window resizing. Keep the headline at the same screen Y throughout the sticky scene; allow normal scene exit, static reduced-motion and no-JavaScript fallbacks.

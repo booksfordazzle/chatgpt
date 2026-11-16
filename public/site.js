@@ -81,6 +81,22 @@ document.querySelectorAll('.waitlist-form').forEach(form => {
 // A sticky scroll scene on both desktop and mobile; reduced motion keeps the poster.
 const film = document.querySelector('[data-film]');
 if (film) {
+  // Mobile browser chrome changes height during scroll; keep the scene geometry stable.
+  let heroViewportWidth = innerWidth;
+  const captureHeroViewport = () => {
+    const root = document.documentElement;
+    root.style.setProperty('--hero-viewport-height', `${innerHeight}px`);
+    root.classList.toggle('hero-viewport-medium', innerHeight <= 950);
+    root.classList.toggle('hero-viewport-short', innerHeight <= 800);
+    root.classList.toggle('hero-viewport-small', innerHeight <= 650);
+  };
+  captureHeroViewport();
+  addEventListener('resize', () => {
+    if (innerWidth !== heroViewportWidth || !matchMedia('(pointer: coarse)').matches) {
+      heroViewportWidth = innerWidth;
+      captureHeroViewport();
+    }
+  }, { passive: true });
   const desktop = matchMedia('(min-width: 761px)');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let loaded = false, scheduled = false;
