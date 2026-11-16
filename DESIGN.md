@@ -95,3 +95,7 @@ Greek CTAs now say “Θέλω να μπώ” without an exclamation mark; Engli
 ## Current product carousel frame
 
 The homepage carousel contains two photographs: the supplied closed-jar closeup and the diagonal five-jar composition. Use a shared 1920:819 photo frame at every width, with images filling the frame and controls overlaid inside its bottom-right corner. Do not reserve a black strip below the photographs. Preserve the caption gap and existing slideshow behavior. Without JavaScript, show both photos at their natural aspect ratios.
+
+## Contact form
+
+Greek and English contact pages now use required name, email and message fields, with horizontal labels on desktop and stacked labels on smaller screens. Preserve the existing dark identity, business sidebar and FAQ. Native POST to FormSubmit forwards to ermitikos@gmail.com after recipient activation; keep provider spam verification, privacy disclosure and truthful provider-owned results. See CONTACT_SETUP.md.
