@@ -102,9 +102,8 @@ if (film) {
   let loaded = false, scheduled = false;
   const heroScene = film.closest('.hero-film');
   const heroContent = heroScene.querySelector('.hero-content');
-  function measureHeroTitle() {
-    heroScene.style.setProperty('--hero-title-half', `${heroScene.querySelector('#hero-title').getBoundingClientRect().height / 2}px`);
-  }
+  const heroTitle = heroScene.querySelector('#hero-title');
+  const heroSignup = heroScene.querySelector('.hero-signup');
   function scrub() {
     scheduled = false;
     if (reduced.matches || !Number.isFinite(film.duration)) return;
@@ -113,19 +112,27 @@ if (film) {
     const time = progress * Math.max(0, film.duration - .05);
     const fps = Number(desktop.matches ? film.dataset.desktopFps : film.dataset.mobileFps);
     const revealStart = Math.max(0, film.duration - 200 / fps);
-    const linear = Math.min(1, Math.max(0, (time - revealStart) / .75));
-    const reveal = linear * linear * (3 - 2 * linear);
-    heroScene.style.setProperty('--hero-reveal', String(reveal));
-    heroContent.inert = reveal < .05;
+    const phase = Math.min(1, Math.max(0, (time - revealStart) / Math.max(.01, film.duration - .05 - revealStart)));
+    const ease = value => { const t = Math.min(1, Math.max(0, value)); return t * t * (3 - 2 * t); };
+    const titleIn = ease(phase / .18);
+    const titleOut = ease((phase - .4) / .15);
+    const titleOpacity = titleIn * (1 - titleOut);
+    const signupOpacity = ease((phase - .62) / .2);
+    heroScene.style.setProperty('--hero-title-opacity', String(titleOpacity));
+    heroScene.style.setProperty('--hero-signup-opacity', String(signupOpacity));
+    heroScene.style.setProperty('--hero-shade-opacity', String(titleIn));
+    heroSignup.inert = signupOpacity < .05;
+    heroTitle.setAttribute('aria-hidden', String(titleOpacity < .01));
     if (!film.seeking && Math.abs(film.currentTime - time) > .06) film.currentTime = time;
   }
   function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(scrub); } }
   function configure() {
     film.pause();
-    measureHeroTitle();
     heroScene.classList.toggle('has-timed-reveal', !reduced.matches);
-    heroScene.style.setProperty('--hero-reveal', '0');
-    heroContent.inert = !reduced.matches;
+    for (const name of ['title', 'signup', 'shade']) heroScene.style.setProperty(`--hero-${name}-opacity`, '0');
+    heroContent.inert = false;
+    heroSignup.inert = !reduced.matches;
+    heroTitle.removeAttribute('aria-hidden');
     if (reduced.matches) { film.classList.remove('is-ready'); return; }
     const source = desktop.matches ? film.dataset.desktopSrc : film.dataset.mobileSrc;
     if (!loaded || film.getAttribute('src') !== source) { loaded = true; film.classList.remove('is-ready'); film.src = source; film.preload = 'auto'; film.load(); }
@@ -134,10 +141,9 @@ if (film) {
   }
   film.addEventListener('loadeddata', () => { if (!reduced.matches) film.classList.add('is-ready'); schedule(); });
   film.addEventListener('seeked', schedule);
-  film.addEventListener('error', () => { film.classList.remove('is-ready'); heroScene.classList.remove('has-timed-reveal'); heroContent.inert = false; });
+  film.addEventListener('error', () => { film.classList.remove('is-ready'); heroScene.classList.remove('has-timed-reveal'); heroContent.inert = false; heroSignup.inert = false; heroTitle.removeAttribute('aria-hidden'); });
   addEventListener('scroll', schedule, { passive: true }); addEventListener('resize', schedule, { passive: true });
-  addEventListener('resize', measureHeroTitle, { passive: true });
-  document.fonts.ready.then(() => { measureHeroTitle(); schedule(); });
+  document.fonts.ready.then(schedule);
   desktop.addEventListener('change', configure); reduced.addEventListener('change', configure); configure();
 }
 

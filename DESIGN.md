@@ -169,3 +169,7 @@ Supersede previous manual headline/form offsets. Center the headline precisely i
 ## Latest contact copy and golden signup action
 
 Contact introduction now reads “Δεν θα σε σπαμάρουμε ποτέ.” / “We’ll never spam you.” Remove the inline FormSubmit/Gmail privacy paragraph below the form; retain the full privacy policy and footer link. Signup CTA buttons use a gold face with dark text and the existing soft moving glow in gold, with a static reduced-motion fallback.
+
+## Current hero two-stage sequence
+
+During the final 200 source video frames, fade in the headline at the absolute frame center, hold, then fade it out. After it disappears, fade in a centered group containing “Μπες στην λίστα αναμονής” / “Join the waitlist” and the complete signup form. Each chapter is independently centered. Timing within that window: headline in 0–18%, hold to 40%, out 40–55%, signup in 62–82%, hold to end. Video starts without shading; fade to 30% black with the first headline, retaining that shade through the signup chapter. Reverse naturally on scrolling back. Keep hidden form inert; static/reduced-motion/error views show both chapters in readable order.
