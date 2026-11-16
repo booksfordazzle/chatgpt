@@ -139,3 +139,7 @@ Latest owner hero adjustment: visually lower the headline and the whole signup f
 Latest repeated owner adjustment adds another 100px to the headline and signup offset, now 200px total. Keep the bull position unchanged.
 
 Allow vertical scrolling inside the hero content when the lowered signup exceeds the visible frame, so its controls and feedback remain reachable on short screens.
+
+## Current hero layout restoration
+
+Remove the bull emblem from the homepage hero in both languages. Restore the headline and signup form to their original centered positions, with no 100px/200px relative offsets or inner scrolling. Preserve the white headline, 30% dark overlay, original headline-to-form spacing, visible email field and required consent checkbox. This supersedes previous bull and lowered-content positioning instructions.
