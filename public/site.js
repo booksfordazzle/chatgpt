@@ -100,18 +100,32 @@ if (film) {
   const desktop = matchMedia('(min-width: 761px)');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let loaded = false, scheduled = false;
+  const heroScene = film.closest('.hero-film');
+  const heroContent = heroScene.querySelector('.hero-content');
+  function measureHeroTitle() {
+    heroScene.style.setProperty('--hero-title-half', `${heroScene.querySelector('#hero-title').getBoundingClientRect().height / 2}px`);
+  }
   function scrub() {
     scheduled = false;
-    if (reduced.matches || !Number.isFinite(film.duration) || film.seeking) return;
-    const stage = film.closest('.hero-film');
-    const distance = stage.offsetHeight - film.parentElement.offsetHeight;
-    const progress = Math.min(1, Math.max(0, (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header')) - stage.getBoundingClientRect().top) / Math.max(1, distance)));
+    if (reduced.matches || !Number.isFinite(film.duration)) return;
+    const distance = heroScene.offsetHeight - film.parentElement.offsetHeight;
+    const progress = Math.min(1, Math.max(0, (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header')) - heroScene.getBoundingClientRect().top) / Math.max(1, distance)));
     const time = progress * Math.max(0, film.duration - .05);
-    if (Math.abs(film.currentTime - time) > .06) film.currentTime = time;
+    const fps = Number(desktop.matches ? film.dataset.desktopFps : film.dataset.mobileFps);
+    const revealStart = Math.max(0, film.duration - 200 / fps);
+    const linear = Math.min(1, Math.max(0, (time - revealStart) / .75));
+    const reveal = linear * linear * (3 - 2 * linear);
+    heroScene.style.setProperty('--hero-reveal', String(reveal));
+    heroContent.inert = reveal < .05;
+    if (!film.seeking && Math.abs(film.currentTime - time) > .06) film.currentTime = time;
   }
   function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(scrub); } }
   function configure() {
     film.pause();
+    measureHeroTitle();
+    heroScene.classList.toggle('has-timed-reveal', !reduced.matches);
+    heroScene.style.setProperty('--hero-reveal', '0');
+    heroContent.inert = !reduced.matches;
     if (reduced.matches) { film.classList.remove('is-ready'); return; }
     const source = desktop.matches ? film.dataset.desktopSrc : film.dataset.mobileSrc;
     if (!loaded || film.getAttribute('src') !== source) { loaded = true; film.classList.remove('is-ready'); film.src = source; film.preload = 'auto'; film.load(); }
@@ -120,8 +134,10 @@ if (film) {
   }
   film.addEventListener('loadeddata', () => { if (!reduced.matches) film.classList.add('is-ready'); schedule(); });
   film.addEventListener('seeked', schedule);
-  film.addEventListener('error', () => film.classList.remove('is-ready'));
+  film.addEventListener('error', () => { film.classList.remove('is-ready'); heroScene.classList.remove('has-timed-reveal'); heroContent.inert = false; });
   addEventListener('scroll', schedule, { passive: true }); addEventListener('resize', schedule, { passive: true });
+  addEventListener('resize', measureHeroTitle, { passive: true });
+  document.fonts.ready.then(() => { measureHeroTitle(); schedule(); });
   desktop.addEventListener('change', configure); reduced.addEventListener('change', configure); configure();
 }
 

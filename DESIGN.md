@@ -161,3 +161,7 @@ Visibility safeguards cap headline offsets at -180px on desktop up to 950px tall
 ## Stable hero during mobile scrolling
 
 Capture hero viewport height and height-based spacing categories on entry; retain them when coarse-pointer browser chrome changes only viewport height. Refresh on width/orientation changes and desktop window resizing. Keep the headline at the same screen Y throughout the sticky scene; allow normal scene exit, static reduced-motion and no-JavaScript fallbacks.
+
+## Timed centered hero reveal
+
+Supersede previous manual headline/form offsets. Center the headline precisely in the sticky film frame and place the email form below. Start with text/form hidden and no dark overlay. Begin a smooth 0.75-second fade at duration minus 200 actual video frames (desktop ia.mp4: 24fps, mobile: 60fps). As they appear, increase the black overlay to 30%, leaving video 70% visible. Reverse on scroll back. Hide unrevealed form from interaction. Reduced motion, no JavaScript and video errors show static readable text and a usable form. Preserve stable viewport geometry during mobile toolbar changes.

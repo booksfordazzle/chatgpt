@@ -364,10 +364,7 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 /* Owner preference: white headline over the 70%-visible hero film. */
 .hero-content #hero-title{color:#fff}
 
-/* Raise only the hero headline; preserve the signup position. */
-.hero-content #hero-title{position:relative;top:-200px}
 
-.hero-content .hero-signup{position:relative;top:230px}
 
 /* Soft moving glow behind signup buttons; keep the button face and text still. */
 .waitlist-form .email-row .button{position:relative;isolation:isolate;box-shadow:0 4px 16px rgba(223,221,181,.22)}
@@ -375,9 +372,6 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 .waitlist-form .email-row .button:disabled::before{animation-play-state:paused}
 @keyframes signup-moving-glow{0%,100%{transform:translateX(-9px);opacity:.45}50%{transform:translateX(9px);opacity:.85}}
 @media(prefers-reduced-motion:reduce){.waitlist-form .email-row .button::before{animation:none;opacity:.5}}
-@media(min-width:761px){.hero-viewport-medium .hero-content #hero-title{top:-180px}}
-.hero-viewport-short .hero-content #hero-title{top:-120px}.hero-viewport-short .hero-content .hero-signup{top:140px}
-@media(max-width:760px){.hero-viewport-small .hero-content #hero-title{top:-85px}}
 
 /* Keep the sticky scene and its text still when mobile browser bars retract. */
 @media(prefers-reduced-motion:no-preference){
@@ -385,3 +379,12 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
  .js .hero-film{height:calc(var(--hero-viewport-height,100svh)*2.1)}
 }
 @media(max-width:760px) and (prefers-reduced-motion:no-preference){.js .hero-film{height:calc(var(--hero-viewport-height,100svh)*2.8)}}
+
+/* Headline stays at the exact center of the sticky film, with signup below. */
+.hero-sticky .hero-content{position:absolute;inset:0;height:100%;display:block;padding:0;width:calc(100% - var(--page-gutter)*2);margin:auto}
+.hero-content #hero-title{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);margin:0}
+.hero-content .hero-signup{position:absolute;top:calc(50% + var(--hero-title-half,112px) + 40px);left:50%;transform:translateX(-50%);margin:0}
+.hero-content .hero-signup .form-status:empty{min-height:0;margin:0}
+.hero-film.has-timed-reveal #hero-title,.hero-film.has-timed-reveal .hero-signup{opacity:var(--hero-reveal,0)}
+.hero-film.has-timed-reveal .hero-shade{background:rgba(0,0,0,.3);opacity:var(--hero-reveal,0)}
+@media(max-width:760px){.hero-content .hero-signup{top:calc(50% + var(--hero-title-half,32px) + 24px)}}
