@@ -1,6 +1,6 @@
 # PRIMAL CORE
 
-A Greek prelaunch site for primalcore.gr. Greek/English static, server-renderable HTML, self-hosted fonts, responsive WebP images, a supplied 60fps hero film and ingredient film with muted autoplay/loop and independent pause controls, a manually operated ingredient slider, and a full-bleed cinematic product image. No frontend dependencies, analytics or advertising cookies. The contact form uses FormSubmit to forward enquiries to Gmail; see CONTACT_SETUP.md for required one-time recipient activation.
+A Greek prelaunch site for primalcore.gr. Greek/English static, server-renderable HTML, self-hosted fonts, responsive WebP images, a supplied 60fps hero film and ingredient film with muted autoplay/loop and independent pause controls, a manually operated ingredient slider, and a full-bleed cinematic product image. No frontend dependencies or advertising cookies. Signup attribution uses first-party sessionStorage and no cross-session visitor ID. The contact form uses FormSubmit to forward enquiries to Gmail; see CONTACT_SETUP.md for required one-time recipient activation.
 
 ## Preview by double-clicking (no installation)
 
@@ -55,3 +55,7 @@ A generic static host can serve the pages but **cannot** run the waitlist endpoi
 This handoff prepares source and deployment configuration. It does not publish DNS, deploy Netlify, deploy your Google Apps Script receiver, or establish regulatory approval for a cosmetic product.
 
 See `REVIEW.md` for the assessment and verification results. Google Sans is self-hosted in Greek/Latin variable subsets, including italics; its SIL Open Font License is in `public/assets/GOOGLE-SANS-LICENSE.txt`.
+
+## Session attribution
+
+Both existing waitlist forms now share first-party session attribution. See [ATTRIBUTION_SETUP.md](ATTRIBUTION_SETUP.md) for exact columns, test links, device detection and the required Apps Script version deployment. No consent fields or consent/policy identifiers were changed. Run `NODE_ENV=development npm run dev` for development-only payload logging; production assets do not set the debug flag.

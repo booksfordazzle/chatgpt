@@ -7,7 +7,7 @@ export function createVercelHandler(waitlistHandler = sharedWaitlistHandler) {
     let body = '';
     try {
       const length = headers['content-length'];
-      if (length && (!/^\d+$/.test(length) || Number(length) > 4096)) {
+      if (length && (!/^\d+$/.test(length) || Number(length) > 16384)) {
         res.statusCode = 413;
         res.setHeader('Cache-Control', 'no-store');
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -28,12 +28,12 @@ export function createVercelHandler(waitlistHandler = sharedWaitlistHandler) {
         for await (const chunk of req) {
           const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
           bytes += buffer.length;
-          if (bytes > 4096) { body = null; break; }
+          if (bytes > 16384) { body = null; break; }
           chunks.push(buffer);
         }
         if (body !== null) body = Buffer.concat(chunks).toString('utf8');
       }
-      if (body === null || Buffer.byteLength(body) > 4096) {
+      if (body === null || Buffer.byteLength(body) > 16384) {
         res.statusCode = 413;
         res.setHeader('Cache-Control', 'no-store');
         res.setHeader('Content-Type', 'application/json; charset=utf-8');

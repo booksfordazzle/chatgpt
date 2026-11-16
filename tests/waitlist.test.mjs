@@ -14,7 +14,7 @@ test('Sheets receiver gets consent and bounded attribution; only confirmed stora
   assert.equal(result.statusCode, 200);
   assert.deepEqual(JSON.parse(result.body), { ok: true });
   assert.equal(sent.url, env.GOOGLE_APPS_SCRIPT_URL); assert.equal(sent.redirect, 'manual');
-  assert.deepEqual(sent.body, { email: 'Person@example.com', consent: true, token: env.WAITLIST_SHARED_SECRET, locale: 'en-US', source: 'primal-core-hero', policyVersion: '2026-11-15-sheets-v1', consentTextVersion: 'launch-updates-v1', utm: { utm_campaign: 'launch' }, referrerOrigin: 'https://referrer.test', landingPath: '/en/', deviceType: 'unknown' });
+  assert.deepEqual(sent.body, { email: 'Person@example.com', consent: true, token: env.WAITLIST_SHARED_SECRET, locale: 'en-US', source: 'primal-core-hero', policyVersion: '2026-11-15-sheets-v1', consentTextVersion: 'launch-updates-v1', utm: { utm_source: '', utm_medium: '', utm_campaign: 'launch', utm_term: '', utm_content: '' }, referrerOrigin: 'https://referrer.test', landingPath: '/en/', deviceType: 'unknown', device_type: '', os: '', browser: '', landing_page: '', referrer_full: '', screen_width: '', viewport: '' });
   assert.ok(!result.body.includes(env.WAITLIST_SHARED_SECRET));
 });
 
@@ -34,7 +34,7 @@ test('invalid requests never reach storage', async () => {
   let calls = 0;
   const handler = createHandler({ env, fetchImpl: async () => { calls++; throw Error(); } });
   for (const data of [{ email: 'invalid' }, { email: 'a\nb@example.com' }, { consent: false }, { website: 'bot.example' }, { email: 'x'.repeat(255) + '@e.com' }]) assert.equal((await handler(event(data))).statusCode, 400);
-  for (const body of ['null', '[]', '{bad', 'x'.repeat(4097)]) assert.equal((await handler(event({}, { body }))).statusCode, 400);
+  for (const body of ['null', '[]', '{bad', 'x'.repeat(16385)]) assert.equal((await handler(event({}, { body }))).statusCode, 400);
   assert.equal((await handler(event({}, { isBase64Encoded: true }))).statusCode, 400);
   assert.equal((await handler(event({}, { headers: { 'content-type': 'text/plain', accept: 'application/json' } }))).statusCode, 415);
   assert.equal(calls, 0);
@@ -80,8 +80,8 @@ test('untrusted metadata is bounded and cannot select locale, source or arbitrar
   const handler = createHandler({ env, fetchImpl: async (_url, options) => { saved = JSON.parse(options.body); return confirmed(); } });
   await handler(event({ lang: 'attacker', source: 'attacker', utm_source: 'x'.repeat(500), utm_content: { secret: 'no' }, referrer_origin: 'javascript:alert(1)', landing_path: '//attacker.test', consent_text_version: 'forged', privacy_version: 'forged' }));
   assert.equal(saved.locale, 'el'); assert.equal(saved.source, 'primal-core-waitlist');
-  assert.equal(saved.utm.utm_source.length, 128); assert.equal(saved.utm.utm_content, undefined);
-  assert.equal(saved.referrerOrigin, null); assert.equal(saved.landingPath, null);
+  assert.equal(saved.utm.utm_source.length, 128); assert.equal(saved.utm.utm_content, '');
+  assert.equal(saved.referrerOrigin, ''); assert.equal(saved.landingPath, '');
   assert.equal(saved.consent_text_version, undefined); assert.equal(saved.privacy_version, undefined);
 });
 
@@ -136,4 +136,17 @@ test('coarse device class survives both JS and native form requests without pers
  await handler(request); assert.equal(saved.deviceType,'mobile'); assert.ok(!JSON.stringify(saved).includes('private-browser-details'));
  request.headers['user-agent']='Mozilla Windows NT desktop'; await handler(request); assert.equal(saved.deviceType,'desktop');
  await handler(event({device_type:'=unsafe'})); assert.equal(saved.deviceType,'unknown');
+});
+
+test('new technical attribution reaches the receiver with unchanged consent and source and empty missing strings', async () => {
+ let saved;
+ const handler = createHandler({ env, fetchImpl: async (_url, options) => { saved = JSON.parse(options.body); return confirmed(); } });
+ await handler(event({ source: 'primal_core_footer', device_type: 'tablet', os: 'iOS', browser: 'Safari', screen_width: '1024', viewport: '1024x768', landing_page: '/?utm_source=instagram&utm_medium=bio', referrer_full: 'https://www.instagram.com/profile?link=bio' }));
+ assert.equal(saved.source, 'primal_core_footer'); assert.equal(saved.device_type, 'tablet'); assert.equal(saved.os, 'iOS'); assert.equal(saved.browser, 'Safari'); assert.equal(saved.screen_width, '1024'); assert.equal(saved.viewport, '1024x768');
+ assert.equal(saved.landing_page, '/?utm_source=instagram&utm_medium=bio'); assert.equal(saved.referrer_full, 'https://www.instagram.com/profile?link=bio');
+ assert.equal(saved.consent, true); assert.equal(saved.policyVersion, '2026-11-15-sheets-v1'); assert.equal(saved.consentTextVersion, 'launch-updates-v1');
+ assert.ok(Object.values(saved.utm).every(value => value === ''));
+ assert.ok(!('ip_address' in saved)); assert.ok(!('userAgent' in saved));
+ await handler(event({ os: '=FORMULA()', browser: 'unsafe', landing_page: '//attacker.test', referrer_full: 'javascript:alert(1)', screen_width: '-1' }));
+ for (const field of ['os', 'browser', 'landing_page', 'referrer_full', 'screen_width']) assert.equal(saved[field], '');
 });

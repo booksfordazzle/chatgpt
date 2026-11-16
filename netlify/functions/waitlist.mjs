@@ -1,6 +1,6 @@
 import { createSubmissionLimiter, rejectsBrowserOrigin } from './lib/request-guard.mjs';
 const EMAIL = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
-const SOURCES = new Set(['primal-core-waitlist', 'primal-core-hero', 'primal-core-footer']);
+const SOURCES = new Set(['primal-core-waitlist', 'primal-core-hero', 'primal-core-footer', 'primal_core_hero', 'primal_core_footer']);
 const CAMPAIGN_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
 const clean = (value, limit) => typeof value === 'string'
   ? value.trim().replace(/[\x00-\x1f\x7f]/g, '').slice(0, limit) : null;
@@ -31,7 +31,7 @@ export function createHandler({ env = process.env, fetchImpl = fetch, report = e
       : { statusCode: 303, headers: { ...headers, Location: languagePrefix + (ok ? '/thanks.html' : '/signup-unavailable.html') }, body: '' };
     if (event.httpMethod !== 'POST') return { ...reply(405, false, 'method_not_allowed'), headers: { ...headers, Allow: 'POST' } };
     if (rejectsBrowserOrigin(event.headers)) return reply(403, false, 'origin_rejected');
-    if (event.isBase64Encoded || typeof event.body !== 'string' || !event.body || Buffer.byteLength(event.body) > 4096) return reply(400, false, 'invalid_request');
+    if (event.isBase64Encoded || typeof event.body !== 'string' || !event.body || Buffer.byteLength(event.body) > 16384) return reply(400, false, 'invalid_request');
     let data;
     try {
       const type = event.headers?.['content-type'] || '';
@@ -64,16 +64,27 @@ export function createHandler({ env = process.env, fetchImpl = fetch, report = e
     }
 
     const utm = {};
-    for (const name of CAMPAIGN_KEYS) { const value = clean(data[name], 128); if (value) utm[name] = value; }
-    let referrerOrigin = null;
+    for (const name of CAMPAIGN_KEYS) { utm[name] = clean(data[name], 128) || ''; }
+    let referrerOrigin = '';
     try { const url = new URL(data.referrer_origin); if (url.protocol === 'https:' || url.protocol === 'http:') referrerOrigin = url.origin.slice(0, 256); } catch {}
     const landing = clean(data.landing_path, 256);
     // Only the pathname is retained, never potentially identifying queries/fragments.
-    const landingPath = landing?.startsWith('/') && !landing.startsWith('//') ? landing.split(/[?#]/)[0] : null;
-    // Coarse device class only; never persist the raw User-Agent. Tablets count as mobile.
+    const landingPath = landing?.startsWith('/') && !landing.startsWith('//') ? landing.split(/[?#]/)[0] : '';
+    // Preserve legacy device reporting; never persist the raw User-Agent.
     const agent = event.headers?.['user-agent'] || '';
-    const deviceType = ['mobile', 'desktop'].includes(data.device_type) ? data.device_type
+    const deviceType = ['mobile', 'tablet', 'desktop'].includes(data.device_type) ? data.device_type
       : agent ? (/Android|iPhone|iPad|iPod|Mobile/i.test(agent) ? 'mobile' : 'desktop') : 'unknown';
+    const enumValue = (value, values) => values.includes(value) ? value : '';
+    const device_type = enumValue(data.device_type, ['mobile', 'tablet', 'desktop']);
+    const os = enumValue(data.os, ['iOS', 'Android', 'Windows', 'macOS', 'Linux', 'Other']);
+    const browser = enumValue(data.browser, ['Chrome', 'Safari', 'Firefox', 'Edge', 'Brave', 'Other']);
+    const landingPage = clean(data.landing_page, 2048) || '';
+    const landing_page = landingPage.startsWith('/') && !landingPage.startsWith('//') ? landingPage : '';
+    let referrer_full = '';
+    try { const url = new URL(data.referrer_full); if (['https:', 'http:'].includes(url.protocol) && !url.username && !url.password) referrer_full = url.href.slice(0, 2048); } catch {}
+    const width = String(data.screen_width ?? '');
+    const screen_width = /^\d{1,5}$/.test(width) && Number(width) > 0 && Number(width) <= 20000 ? width : '';
+    const viewport = typeof data.viewport === 'string' && /^\d{1,5}x\d{1,5}$/.test(data.viewport) ? data.viewport : '';
     const source = SOURCES.has(data.source) ? data.source : 'primal-core-waitlist';
     const storageFailure = (diagnostic, error = 'storage_unavailable', upstreamStatus) => {
       // Only fixed reason codes and HTTP status numbers are emitted. Never log URLs,
@@ -88,7 +99,7 @@ export function createHandler({ env = process.env, fetchImpl = fetch, report = e
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, consent: true, token: secret, locale, source,
           policyVersion: '2026-11-15-sheets-v1', consentTextVersion: 'launch-updates-v1',
-          utm, referrerOrigin, landingPath, deviceType })
+          utm, referrerOrigin, landingPath, deviceType, device_type, os, browser, landing_page, referrer_full, screen_width, viewport })
       });
       // Apps Script ContentService serves its JSON through this Google-only redirect.
       // Never forward the POST body/shared secret to the redirect destination.

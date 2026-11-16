@@ -32,7 +32,7 @@ test('Vercel raw streams and buffers are supported without bypassing validation'
 test('Vercel caps request bodies and rejects wrong origins and GET', async () => {
   let calls = 0;
   const adapter = createVercelHandler(async () => { calls++; return { statusCode: 200, body: '' }; });
-  for (const req of [{ method: 'POST', headers, body: 'x'.repeat(4097) }, Object.assign(Readable.from(['x'.repeat(4097)]), { method: 'POST', headers })]) {
+  for (const req of [{ method: 'POST', headers, body: 'x'.repeat(16385) }, Object.assign(Readable.from(['x'.repeat(16385)]), { method: 'POST', headers })]) {
     const res = response(); await adapter(req, res); assert.equal(res.statusCode, 413);
   }
   assert.equal(calls, 0);

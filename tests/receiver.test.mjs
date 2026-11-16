@@ -40,7 +40,7 @@ test('Sheets saves email, receipt/version/locale/source/attribution and case-ins
 test('Sheets upgrades old five-column headers without overwriting existing rows or consent dates', () => {
   const old = ["'old@example.com", '2026-01-01T00:00:00Z', 'true', '2026-11-14', 'old-source'];
   const r = receiver([legacyHeaders, old]); assert.equal(r.submit({}).ok, true);
-  assert.deepEqual(r.rows[1], old); assert.equal(r.rows[0].length, 18); assert.equal(r.rows[2].length, 18);
+  assert.deepEqual(r.rows[1], old); assert.equal(r.rows[0].length, 24); assert.equal(r.rows[2].length, 24);
 });
 test('unknown sheet layouts fail safely without overwriting data', () => {
   const initial = [['Customer','Email'],['User','existing@example.com']]; const r = receiver(initial);
@@ -85,4 +85,33 @@ test('device class appends safely to legacy sheets and rejects arbitrary device 
  const column=r.rows[0].indexOf('Device type'); assert.equal(column,17); assert.equal(r.rows[2][column],'mobile');
  assert.equal(r.rows[1].length,5);
  assert.equal(r.submit({email:'second@example.com',deviceType:'=unsafe'}).ok,true); assert.equal(r.rows[3][column],'unknown');
+});
+
+test('six new columns append after existing columns and duplicates cannot overwrite existing attribution or consent', () => {
+ const original = receiver(); original.submit({ email: 'old@example.com' });
+ const oldHeaders = original.rows[0].slice(0, 18);
+ const oldRow = original.rows[1].slice(0, 18);
+ const r = receiver([oldHeaders, oldRow]);
+ const data = { email: 'new@example.com', source: 'primal_core_hero', deviceType: 'tablet', device_type: 'tablet', os: 'iOS', browser: 'Safari', landing_page: '/?utm_source=instagram', referrer_full: 'https://www.instagram.com/profile?link=bio', screen_width: '1024', utm: { utm_source: 'instagram' } };
+ assert.equal(r.submit(data).ok, true);
+ assert.deepEqual(r.rows[0].slice(0,18), oldHeaders);
+ assert.deepEqual(r.rows[0].slice(18), ['device_type','os','browser','landing_page','referrer_full','screen_width']);
+ assert.deepEqual(r.rows[1], oldRow);
+ assert.deepEqual(r.rows[2].slice(18), ['tablet','iOS','Safari','/?utm_source=instagram','https://www.instagram.com/profile?link=bio','1024']);
+ assert.equal(r.rows[2][4], 'primal_core_hero');
+ const before = [...r.rows[2]];
+ assert.equal(r.submit({ ...data, email: 'NEW@example.com', os: 'Android', source: 'primal_core_footer' }).ok, true);
+ assert.deepEqual(r.rows[2], before);
+});
+
+test('Vercel handler payload appends all new fields through the real Apps Script logic', async () => {
+ const { createHandler } = await import('../netlify/functions/waitlist.mjs');
+ const r = receiver();
+ const handler = createHandler({ env: { GOOGLE_APPS_SCRIPT_URL:'https://script.google.com/macros/s/test/exec', WAITLIST_SHARED_SECRET:'test-secret' }, fetchImpl: async (_url, options) => new Response(JSON.stringify(r.submit(JSON.parse(options.body)))) });
+ const payload = { email:'qa@example.com', consent:true, source:'primal-core-footer', lang:'en-US', utm_source:'instagram', utm_medium:'bio', utm_campaign:'launch_test', utm_content:'test-post', referrer_origin:'https://www.instagram.com', referrer_full:'https://www.instagram.com/profile?link=bio', landing_page:'/?utm_source=instagram&utm_medium=bio', landing_path:'/', device_type:'mobile', os:'iOS', browser:'Chrome', screen_width:'390', viewport:'390x844' };
+ const result = await handler({ httpMethod:'POST', headers:{accept:'application/json','content-type':'application/json'}, body:JSON.stringify(payload) });
+ assert.equal(result.statusCode,200);
+ const row = Object.fromEntries(r.rows[0].map((key,i)=>[key,r.rows[1][i]]));
+ assert.equal(row['UTM source'],'instagram'); assert.equal(row['UTM content'],'test-post'); assert.equal(row['device_type'],'mobile'); assert.equal(row.os,'iOS'); assert.equal(row.browser,'Chrome'); assert.equal(row.screen_width,'390');
+ assert.equal(row['Consent'],'true'); assert.equal(row['Privacy version'],'2026-11-15-sheets-v1'); assert.equal(row['Consent text version'],'launch-updates-v1');
 });

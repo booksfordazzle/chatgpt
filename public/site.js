@@ -25,6 +25,20 @@ nav?.addEventListener('click', event => { if (event.target.closest('a')) closeMe
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && menu?.getAttribute('aria-expanded') === 'true') { closeMenu(); menu.focus(); } });
 document.addEventListener('click', event => { if (!event.target.closest('.site-header')) closeMenu(); });
 const localPreview = location.protocol === 'file:';
+let attributionStorage;
+try { attributionStorage = window.sessionStorage; } catch {}
+const attribution = PrimalAttribution.create({ location, document, navigator, window, storage: attributionStorage });
+const campaignKeys = PrimalAttribution.campaignKeys;
+function populateAttributionFields(form) {
+  const fields = attribution.snapshot();
+  for (const [name, value] of Object.entries(fields)) {
+    let input = form.querySelector(`input[name="${name}"]`);
+    if (!input) { input = document.createElement('input'); input.type = 'hidden'; input.name = name; form.append(input); }
+    input.value = value;
+  }
+  return fields;
+}
+
 document.querySelectorAll('.waitlist-form').forEach(form => {
 form.addEventListener('submit', async event => {
   event.preventDefault();
@@ -45,9 +59,13 @@ form.addEventListener('submit', async event => {
   button.textContent = translate("Αποθήκευση…");
   let redirecting = false;
   try {
+    await attribution.ready;
+    const fields = populateAttributionFields(form);
+    const payload = { ...fields, email: email.value.trim(), consent: form.elements.consent.checked, lang: document.documentElement.lang, website: form.elements.website.value, source: form.elements.source.value };
+    if (window.PRIMAL_DEV === true) console.log('[waitlist payload]', payload);
     const response = await fetch('/api/waitlist', {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ email: email.value.trim(), consent: form.elements.consent.checked, lang: document.documentElement.lang, device_type: form.elements.device_type?.value, website: form.elements.website.value, source: form.elements.source.value, landing_path: form.elements.landing_path?.value, referrer_origin: form.elements.referrer_origin?.value, ...Object.fromEntries(campaignKeys.filter(key => form.elements[key]).map(key => [key, form.elements[key].value])) }),
+      body: JSON.stringify(payload),
       signal: AbortSignal.timeout(25000)
     });
     const result = await response.json();
@@ -68,21 +86,9 @@ form.addEventListener('submit', async event => {
   }
 });
 });
-// Capture only allowlisted campaign values; no tracking cookies or storage.
-const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
-const campaignQuery = new URLSearchParams(location.search);
-let referrerOrigin = '';
-try { referrerOrigin = new URL(document.referrer).origin; } catch {}
-document.querySelectorAll('.waitlist-form').forEach(form => {
-  const mobileDevice = navigator.userAgentData?.mobile === true || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const fields = { device_type: mobileDevice ? 'mobile' : 'desktop', landing_path: location.pathname, referrer_origin: referrerOrigin };
-  campaignKeys.forEach(key => { if (campaignQuery.has(key)) fields[key] = campaignQuery.get(key).slice(0, 128); });
-  Object.entries(fields).forEach(([name, value]) => {
-    const input = document.createElement('input');
-    input.type = 'hidden'; input.name = name; input.value = value;
-    form.append(input);
-  });
-});
+// One capture shared by both forms, refreshed for current viewport on submit.
+document.querySelectorAll('.waitlist-form').forEach(populateAttributionFields);
+attribution.ready.then(() => document.querySelectorAll('.waitlist-form').forEach(populateAttributionFields));
 // A sticky scroll scene on both desktop and mobile; reduced motion keeps the poster.
 const film = document.querySelector('[data-film]');
 if (film) {
@@ -396,7 +402,8 @@ if (confirmationVideoLink && confirmationVideoDialog && typeof confirmationVideo
   const status = confirmationVideoDialog.querySelector('.confirmation-video-status');
   confirmationVideoLink.addEventListener('click', event => {
     event.preventDefault();
-    if (!video.getAttribute('src')) video.src = video.dataset.src;
+    if (!video.getAttribute('src')) { video.src = video.dataset.src; video.load(); }
+    video.playsInline = true;
     confirmationVideoDialog.showModal();
     document.documentElement.classList.add('has-confirmation-video');
     status.hidden = true;

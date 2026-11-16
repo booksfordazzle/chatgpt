@@ -3,12 +3,12 @@ function doPost(event) {
   var lock = LockService.getScriptLock();
   var locked = false;
   var baseHeaders = ['Email', 'Registered at (UTC)', 'Consent', 'Privacy version', 'Source'];
-  var extraHeaders = ['Consent received at (UTC)', 'Consent text version', 'Locale', 'UTM source', 'UTM medium', 'UTM campaign', 'UTM term', 'UTM content', 'Referrer origin', 'Landing path', 'Welcome email status', 'Welcome email sent at (UTC)', 'Device type'];
+  var extraHeaders = ['Consent received at (UTC)', 'Consent text version', 'Locale', 'UTM source', 'UTM medium', 'UTM campaign', 'UTM term', 'UTM content', 'Referrer origin', 'Landing path', 'Welcome email status', 'Welcome email sent at (UTC)', 'Device type', 'device_type', 'os', 'browser', 'landing_page', 'referrer_full', 'screen_width'];
   function reply(ok) { return ContentService.createTextOutput(JSON.stringify({ ok: ok })).setMimeType(ContentService.MimeType.JSON); }
   function bounded(value, limit) { return typeof value === 'string' ? value.trim().replace(/[\x00-\x1f\x7f]/g, '').slice(0, limit) : ''; }
   function cell(value) { value = String(value); return /^[=+\-@]/.test(value) ? "'" + value : value; }
   try {
-    if (!event || !event.postData || event.postData.contents.length > 4096) return reply(false);
+    if (!event || !event.postData || event.postData.contents.length > 16384) return reply(false);
     var input = JSON.parse(event.postData.contents);
     if (!input || typeof input !== 'object' || Array.isArray(input)) return reply(false);
     var props = PropertiesService.getScriptProperties();
@@ -18,7 +18,7 @@ function doPost(event) {
     var email = typeof input.email === 'string' ? input.email.trim() : '';
     if (email.length > 254 || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email) || /[\r\n\x00]/.test(email)) return reply(false);
     var locale = input.locale === 'en-US' ? 'en-US' : 'el';
-    var source = ['primal-core-waitlist','primal-core-hero','primal-core-footer'].indexOf(input.source) >= 0 ? input.source : 'primal-core-waitlist';
+    var source = ['primal-core-waitlist','primal-core-hero','primal-core-footer','primal_core_hero','primal_core_footer'].indexOf(input.source) >= 0 ? input.source : 'primal-core-waitlist';
     var utm = input.utm && typeof input.utm === 'object' && !Array.isArray(input.utm) ? input.utm : {};
     lock.waitLock(10000); locked = true;
     var book = SpreadsheetApp.openById(props.getProperty('SPREADSHEET_ID'));
@@ -51,7 +51,12 @@ function doPost(event) {
         'Consent received at (UTC)': now, 'Consent text version': 'launch-updates-v1', 'Locale': locale,
         'Referrer origin': bounded(input.referrerOrigin, 256), 'Landing path': bounded(input.landingPath, 256),
         'Welcome email status': 'disabled',
-        'Device type': ['mobile', 'desktop'].indexOf(input.deviceType) >= 0 ? input.deviceType : 'unknown'
+        'Device type': ['mobile', 'tablet', 'desktop'].indexOf(input.deviceType) >= 0 ? input.deviceType : 'unknown',
+        'device_type': ['mobile', 'tablet', 'desktop'].indexOf(input.device_type) >= 0 ? input.device_type : '',
+        'os': ['iOS','Android','Windows','macOS','Linux','Other'].indexOf(input.os) >= 0 ? input.os : '',
+        'browser': ['Chrome','Safari','Firefox','Edge','Brave','Other'].indexOf(input.browser) >= 0 ? input.browser : '',
+        'landing_page': bounded(input.landing_page, 2048), 'referrer_full': bounded(input.referrer_full, 2048),
+        'screen_width': /^\d{1,5}$/.test(String(input.screen_width || '')) && Number(input.screen_width) > 0 && Number(input.screen_width) <= 20000 ? String(input.screen_width) : ''
       };
       ['source','medium','campaign','term','content'].forEach(function(name) { values['UTM ' + name] = bounded(utm['utm_' + name], 128); });
       var range = sheet.getRange(savedRowNumber, 1, 1, headers.length);

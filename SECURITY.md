@@ -25,3 +25,7 @@ Read-only production checks before this commit: homepage returned 200 with CSP/f
 5. **Functional verification:** the owner should perform one real contact submission, complete the provider challenge, check the localized return page and Gmail receipt. FormSubmit activation has previously been confirmed by the owner. The code does not bypass activation.
 
 No site can be guaranteed safe against all attacks. Keep hosting/runtime security patches current and monitor rejected requests and email abuse.
+
+## Attribution extension
+
+The bounded request limit is now 16 KiB (previously 4 KiB) to accommodate bounded landing/referrer URLs and technical attribution. Enums, URL schemes, screen width and formula escaping are validated without changing consent identifiers. Existing security rate-limit IP hashes are not sent as attribution or stored in the Sheet. Session-only attribution is not automatically exempt from privacy/ePrivacy requirements: the owner must assess its lawful basis and retention; no compliance certification or new consent banner is implied by the implementation.

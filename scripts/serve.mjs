@@ -8,12 +8,13 @@ http.createServer(async(req,res)=>{
  try {
   const pathname = decodeURIComponent(new URL(req.url,'http://localhost').pathname);
   if(pathname === '/api/waitlist') {
-   let body=''; for await (const chunk of req) { body+=chunk; if(Buffer.byteLength(body)>4096){res.writeHead(413);res.end();return;} }
+   let body=''; for await (const chunk of req) { body+=chunk; if(Buffer.byteLength(body)>16384){res.writeHead(413);res.end();return;} }
    const result=await handler({httpMethod:req.method,headers:req.headers,body}); res.writeHead(result.statusCode,result.headers);res.end(result.body);return;
   }
   let file=path.resolve(root,'.'+pathname);if(!file.startsWith(root+path.sep)&&file!==root){res.writeHead(403);res.end();return;}
   try { if((await stat(file)).isDirectory())file=path.join(file,'index.html'); } catch {}
   let status=200,body;try{body=await readFile(file)}catch{status=404;file=path.join(root,'404.html');body=await readFile(file)}
+  if(path.basename(file)==='site.js' && process.env.NODE_ENV==='development') body=Buffer.concat([Buffer.from('window.PRIMAL_DEV = true;\n'),body]);
   const headers={'Content-Type':mime[path.extname(file)]||'application/octet-stream','X-Content-Type-Options':'nosniff','Cache-Control':'no-store','Accept-Ranges':'bytes'};
   if(status===200 && req.headers.range){
    const range=/^bytes=(\d*)-(\d*)$/.exec(req.headers.range);
