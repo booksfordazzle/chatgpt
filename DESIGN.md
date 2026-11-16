@@ -199,3 +199,5 @@ Replace the visible Menu word on every Greek and English header with a three-lin
 Confirmation CTA becomes “Δες το βίντεο!” / “Watch the video!”, with pill corners. Open the owner-supplied portrait waitlist-confirmation.mp4 in a native modal on explicit activation, with native playback controls, accessible close button, Escape/backdrop closing and playback paused/reset on close. Keep a direct MP4 link fallback without JavaScript or dialog support. Do not preload video before opening. Per explicit owner request, disallow pinch zoom using viewport maximum-scale/user-scalable settings and root pan-only touch-action; browser accessibility overrides may still permit zoom.
 
 Latest compact menu preference: remove the outer border/background, use a 32px three-line SVG inside a 48px touch target, and retain the keyboard focus outline and accessible menu label.
+
+Latest confirmation video replacement: use the unchanged owner-supplied download (47).mp4 as waitlist-confirmation-v2.mp4 and remove the previous video asset. Keep the bilingual watch buttons, popup and direct-link fallback. The new asset URL prevents the previous cached film from being reused.
