@@ -189,3 +189,7 @@ Contact name/email fields and send buttons use pill corners; the message area us
 ## Aligned hero chapter headings
 
 Align the first hero headline’s vertical center with the vertical center of “Μπες στην λίστα αναμονής” / “Join the waitlist”, retaining the centered signup group. Measure the signup heading offset and refresh after fonts, resizing and form-size changes. Preserve the existing fade sequence.
+
+## Icon-only compact menu
+
+Replace the visible Menu word on every Greek and English header with a three-line hamburger SVG. Keep a 44×44px target, localized accessible name, aria-expanded state and existing dropdown/keyboard behavior. Desktop expanded navigation remains intact.

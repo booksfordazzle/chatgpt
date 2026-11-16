@@ -415,3 +415,6 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 
 /* Both hero chapter headings share the same vertical center. */
 .hero-film.has-timed-reveal #hero-title{top:calc(50% + var(--hero-heading-offset,0px))}
+
+/* Icon-only navigation keeps a comfortable keyboard and touch target. */
+@media(max-width:1100px){.header-inner>.menu-toggle{width:44px;height:44px;padding:10px;justify-content:center;gap:0}}
