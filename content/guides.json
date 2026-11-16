@@ -1,0 +1,74 @@
+[
+  {
+    "key": "winter",
+    "paths": [
+      "blog/xiro-derma-cheimona-andron.html",
+      "en/blog/mens-dry-skin-winter.html"
+    ],
+    "titles": [
+      "Ανδρικό ξηρό δέρμα τον χειμώνα: ένας απλός οδηγός φροντίδας",
+      "Dry skin in men during winter: a simple care guide"
+    ],
+    "indexable": true
+  },
+  {
+    "key": "hands",
+    "paths": [
+      "blog/xira-cheria-agkones.html",
+      "en/blog/dry-hands-elbows.html"
+    ],
+    "titles": [
+      "Ξηρά χέρια και τραχείς αγκώνες: φροντίδα χωρίς υπερβολές",
+      "Dry hands and rough elbows: practical everyday care"
+    ],
+    "indexable": true
+  },
+  {
+    "key": "ingredients",
+    "paths": [
+      "systatika.html",
+      "en/ingredients.html"
+    ],
+    "titles": [
+      "Συστατικά PRIMAL CORE: τι γνωρίζουμε και τι μένει να επιβεβαιωθεί",
+      "PRIMAL CORE ingredients: what is known and what is still being finalized"
+    ],
+    "indexable": false
+  },
+  {
+    "key": "tallow",
+    "paths": [
+      "odigos/tallow-gia-prosopo.html",
+      "en/guides/tallow-for-face.html"
+    ],
+    "titles": [
+      "Βόειο στέαρ για το πρόσωπο: οδηγός για το tallow balm",
+      "Beef tallow for the face: a guide to tallow balm"
+    ],
+    "indexable": true
+  },
+  {
+    "key": "shave",
+    "paths": [
+      "odigos/balm-meta-to-xyrisma.html",
+      "en/guides/post-shave-balm.html"
+    ],
+    "titles": [
+      "Balm μετά το ξύρισμα: πώς επιλέγεις και τι να προσέξεις",
+      "Post-shave balm: how to choose it and what to watch for"
+    ],
+    "indexable": true
+  },
+  {
+    "key": "mastic",
+    "paths": [
+      "odigos/mastichaiou-stin-peripoihsh.html",
+      "en/guides/chios-mastic-skincare.html"
+    ],
+    "titles": [
+      "Μαστιχέλαιο Χίου στην περιποίηση: άρωμα, προέλευση και σωστές προσδοκίες",
+      "Chios mastic oil in skincare: aroma, origin and realistic expectations"
+    ],
+    "indexable": true
+  }
+]

@@ -15,10 +15,12 @@ async function pages(dir) {
 
 test('every Greek page has a complete English counterpart and reciprocal language links',async()=>{
  const englishPages=await pages('public/en');
- assert.equal(englishPages.length,18);
+ const guides = JSON.parse(await readFile('content/guides.json','utf8'));
+ assert.equal(englishPages.length,24);
+ const counterparts = new Map(guides.map(g => ['public/' + g.paths[1], 'public/' + g.paths[0]]));
  for(const englishFile of englishPages){
   const relative=path.relative('public/en',englishFile);
-  const greekFile=path.join('public',relative);
+  const greekFile=counterparts.get(englishFile) || path.join('public',relative);
   const [english,greek]=await Promise.all([readFile(englishFile,'utf8'),readFile(greekFile,'utf8')]);
   assert.match(english,/<html lang="en-US">/);
   assert.match(greek,/<html lang="el">/);

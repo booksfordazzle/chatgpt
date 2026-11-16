@@ -5,6 +5,8 @@ const out = process.env.OUTPUT_DIR || 'dist';
 await rm(out, { recursive: true, force: true }); await mkdir(out, { recursive: true }); await cp('public', out, { recursive: true });
 const escape = value => value.replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;');
 const pages = [];
+const guides = JSON.parse(await readFile('content/guides.json', 'utf8'));
+const reviewedPages = new Set(['index.html', 'blog/index.html', 'en/blog/index.html', ...guides.filter(page => page.indexable).flatMap(page => page.paths)]);
 async function visit(dir) {
  for (const entry of await readdir(dir, { withFileTypes: true })) {
   const file = path.join(dir,entry.name); if(entry.isDirectory()){await visit(file);continue;} if(!entry.name.endsWith('.html'))continue;
@@ -33,8 +35,8 @@ async function visit(dir) {
     return `href="${escape(SITE_URL + canonicalPath(target.pathname.slice(1)))}"`;
   }));
   html = html.replace('</head>',metadata+'</head>');
-  // Only the reviewed Greek landing page is ready for the production sitemap.
-  if(relative==='index.html'&&!/<meta\b(?=[^>]*name="robots")(?=[^>]*content="[^"]*noindex)/i.test(html))pages.push(url);
+  // Only reviewed complete pages are eligible; provisional ingredient declarations stay noindexed.
+  if(reviewedPages.has(relative)&&!/<meta\b(?=[^>]*name="robots")(?=[^>]*content="[^"]*noindex)/i.test(html))pages.push(url);
   await writeFile(file,html);
  }
 }

@@ -12,11 +12,11 @@ Greek-speaking visitors interested in a simple men's face-care routine. The prod
 
 ## Product Purpose
 
-PRIMAL CORE is a prelaunch cosmetic brand site that explains the product and collects launch updates through an explicitly consented email waitlist. The owner requested an early-bird 15% launch offer.
+PRIMAL CORE is a prelaunch cosmetic brand site that explains the product and collects launch updates through an explicitly consented email waitlist. No percentage discount or early-bird offer is promised.
 
 ## Positioning
 
-Five ingredients, with beef tallow and Chios mastic oil as the two central materials in the brand story. The complete formula also includes beeswax, jojoba oil and vitamin E. The two-material story must not imply a two-ingredient formula.
+The final formulation, ingredient count, percentages and INCI are not finalized, as confirmed by the owner. Beef tallow and Chios mastic oil are the two central materials in the development story; jojoba, beeswax and vitamin E have also appeared in development materials. Do not present any proposed four- or five-ingredient formula as final.
 
 ## Operating Context
 
