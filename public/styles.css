@@ -364,6 +364,5 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 /* Owner preference: white headline over the 70%-visible hero film. */
 .hero-content #hero-title{color:#fff}
 
-
-
-
+/* Raise only the hero headline; preserve the signup position. */
+.hero-content #hero-title{position:relative;top:-50px}
