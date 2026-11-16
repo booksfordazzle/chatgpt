@@ -1,3 +1,5 @@
+> Current preview audit takes precedence over historical preferences below: the Greek homepage uses a static photographic introduction with one descriptive H1 and an emotional subtitle. Both films require native controls, preload none and static posters; no autoplay. Use qualified cosmetic wording and the audit claim ledger, pending owner-approved INCI and sensory evidence. Keep one visible evidence box, six H3 FAQs, unchecked launch-only consent and both existing forms. Secondary pages remain noindexed drafts. Earlier scroll-video, autoplay and verbatim ingredient-copy instructions are historical.
+
 # PRIMAL CORE interface
 
 Preserve the supplied dark, cinematic Greek identity: near-black surfaces, ivory typography, product and ingredient photography, restrained moss/olive tones. The home surface helps visitors understand the product's development status and request launch updates. Articles support reading.

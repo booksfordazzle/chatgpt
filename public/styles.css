@@ -469,3 +469,5 @@ html{touch-action:auto}
 @media(max-width:760px){.audit-home .audit-hero-photo{grid-row:1}.audit-home .audit-hero-photo img{height:240px;aspect-ratio:auto;object-fit:cover}}
 
 .audit-home .benefit-list summary{display:flex;align-items:center;justify-content:space-between;gap:24px}.audit-home .benefit-list summary svg{flex:none}
+.audit-home .consent-note{font-size:13px;line-height:1.6;margin-top:12px;color:var(--muted);max-width:60ch}
+.audit-home .audit-contact{width:calc(100% - var(--page-gutter)*2);margin:0 auto 56px}

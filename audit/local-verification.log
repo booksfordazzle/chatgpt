@@ -1,0 +1,16 @@
+PASS XML sitemap: one production-target root, no lastmod
+PASS 37 HTML pages: H1=1, lang/title/description/canonical/viewport present; 36 noindexed secondary pages
+PASS all built internal anchor routes resolve; Terms unlinked; no preview origin in served HTML
+PASS required stem scan: explicit negative limitations only
+Command: npm test
+Result: 47 tests passed, 0 failed (Node test runner, final audit changes).
+Command: node JSON.parse over every dist/**/*.html application/ld+json block
+Result: 1 block, Organization + WebSite only; no Product/Offer/Review/FAQPage.
+Command: git diff --name-only e768db9 -- api netlify/functions google-apps-script
+Result: empty; backend unchanged.
+Command: Python jsonschema.Draft7Validator(vercel-schema.json).validate(vercel.json)
+Result: config accepted by official Vercel schema with compatible Draft7 validator. Schema mixes draft keywords; default metaschema checking is incompatible.
+Command: PLAYWRIGHT_BROWSERS_PATH=/workspace/work/browsers node /workspace/work/preview-audit/browser-final.cjs
+Result: PASS at 1440, 390, 320px; see browser-verification.log. All form responses mocked; no actual Sheets writes or emails.
+Command: CHROME_PATH=/workspace/work/browsers/chromium-1234/chrome-linux64/chrome npm_config_cache=/workspace/work/npm-cache npx --yes lighthouse http://127.0.0.1:8083/ --chrome-flags='--headless --no-sandbox' --only-categories=performance,accessibility,best-practices,seo --output=json --output=html --output-path=audit/lighthouse-mobile
+Result: Lighthouse 13.6.0 mobile, local built-output server, Performance 94, Accessibility 100, Best Practices 100, SEO 100; CLS 0.0131; LCP 3.1s. Deliberate live preview noindex is not simulated on localhost. No performance guarantees for production network.

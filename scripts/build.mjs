@@ -24,6 +24,14 @@ async function visit(dir) {
     const rebased = path.posix.relative(path.posix.dirname(canonicalPath(relative)), destination) || './';
     return tag.replace(/href="[^"]*"/, `href="${escape(rebased + target.search + target.hash)}"`);
   });
+  // Set progressive-enhancement state before first paint, preserving no-JS fallback.
+  const bootstrap = path.posix.relative(path.posix.dirname(canonicalPath(relative)), '/bootstrap.js') || 'bootstrap.js';
+  html = html.replace('<head>', `<head><script src="${bootstrap}"></script>`);
+  // Alternate-language metadata needs absolute canonical URLs (navigation stays relative).
+  html = html.replace(/<link\b(?=[^>]*rel="alternate")(?=[^>]*hreflang=)[^>]*>/gi, tag => tag.replace(/href="([^"]+)"/, (_match, href) => {
+    const target = new URL(href, SITE_URL + '/' + relative);
+    return `href="${escape(SITE_URL + canonicalPath(target.pathname.slice(1)))}"`;
+  }));
   html = html.replace('</head>',metadata+'</head>');
   // Only the reviewed Greek landing page is ready for the production sitemap.
   if(relative==='index.html'&&!/<meta\b(?=[^>]*name="robots")(?=[^>]*content="[^"]*noindex)/i.test(html))pages.push(url);

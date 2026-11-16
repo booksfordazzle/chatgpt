@@ -1,0 +1,3 @@
+PASS viewport 1440 : zero initial movies/third-party requests/cookies; consent+honeypot; both mocked success/error submits preserve attribution/source; menu/FAQ keyboard; no JS errors/overflow
+PASS viewport 390 : zero initial movies/third-party requests/cookies; consent+honeypot; both mocked success/error submits preserve attribution/source; menu/FAQ keyboard; no JS errors/overflow
+PASS viewport 320 : zero initial movies/third-party requests/cookies; consent+honeypot; both mocked success/error submits preserve attribution/source; menu/FAQ keyboard; no JS errors/overflow
