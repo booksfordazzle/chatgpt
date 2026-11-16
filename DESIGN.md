@@ -173,3 +173,7 @@ Contact introduction now reads “Δεν θα σε σπαμάρουμε ποτέ
 ## Current hero two-stage sequence
 
 During the final 200 source video frames, fade in the headline at the absolute frame center, hold, then fade it out. After it disappears, fade in a centered group containing “Μπες στην λίστα αναμονής” / “Join the waitlist” and the complete signup form. Each chapter is independently centered. Timing within that window: headline in 0–18%, hold to 40%, out 40–55%, signup in 62–82%, hold to end. Video starts without shading; fade to 30% black with the first headline, retaining that shade through the signup chapter. Reverse naturally on scrolling back. Keep hidden form inert; static/reduced-motion/error views show both chapters in readable order.
+
+## Contact portrait and FAQ overlay
+
+Replace the contact H1 closing “Γράψε μας.” with “Είμαστε εδώ για να σε ακούσουμε.” and English “We’re here to listen.” Remove the business-name/address block and the sentence explaining use of the email to reply. Display the unchanged owner-supplied 1408×1760 contact-product.jpg vertically beside the form (below it on mobile). Superimpose the existing FAQ heading, description and link in its dark upper negative space, without covering the jar. Preserve native FAQ links and working bilingual contact submission.

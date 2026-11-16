@@ -9,3 +9,5 @@ Native POST to https://formsubmit.co/ermitikos@gmail.com forwards via FormSubmit
 Delivery must be verified after activation on the deployed domain. Until then, inbox delivery is unverified. See CONTACT_SETUP.md.
 
 Latest owner refinement: use AJAX with inline Greek/English feedback and no external confirmation screen for JavaScript visitors. Disable provider CAPTCHA; keep honeypot and native form fallback. Preserve input on failure and explicitly reject activation responses. CSP permits FormSubmit in connect-src too. No-JavaScript visitors still use native provider navigation.
+
+Current owner revision: replace the business sidebar with the supplied portrait contact-product.jpg, retaining full composition. Overlay existing FAQ help in the dark upper section. Closing H1 is now “Είμαστε εδώ για να σε ακούσουμε.” / “We’re here to listen.” Remove the reply-email explanatory sentence. Stack portrait below form on mobile.
