@@ -1,0 +1,29 @@
+HTTP/1.1 200 OK
+date: Mon, 16 Nov 2026 12:17:44 GMT
+server: envoy
+
+HTTP/2 200 
+accept-ranges: bytes
+access-control-allow-origin: *
+age: 1532
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests
+content-type: text/html; charset=utf-8
+cross-origin-opener-policy: same-origin
+cross-origin-resource-policy: same-origin
+date: Mon, 16 Nov 2026 12:17:45 GMT
+etag: "e660c6e561b0b36d8b07c88c7a36ccd8"
+last-modified: Mon, 16 Nov 2026 11:52:12 GMT
+permissions-policy: camera=(), microphone=(), geolocation=()
+referrer-policy: strict-origin-when-cross-origin
+server: envoy
+strict-transport-security: max-age=31536000
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-vercel-cache: HIT
+x-vercel-id: cle1::4qxs8-1794831465063-a354d1ad7615
+content-length: 23759
+x-envoy-upstream-service-time: 142
+
+

@@ -1,0 +1,1445 @@
+[
+  {
+    "route": "/",
+    "nav_footer": false,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "1530",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"e660c6e561b0b36d8b07c88c7a36ccd8\"",
+          "last-modified": "Mon, 16 Nov 2026 11:52:12 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "HIT",
+          "x-vercel-id": "cle1::x4l4n-1794831463131-2414f8b0af4d",
+          "content-length": "23759",
+          "x-envoy-upstream-service-time": "142"
+        }
+      }
+    ],
+    "content_chars": 3915,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/404.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"404.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"2800d3e1d7d29e3911ec56f42fb85b8e\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::sxkbx-1794831463117-6e41dacb8d63",
+          "content-length": "3389",
+          "x-envoy-upstream-service-time": "300"
+        }
+      }
+    ],
+    "content_chars": 296,
+    "classification": "custom 404 template; direct document returned 200",
+    "curl_exit": 0
+  },
+  {
+    "route": "/about.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"about.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"08ab94fbfbce554ab5ed868604b25b39\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::g8hbn-1794831463082-a7d687a528cf",
+          "content-length": "9168",
+          "x-envoy-upstream-service-time": "343"
+        }
+      }
+    ],
+    "content_chars": 1510,
+    "classification": "thin/unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/blog/ancestral-ingredients.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"ancestral-ingredients.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"8f7aadd7f77acc26305f5b7cec96d4bd\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::xz75v-1794831463158-72851de8c72c",
+          "content-length": "21978",
+          "x-envoy-upstream-service-time": "265"
+        }
+      }
+    ],
+    "content_chars": 9669,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/blog/chios-mastic-skincare.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"chios-mastic-skincare.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"62794104ee77ffe3f3a7725f49cd3a09\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::k2wpk-1794831463063-e2751a0c1561",
+          "content-length": "20816",
+          "x-envoy-upstream-service-time": "351"
+        }
+      }
+    ],
+    "content_chars": 9165,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/blog/hippocrates-tallow-mastic.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"hippocrates-tallow-mastic.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"224285174998927993baf3a079cbbc8e\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::pp9gb-1794831463134-a6af7ddcccc1",
+          "content-length": "15201",
+          "x-envoy-upstream-service-time": "268"
+        }
+      }
+    ],
+    "content_chars": 6342,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/blog/index.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"index.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"80219709030aaa48f4e1e0f1471916b2\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::6s9q8-1794831463332-a89240d2e8f4",
+          "content-length": "6717",
+          "x-envoy-upstream-service-time": "166"
+        }
+      }
+    ],
+    "content_chars": 826,
+    "classification": "thin/unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/blog/tallow-safety.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"tallow-safety.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"d4d08a05c3140d13eb12c784c46646d1\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::xdqjj-1794831463540-02ad62e776ae",
+          "content-length": "21451",
+          "x-envoy-upstream-service-time": "178"
+        }
+      }
+    ],
+    "content_chars": 9337,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/blog/tallow-science.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"tallow-science.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"c05780904f30a78ab865c313626e9daa\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::r2dbm-1794831463540-0b2686508ee2",
+          "content-length": "27864",
+          "x-envoy-upstream-service-time": "174"
+        }
+      }
+    ],
+    "content_chars": 12759,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/blog/tallow-skincare.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"tallow-skincare.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"a1d6544f0ecd3e837810b38db290b7fa\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::z9cjh-1794831463521-da83d38f11a3",
+          "content-length": "23845",
+          "x-envoy-upstream-service-time": "180"
+        }
+      }
+    ],
+    "content_chars": 10499,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/blog/thirty-days.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"thirty-days.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"3341be5c376deda59f5fd4e2bd144913\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::5x8h6-1794831463507-36f5d5f78e92",
+          "content-length": "18255",
+          "x-envoy-upstream-service-time": "192"
+        }
+      }
+    ],
+    "content_chars": 7743,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/blog/what-is-tallow.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"what-is-tallow.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"f87768c1bb44be20456aadb8dcfd5bc0\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::6qvrr-1794831463553-1b3ba0a1fcd6",
+          "content-length": "6372",
+          "x-envoy-upstream-service-time": "188"
+        }
+      }
+    ],
+    "content_chars": 1663,
+    "classification": "thin/unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/contact-sent.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"contact-sent.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"5e7181921ebd9dc7989766adbb08fd17\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::9xztw-1794831463594-39cfa4483b30",
+          "content-length": "3194",
+          "x-envoy-upstream-service-time": "188"
+        }
+      }
+    ],
+    "content_chars": 289,
+    "classification": "utility/thin",
+    "curl_exit": 0
+  },
+  {
+    "route": "/contact.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"contact.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"57682291fc96668f80995405233c2f30\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::swj57-1794831463724-d91d35948019",
+          "content-length": "6123",
+          "x-envoy-upstream-service-time": "82"
+        }
+      }
+    ],
+    "content_chars": 547,
+    "classification": "utility/thin",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/404.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"404.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"69b135720182427ede6117fc261667b7\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::jp82k-1794831463690-7ba83e32d3f9",
+          "content-length": "2965",
+          "x-envoy-upstream-service-time": "79"
+        }
+      }
+    ],
+    "content_chars": 239,
+    "classification": "custom 404 template; direct document returned 200",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/about.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"about.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"b1cd4be03371ecdaecd9ab552d94765e\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::ljrk9-1794831463810-b873a0017b81",
+          "content-length": "7397",
+          "x-envoy-upstream-service-time": "129"
+        }
+      }
+    ],
+    "content_chars": 1302,
+    "classification": "thin/unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/blog/ancestral-ingredients.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"ancestral-ingredients.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"da877357acbbf48d7073a95f2a215aaa\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::pvx7j-1794831463812-bfa6ceda7af2",
+          "content-length": "12757",
+          "x-envoy-upstream-service-time": "170"
+        }
+      }
+    ],
+    "content_chars": 8358,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/blog/chios-mastic-skincare.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"chios-mastic-skincare.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"2da3b83d442d3068977a648a2b320c73\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::mcgkz-1794831463726-fe55b84d01b0",
+          "content-length": "12080",
+          "x-envoy-upstream-service-time": "80"
+        }
+      }
+    ],
+    "content_chars": 7955,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/blog/hippocrates-tallow-mastic.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"hippocrates-tallow-mastic.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"a089b97c007c5ca19c1a55bbfb5545f1\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::4qxs8-1794831463898-17e5d7a1a4ce",
+          "content-length": "9504",
+          "x-envoy-upstream-service-time": "177"
+        }
+      }
+    ],
+    "content_chars": 5753,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/blog/index.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"index.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "etag": "\"b6894076e5fce22ffa52a1b80e0bb583\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:43 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::wbf99-1794831463888-a8b059f10700",
+          "content-length": "5470",
+          "x-envoy-upstream-service-time": "81"
+        }
+      }
+    ],
+    "content_chars": 720,
+    "classification": "thin/unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/blog/tallow-safety.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"tallow-safety.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"dd3a33231b225a0b1d4a0bdb31ed5937\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::4qxs8-1794831464051-f7d620fddc1b",
+          "content-length": "12124",
+          "x-envoy-upstream-service-time": "175"
+        }
+      }
+    ],
+    "content_chars": 7656,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/blog/tallow-science.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"tallow-science.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"fa6e19ef15203ce52443c47e59986277\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::b2prs-1794831463977-4cf8c420df72",
+          "content-length": "15574",
+          "x-envoy-upstream-service-time": "173"
+        }
+      }
+    ],
+    "content_chars": 10876,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/blog/tallow-skincare.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"tallow-skincare.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"39563b429af2a3bd3347584a03f4eca2\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::wdvbp-1794831464087-db9ead8bd6f2",
+          "content-length": "13547",
+          "x-envoy-upstream-service-time": "167"
+        }
+      }
+    ],
+    "content_chars": 8954,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/blog/thirty-days.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"thirty-days.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"586ca215d972d0ffe5f2af14734c6d08\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::g6nt5-1794831464072-047c44a6e900",
+          "content-length": "10688",
+          "x-envoy-upstream-service-time": "191"
+        }
+      }
+    ],
+    "content_chars": 6547,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/blog/what-is-tallow.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"what-is-tallow.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"2dd29930e2b0e0b2f471cf52023b617c\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::z9cjh-1794831464048-c3cc26f8c4a9",
+          "content-length": "4792",
+          "x-envoy-upstream-service-time": "83"
+        }
+      }
+    ],
+    "content_chars": 1517,
+    "classification": "thin/unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/contact-sent.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"contact-sent.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"be3c9fdf9e86ba21e14583a402691f47\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::hmdv8-1794831464142-a500327ee2b5",
+          "content-length": "2835",
+          "x-envoy-upstream-service-time": "184"
+        }
+      }
+    ],
+    "content_chars": 246,
+    "classification": "utility/thin",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/contact.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"contact.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"95e2383706cffa4b0f2a7840d0215018\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::r2nzp-1794831464106-046d031bf487",
+          "content-length": "5508",
+          "x-envoy-upstream-service-time": "73"
+        }
+      }
+    ],
+    "content_chars": 469,
+    "classification": "utility/thin",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/index.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"index.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"1303bb1f8a722f072a262537ec902bf8\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::vm5hn-1794831464186-2236cca25c1a",
+          "content-length": "19426",
+          "x-envoy-upstream-service-time": "96"
+        }
+      }
+    ],
+    "content_chars": 3401,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/philosophy.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"philosophy.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"e7faef36c9cc247d8d3c35da90242020\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::r57dj-1794831464205-8ae1d154ef4c",
+          "content-length": "7898",
+          "x-envoy-upstream-service-time": "76"
+        }
+      }
+    ],
+    "content_chars": 916,
+    "classification": "thin/unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/privacy.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"privacy.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"21d08e935e14d40c2ea023a490df2bae\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::sxkbx-1794831464339-0ff558c25d7e",
+          "content-length": "7033",
+          "x-envoy-upstream-service-time": "191"
+        }
+      }
+    ],
+    "content_chars": 3844,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/signup-unavailable.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"signup-unavailable.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"f45a324937dbd45fed72c8b5096f52d9\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::sgkhz-1794831464373-b3d3799953a7",
+          "content-length": "3199",
+          "x-envoy-upstream-service-time": "162"
+        }
+      }
+    ],
+    "content_chars": 318,
+    "classification": "utility/thin",
+    "curl_exit": 0
+  },
+  {
+    "route": "/en/thanks.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"thanks.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"b31c15c7038b3ddf282ac4a4a07fdb86\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::f57qr-1794831464355-f4a73ce26dbf",
+          "content-length": "3737",
+          "x-envoy-upstream-service-time": "201"
+        }
+      }
+    ],
+    "content_chars": 246,
+    "classification": "utility/thin",
+    "curl_exit": 0
+  },
+  {
+    "route": "/index.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "1531",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"index.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"e660c6e561b0b36d8b07c88c7a36ccd8\"",
+          "last-modified": "Mon, 16 Nov 2026 11:52:12 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "HIT",
+          "x-vercel-id": "cle1::22m9h-1794831464390-5f91ba6a0606",
+          "content-length": "23759",
+          "x-envoy-upstream-service-time": "127"
+        }
+      }
+    ],
+    "content_chars": 3915,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/philosophy.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"philosophy.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"516244bc74e3ae05bd6a118ad9eab11b\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::22m9h-1794831464402-ef75d7054b37",
+          "content-length": "9082",
+          "x-envoy-upstream-service-time": "148"
+        }
+      }
+    ],
+    "content_chars": 1000,
+    "classification": "thin/unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/privacy.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"privacy.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"ac71706b1aa5ed161fcc7ff57edcc37d\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::hxm77-1794831464460-c66e26937970",
+          "content-length": "11079",
+          "x-envoy-upstream-service-time": "161"
+        }
+      }
+    ],
+    "content_chars": 4438,
+    "classification": "substantive existing copy; claims/SEO unfinished",
+    "curl_exit": 0
+  },
+  {
+    "route": "/signup-unavailable.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"signup-unavailable.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"968ef7bd66887f8f0c798b91e453461d\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::mt45p-1794831464490-f8cc886f1398",
+          "content-length": "3659",
+          "x-envoy-upstream-service-time": "79"
+        }
+      }
+    ],
+    "content_chars": 346,
+    "classification": "utility/thin",
+    "curl_exit": 0
+  },
+  {
+    "route": "/thanks.html",
+    "nav_footer": true,
+    "chain": [
+      {
+        "status": "HTTP/2 200 ",
+        "location": "",
+        "content_type": "text/html; charset=utf-8",
+        "x_robots_tag": "",
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "age": "0",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-disposition": "inline; filename=\"thanks.html\"",
+          "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self' https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; upgrade-insecure-requests",
+          "content-type": "text/html; charset=utf-8",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "same-origin",
+          "date": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "etag": "\"e756fe65e9c5f0d67ee19d446a4de14f\"",
+          "last-modified": "Mon, 16 Nov 2026 12:17:44 GMT",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "envoy",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "cle1::zjv88-1794831464490-1322a99ed7fe",
+          "content-length": "4014",
+          "x-envoy-upstream-service-time": "95"
+        }
+      }
+    ],
+    "content_chars": 251,
+    "classification": "utility/thin",
+    "curl_exit": 0
+  }
+]

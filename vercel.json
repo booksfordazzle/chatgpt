@@ -3,8 +3,8 @@
   "framework": null,
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "cleanUrls": false,
-  "trailingSlash": true,
+  "cleanUrls": true,
+  "trailingSlash": false,
   "functions": {
     "api/waitlist.js": {
       "maxDuration": 30
@@ -56,6 +56,60 @@
           "value": "public, max-age=86400"
         }
       ]
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": ".*\\.vercel\\.app"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-forwarded-proto",
+          "value": "http"
+        },
+        {
+          "type": "host",
+          "value": "(?<previewHost>.*\\.vercel\\.app)"
+        }
+      ],
+      "destination": "https://:previewHost/:path*",
+      "statusCode": 301
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-forwarded-proto",
+          "value": "http"
+        },
+        {
+          "type": "host",
+          "value": "(?<productionHost>(?:www\\.)?primalcore\\.gr)"
+        }
+      ],
+      "destination": "https://:productionHost/:path*",
+      "statusCode": 301
     }
   ]
 }

@@ -67,9 +67,9 @@ test('hosting policies protect transport, frame embedding and script execution c
 test('contact normal submission flow enables hosted CAPTCHA instead of the AJAX bypass', async () => {
  for (const file of ['public/contact.html', 'public/en/contact.html']) {
   const html = await readFile(file, 'utf8');
-  assert.match(html, /name="_captcha" value="true"/);
+  assert.match(html, /<input\b(?=[^>]*name="_captcha")(?=[^>]*value="true")[^>]*>/);
   assert.match(html, /name="_honey"/);
-  assert.match(html, /name="_next" value="https:\/\/chatgpt-weld-mu-98.vercel.app\/(?:en\/)?contact-sent.html"/);
+  assert.doesNotMatch(html, /chatgpt-weld-mu-98\.vercel\.app/);
  }
  assert.doesNotMatch(await readFile('public/site.js', 'utf8'), /formsubmit.co\/ajax/);
 });

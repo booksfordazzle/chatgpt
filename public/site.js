@@ -379,8 +379,10 @@ document.querySelectorAll('[data-product-gallery]').forEach(gallery => {
 
 // Contact spam verification runs on FormSubmit, followed by a branded return page.
 document.querySelectorAll('[data-contact-form]').forEach(form => {
-  const next = form.querySelector('[name="_next"]');
-  if (next && /^https?:$/.test(location.protocol)) next.value = new URL(english ? '/en/contact-sent.html' : '/contact-sent.html', location.origin).href;
+  if (/^https?:$/.test(location.protocol)) {
+    const next = document.createElement('input'); next.type = 'hidden'; next.name = '_next';
+    next.value = new URL(english ? '/en/contact-sent' : '/contact-sent', location.origin).href; form.append(next);
+  }
   form.addEventListener('submit', event => {
     const status = form.querySelector('[data-contact-status]');
     if (form.querySelector('[name="_honey"]').value) {
