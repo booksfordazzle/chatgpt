@@ -151,3 +151,9 @@ Latest hero positioning: raise the headline another 50px (100px total above the 
 ## Current hero positioning and signup shine
 
 Raise the headline another 50px (150px total) and lower the signup another 90px (180px total). At heights at most 800px retain the prior -100px/+90px offsets to keep headline and consent visible. Both signup CTA pills glow softly with a 3.5-second highlight circulating only around their perimeter. Keep the text stationary, focus outline visible, shine noninteractive and reduced-motion rendering static. Apply to Greek and English.
+
+## Latest hero glow and spacing
+
+Replace the circulating perimeter shine with a soft blurred glow moving horizontally behind each signup button. Keep button text stationary and honor reduced motion. Raise the headline another 50px and lower the email form another 50px: main offsets -200px/+230px, shorter-view offsets -150px/+140px, subject to visibility safeguards.
+
+Visibility safeguards cap headline offsets at -180px on desktop up to 950px tall, -120px up to 800px tall, and -85px on mobile up to 650px tall, preventing overlap with the fixed header.
