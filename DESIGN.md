@@ -181,3 +181,7 @@ Replace the contact H1 closing “Γράψε μας.” with “Είμαστε �
 ## Earlier headline and white signup CTA
 
 Start the first hero headline fade 1.25 video seconds earlier while retaining its fade duration and the existing fade-out/signup timing; the extra time becomes a longer readable hold. Keep the video unshaded initially and dim it with the headline. Both Greek signup CTAs now say “Βάλε με”; the English equivalent remains “Let me in!”. Use white CTA faces and a soft moving white glow, replacing gold.
+
+## Rounded contact controls
+
+Contact name/email fields and send buttons use pill corners; the message area uses 16px corners. Give the send button the same soft moving white glow as signup CTAs, with static reduced-motion styling and paused animation during submission. Preserve labels and submission behavior in both languages.

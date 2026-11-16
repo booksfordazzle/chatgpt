@@ -403,3 +403,12 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 @media(min-width:761px){.contact-page .contact-layout{grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr)}}
 @media(max-width:1100px){.contact-photo .contact-help{padding:24px}.contact-photo .contact-help h2{font-size:22px;margin-bottom:16px}.contact-photo .contact-help p{font-size:15px;line-height:1.55;margin-bottom:12px}}
 @media(max-width:359px){.contact-photo .contact-help{padding:20px}.contact-photo .contact-help .text-link{min-height:32px}}
+
+/* Rounded contact fields and a luminous send action, matching signup controls. */
+.contact-form .contact-field input{border-radius:999px}
+.contact-form .contact-field textarea{border-radius:16px}
+.contact-actions .button{position:relative;isolation:isolate;border-radius:999px;background:#fff;color:#10120f;box-shadow:0 4px 18px rgba(255,255,255,.4),0 8px 32px rgba(255,255,255,.2)}
+.contact-actions .button::before{content:"";position:absolute;z-index:-1;inset:-7px -10px;border-radius:inherit;background:radial-gradient(ellipse at center,rgba(255,255,255,.8),rgba(255,255,255,.35) 45%,transparent 72%);filter:blur(9px);pointer-events:none;animation:signup-moving-glow 4s ease-in-out infinite}
+.contact-actions .button:hover{box-shadow:0 5px 24px rgba(255,255,255,.55),0 10px 38px rgba(255,255,255,.28)}
+.contact-actions .button:disabled::before{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.contact-actions .button::before{animation:none;opacity:.5}}
