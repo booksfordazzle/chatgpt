@@ -135,3 +135,7 @@ Latest owner adjustment doubles the hero emblem upward offset from 32px to 64px 
 On mobile viewports at most 650px tall, cap the upward offset at 48px so the bull stays clear of the fixed header.
 
 Latest owner hero adjustment: visually lower the headline and the whole signup form (including consent and status) by 100px, preserving the bull position and the existing space between headline and email field. Applies to both languages and viewport sizes.
+
+Latest repeated owner adjustment adds another 100px to the headline and signup offset, now 200px total. Keep the bull position unchanged.
+
+Allow vertical scrolling inside the hero content when the lowered signup exceeds the visible frame, so its controls and feedback remain reachable on short screens.
