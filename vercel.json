@@ -71,11 +71,31 @@
           "value": "noindex, nofollow"
         }
       ]
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": ".*\\.vercel\\.app"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ],
   "redirects": [
     {
       "source": "/index.html",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/index",
       "destination": "/",
       "statusCode": 301
     },
