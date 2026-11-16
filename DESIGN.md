@@ -91,3 +91,7 @@ Current consent label, both homepage forms: “Συμφωνώ να λαμβάν�
 ## Product slideshow and CTA punctuation
 
 Greek CTAs now say “Θέλω να μπώ” without an exclamation mark; English stays “Let me in!”. The full-bleed product area is a three-photo slideshow: existing product-jar-closeup.jpg plus the two JPEGs extracted unchanged from the latest supplied ZIPs. No third new ZIP was attached. Preserve the existing caption and square-corner frame. Crossfade every six seconds only while visible, with explicit pause/play, previous/next, keyboard and horizontal swipe controls. Pause on hover/focus/document hiding and preserve user pause. Reduced motion starts manually (explicit play may opt in); no-JavaScript displays every photo in order. Keep full compositions of the wide new photographs on mobile rather than cropping away the jars.
+
+## Current product carousel frame
+
+The homepage carousel contains two photographs: the supplied closed-jar closeup and the diagonal five-jar composition. Use a shared 1920:819 photo frame at every width, with images filling the frame and controls overlaid inside its bottom-right corner. Do not reserve a black strip below the photographs. Preserve the caption gap and existing slideshow behavior. Without JavaScript, show both photos at their natural aspect ratios.
