@@ -402,14 +402,20 @@ const confirmationVideoDialog = document.querySelector('#confirmation-video-dial
 if (confirmationVideoLink && confirmationVideoDialog && typeof confirmationVideoDialog.showModal === 'function') {
   const video = confirmationVideoDialog.querySelector('[data-confirmation-video]');
   const status = confirmationVideoDialog.querySelector('.confirmation-video-status');
+  // Native controls darken the opening frames; reveal them only when playback ends.
+  const hidePlaybackControls = () => { video.controls = false; status.hidden = true; };
+  video.addEventListener('play', hidePlaybackControls);
+  video.addEventListener('ended', () => { video.controls = true; });
   confirmationVideoLink.addEventListener('click', event => {
     event.preventDefault();
     if (!video.getAttribute('src')) { video.src = video.dataset.src; video.load(); }
     video.playsInline = true;
+    hidePlaybackControls();
     confirmationVideoDialog.showModal();
     document.documentElement.classList.add('has-confirmation-video');
     status.hidden = true;
     video.play().catch(() => {
+      video.controls = true;
       status.textContent = english ? 'Select Play in the video controls to start.' : 'Πάτησε αναπαραγωγή στα χειριστήρια του βίντεο.';
       status.hidden = false;
     });
