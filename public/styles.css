@@ -365,6 +365,6 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 .hero-content #hero-title{color:#fff}
 
 /* Frame the supplied transparent bull mark above the hero headline. */
-.hero-emblem{display:block;position:relative;overflow:hidden;flex:none;width:clamp(84px,8vw,120px);aspect-ratio:983/717;margin-bottom:24px}
+.hero-emblem{display:block;position:relative;transform:translateY(-32px);overflow:hidden;flex:none;width:clamp(84px,8vw,120px);aspect-ratio:983/717;margin-bottom:24px}
 .hero-emblem img{position:absolute;max-width:none;width:159.5117%;height:auto;left:-31.943%;top:-66.9456%}
 @media(max-width:760px){.hero-emblem{margin-bottom:20px}}
