@@ -3,7 +3,7 @@ PASS 37 HTML pages: H1=1, lang/title/description/canonical/viewport present; 36 
 PASS all built internal anchor routes resolve; Terms unlinked; no preview origin in served HTML
 PASS required stem scan: explicit negative limitations only
 Command: npm test
-Result: 47 tests passed, 0 failed (Node test runner, final audit changes).
+Result: 48 tests passed, 0 failed (Node test runner, final audit changes).
 Command: node JSON.parse over every dist/**/*.html application/ld+json block
 Result: 1 block, Organization + WebSite only; no Product/Offer/Review/FAQPage.
 Command: git diff --name-only e768db9 -- api netlify/functions google-apps-script
