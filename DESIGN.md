@@ -109,3 +109,7 @@ Contact uses FormSubmit AJAX with inline localized pending, submitted and error 
 ## Mobile product carousel photography
 
 At widths up to 760px, use the three unchanged 1122×1402 portrait PNGs from the owner ZIP in this order: dramatic-light single jar, floating five-jar stack, bull-horn lid. Preserve each full composition in a matching 1122:1402 frame with overlaid controls and a three-photo counter. Wider screens retain the existing two landscape photos and bar-free framing. On breakpoint changes, reset to the first photo of the appropriate set while preserving user pause. No-JavaScript shows only the relevant photo set in sequence.
+
+## Hero video brightness
+
+The owner requests the scrollable homepage hero video fully visible, without a dark overlay. The shared hero-shade background is none on desktop and mobile, in both languages. Preserve the video, sticky scroll seeking, headline and signup controls.
