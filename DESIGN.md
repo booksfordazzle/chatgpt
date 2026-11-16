@@ -1,5 +1,7 @@
 > Latest owner instruction: restore the visual design and behavior from tag V.1. Preserve the scroll-driven hero, sequential centered title/signup reveals, original sections, media, carousel, typography and spacing. SEO, crawlability and security improvements must be technical and visually neutral; the previous static audit-home redesign is superseded.
 
+Mobile email inputs must remain at least 16px to prevent browser focus zoom from cropping the adjacent signup button. Preserve user pinch zoom.
+
 # PRIMAL CORE interface
 
 Preserve the supplied dark, cinematic Greek identity: near-black surfaces, ivory typography, product and ingredient photography, restrained moss/olive tones. The home surface helps visitors understand the product's development status and request launch updates. Articles support reading.

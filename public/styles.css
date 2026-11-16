@@ -256,7 +256,7 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 .waitlist-form .email-row input::placeholder{color:#e2e5dc}
 .waitlist-form .email-row .button{flex:0 0 auto;width:auto;min-height:44px;margin:0;padding:10px 20px;border-radius:999px;background:linear-gradient(180deg,#fffefa,#dcded4);color:#10120f;font-size:15px;white-space:nowrap;box-shadow:0 2px 4px rgba(0,0,0,.2)}
 .waitlist-form .email-row .button:hover{background:var(--accent)}
-@media(max-width:760px){.waitlist-form .email-row{gap:5px;padding:4px}.waitlist-form .email-row input[type="email"]{padding-inline:12px;font-size:14px}.waitlist-form .email-row .button{padding-inline:13px;font-size:13px}}
+@media(max-width:760px){.waitlist-form .email-row{gap:5px;padding:4px}.waitlist-form .email-row input[type="email"]{padding-inline:12px;font-size:16px}.waitlist-form .email-row .button{padding-inline:13px;font-size:13px}}
 @media(max-width:359px){.waitlist-form .email-row{flex-direction:column;align-items:stretch;border-radius:26px}.waitlist-form .email-row input[type="email"],.waitlist-form .email-row .button{width:100%}}
 
 /* A bare flag after Contact; artwork also renders correctly without emoji fonts. */

@@ -5,7 +5,7 @@ Latest owner direction supersedes the static audit redesign: restore V.1 appeara
 ## Restored
 
 - Homepage body is byte-for-byte identical to tag `V.1` (`e768db9`): scroll-controlled film, sequential title/signup reveals, original sections/copy, gallery, testimonials, forms and CTAs.
-- Shared CSS matches V.1 except `touch-action:auto`, which permits accessible zoom without altering layout. Typography, colors, spacing, sizing and responsive composition are unchanged.
+- Shared CSS matches V.1 except `touch-action:auto` for accessible zoom and 16px mobile email inputs to prevent focus zoom from cropping the signup button. Typography, colors, spacing, sizing and responsive composition are unchanged.
 - Existing secondary-page bodies are restored from V.1. Contact hidden `_next` inputs are generated from the current origin rather than containing a hardcoded preview host. The Greek custom 404 and the previously requested unlinked/noindexed Terms draft remain.
 - Existing hero, ingredient, carousel and confirmation-video code and assets are retained. Only the audit-specific static-poster helper was removed from shared JS. No video replacement or new layout was introduced.
 
