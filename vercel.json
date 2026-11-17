@@ -10,7 +10,8 @@
       "maxDuration": 30
     },
     "api/welcome-email.js": {
-      "maxDuration": 60
+      "maxDuration": 60,
+      "includeFiles": "public/{apple-touch-icon.png,assets/product-gallery-1-1.jpg}"
     }
   },
   "headers": [

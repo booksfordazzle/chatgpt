@@ -8,7 +8,15 @@ From: PRIMAL CORE <hello@primalcore.gr>. Reply-To and envelope sender: hello@pri
 
 > Σε ευχαριστούμε για την εμπιστοσύνη. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.
 
-English registrations receive the equivalent English message. Both include the site link and a reply-to-withdraw sentence. No tracking pixels, attachments or advertising offer. Withdrawal replies must be processed by the owner before any further campaign; a reply is not an automated unsubscribe operation.
+English registrations receive the equivalent English message. Both include the site link and a reply-to-withdraw sentence. Two inline CID image attachments carry the bull symbol and existing closed-jar photograph; a plain-text alternative is included. No remote imagery, tracking pixels or advertising offer. Withdrawal replies must be processed by the owner before any further campaign; a reply is not an automated unsubscribe operation.
+
+## Current visual template
+
+The owner's black-and-white BECYCLE reference applies to the confirmation email: centered bull/name, ivory Georgia thank-you heading, real product photograph, existing launch-update promise, outlined site CTA and privacy/contact/address footer. The website's global design remains unchanged. Surface details and review evidence are recorded in [.impeccable/surfaces/welcome-email.md](.impeccable/surfaces/welcome-email.md).
+
+`server/welcome-template.mjs` supplies the bilingual HTML and inline images. Run `node scripts/preview-welcome-email.mjs` to regenerate `previews/welcome-el.html` and `previews/welcome-en.html` without sending mail. Greek and English browser previews at 390px and 1440px passed review; contrast ratios are 16.65:1 for main text and 9.21:1 for muted text. Responsive rules also cover 320px. Browser previews do not validate actual inbox rendering or delivery.
+
+For the already configured SMTP flow, the new template takes effect with its Vercel deployment. This visual update requires no Apps Script editing, new Sheet claims or changes to existing Google configuration. The activation steps below describe initial SMTP setup, not steps to repeat for this template update.
 
 ## Activation order
 
