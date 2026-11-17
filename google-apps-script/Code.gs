@@ -14,6 +14,7 @@ function doPost(event) {
     var props = PropertiesService.getScriptProperties();
     var expected = props.getProperty('WAITLIST_SHARED_SECRET');
     if (!expected || input.token !== expected) return reply(false);
+    if (input.action === 'check-welcome-smtp') return reply(true);
     if (input.action === 'claim-welcome-smtp') {
       lock.waitLock(10000); locked = true;
       return reply(claimWelcomeSmtp(input, props));
@@ -118,7 +119,6 @@ function setupWelcomeEmails() {
 function sendPendingWelcomeEmails() {
   var props = PropertiesService.getScriptProperties();
   if (props.getProperty('WELCOME_EMAIL_ENABLED') !== 'true' || props.getProperty('WELCOME_EMAIL_VERSION') !== 'thank-you-v1' || props.getProperty('WELCOME_EMAIL_TRANSPORT') !== 'papaki-smtp-v1') return;
-  if (props.getProperty('WELCOME_EMAIL_TRANSPORT') !== 'papaki-smtp-v1') return;
   for (var attempt = 0; attempt < 5; attempt++) {
     var lock = LockService.getScriptLock();
     if (!lock.tryLock(1000)) return;
@@ -144,7 +144,7 @@ function sendPendingWelcomeEmails() {
       sheet.getRange(rowNumber, statusColumn + 1, 1, 1).setValues([['sending-thanks-v1']]);
       SpreadsheetApp.flush();
     } finally { lock.releaseLock(); }
-    var sent = false, retrySafe = false;
+    var sent = false, retrySafe = false, sendStatus = 0, sendCode = 'request_failed';
     try {
       var response = UrlFetchApp.fetch('https://primalcore.gr/api/welcome-email', {
         method: 'post', contentType: 'application/json',
@@ -152,10 +152,14 @@ function sendPendingWelcomeEmails() {
         payload: JSON.stringify({rowNumber: rowNumber, email: email, locale: locale, registeredAt: registeredAt}),
         muteHttpExceptions: true, followRedirects: false
       });
+      sendStatus = response.getResponseCode();
       var result = JSON.parse(response.getContentText());
+      var safeCodes = ['auth_failed','smtp_host_missing','smtp_host_invalid','smtp_port_invalid','smtp_user_invalid','smtp_password_missing','receiver_not_configured','smtp_not_configured','job_not_available','claim_unavailable','smtp_send_unconfirmed'];
+      sendCode = sendStatus === 200 && result.ok === true ? 'accepted' : safeCodes.indexOf(result.code) >= 0 ? result.code : 'unexpected_response';
       sent = response.getResponseCode() === 200 && result.ok === true;
       retrySafe = response.getResponseCode() === 503 && result.retrySafe === true;
     } catch (_) { /* Uncertain response: never resend automatically. */ }
+    console.log('SMTP send: HTTP ' + sendStatus + ' / ' + sendCode);
     lock.waitLock(10000);
     try {
       sheet.getRange(rowNumber, statusColumn + 1, 1, 1).setValues([[sent ? 'sent-thanks-v1' : retrySafe ? 'pending-thanks-v1' : 'review-thanks-v1']]);
@@ -189,13 +193,13 @@ function checkWelcomeEmailConnection() {
   var status = 0, result = {}, code = 'connection_failed';
   try {
     var secret = PropertiesService.getScriptProperties().getProperty('WAITLIST_SHARED_SECRET');
-    var response = UrlFetchApp.fetch('https://primalcore.gr/api/welcome-email', {
+    var response = UrlFetchApp.fetch('https://primalcore.gr/api/welcome-email?receiver=1', {
       method: 'get', headers: { Authorization: 'Bearer ' + secret },
       muteHttpExceptions: true, followRedirects: false
     });
     status = response.getResponseCode();
     try { result = JSON.parse(response.getContentText()); } catch (_) {}
-    var allowed = ['auth_failed','smtp_host_missing','smtp_host_invalid','smtp_port_invalid','smtp_user_invalid','smtp_password_missing','receiver_not_configured','smtp_not_configured','smtp_auth_failed','smtp_timeout','smtp_dns_failed','smtp_tls_failed','smtp_connection_failed'];
+    var allowed = ['auth_failed','smtp_host_missing','smtp_host_invalid','smtp_port_invalid','smtp_user_invalid','smtp_password_missing','receiver_not_configured','smtp_not_configured','smtp_auth_failed','smtp_timeout','smtp_dns_failed','smtp_tls_failed','smtp_connection_failed','receiver_not_ready','receiver_check_failed'];
     code = status === 200 && result.ok === true ? 'ready' : allowed.indexOf(result.code) >= 0 ? result.code : 'unexpected_response';
   } catch (_) {}
   var check = {ok: code === 'ready', status: status, code: code};

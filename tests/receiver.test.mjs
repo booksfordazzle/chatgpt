@@ -24,7 +24,7 @@ function receiver(initialRows = [], options = {}) {
     SpreadsheetApp: { openById: id => { assert.equal(id, props.SPREADSHEET_ID); return { getSheetByName: () => rows.length ? sheet : null, insertSheet: () => sheet }; }, getActiveSpreadsheet: () => ({ getId: () => '1ptOmDxONI9KD_rLRZp0xGsjJezsOyIP0H3gd5HgleRg' }), flush: () => { flushed++; } },
     Utilities: { getUuid: () => 'test-generated-uuid' },
     UrlFetchApp: { fetch: (url, opts) => {
-      assert.equal(url,'https://primalcore.gr/api/welcome-email');assert.equal(opts.headers.Authorization,'Bearer test-secret');assert.equal(locked,false);
+      assert.equal(url,opts.method==='get'?'https://primalcore.gr/api/welcome-email?receiver=1':'https://primalcore.gr/api/welcome-email');assert.equal(opts.headers.Authorization,'Bearer test-secret');assert.equal(locked,false);
       let code=200,result={ok:true};
       if(options.smtpUnavailable){code=503;result={ok:false,retrySafe:true};}
       else if(opts.method==='post'){
@@ -172,4 +172,9 @@ test('SMTP claim requires matching saved consented row and can only succeed once
 });
 test('old welcome settings cannot start SMTP until the new transport is enabled',()=>{
  const r=receiver([],{props:{WELCOME_EMAIL_ENABLED:'true',WELCOME_EMAIL_VERSION:'thank-you-v1'}});r.submit({});r.sendMail();assert.equal(r.messages.length,0);assert.equal(r.rows[1][15],'pending-thanks-v1');
+});
+
+test('authenticated receiver readiness is read-only and never queues or claims messages',()=>{
+ const r=receiver();assert.equal(r.submit({action:'check-welcome-smtp',consent:false}).ok,true);assert.equal(r.rows.length,0);assert.equal(r.messages.length,0);
+ assert.equal(r.submit({action:'check-welcome-smtp',token:'wrong'}).ok,false);
 });

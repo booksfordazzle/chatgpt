@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import {createWelcomeHandler,smtpSettings} from '../server/welcome-email.mjs';
 const env={WAITLIST_SHARED_SECRET:'private-secret',SMTP_HOST:'smtp-gr.securemail.pro',SMTP_PORT:'465',SMTP_USER:'hello@primalcore.gr',SMTP_PASSWORD:'private-password',GOOGLE_APPS_SCRIPT_URL:'https://script.google.com/macros/s/example/exec'};
 const job={rowNumber:2,email:'owned@example.com',locale:'el',registeredAt:'2026-11-17T10:00:00.000Z'};
-async function run({settings=env,body=job,auth='Bearer private-secret',method='POST',fetchImpl=async()=>new Response('{"ok":true}'),fails=false,verifyFails=false}={}){
+async function run({url,settings=env,body=job,auth='Bearer private-secret',method='POST',fetchImpl=async()=>new Response('{"ok":true}'),fails=false,verifyFails=false}={}){
  const calls=[],messages=[];let closed=0;
  const handler=createWelcomeHandler({env:settings,fetchImpl:async(...args)=>{calls.push(args);return fetchImpl(...args)},createTransport:config=>{assert.equal(config.tls.rejectUnauthorized,true);assert.equal(config.requireTLS,true);return {verify:async()=>{if(verifyFails)throw Object.assign(Error('SECRET'),{code:typeof verifyFails==='string'?verifyFails:undefined})},sendMail:async message=>{messages.push(message);if(fails)throw Error('SECRET');return {accepted:[message.to]}},close:()=>closed++}}});
  const res={setHeader(){},end(body){this.body=JSON.parse(body)}};
- await handler({method,headers:{authorization:auth,'content-type':'application/json'},body},res);return{...res,calls,messages,closed};
+ await handler({method,url,headers:{authorization:auth,'content-type':'application/json'},body},res);return{...res,calls,messages,closed};
 }
 test('SMTP relay denies unauthenticated callers, malformed recipients and oversized bodies',async()=>{
  for(const args of[{auth:''},{auth:'Bearer wrong'},{body:{...job,email:'a@example.com\nBcc: b@example.com'}},{body:{...job,rowNumber:1}},{body:{...job,extra:'x'.repeat(3000)}}]){
@@ -48,4 +48,10 @@ test('readiness reports only fixed configuration and SMTP reason codes without v
  for(const [failure,code] of [['EAUTH','smtp_auth_failed'],['ETIMEDOUT','smtp_timeout'],['EDNS','smtp_dns_failed'],['CERT_HAS_EXPIRED','smtp_tls_failed'],['untrusted-secret-text','smtp_connection_failed']]){
   const r=await run({method:'GET',verifyFails:failure});assert.equal(r.body.code,code);assert(!JSON.stringify(r.body).includes('SECRET'));assert.equal(r.messages.length,0);
  }
+});
+
+test('read-only end-to-end readiness detects outdated receiver without sending or claiming',async()=>{
+ const r=await run({method:'GET',url:'/api/welcome-email?receiver=1',fetchImpl:async(_url,opts)=>{assert.equal(JSON.parse(opts.body).action,'check-welcome-smtp');return new Response(JSON.stringify({ok:true}));}});
+ assert.equal(r.statusCode,200);assert.equal(r.messages.length,0);assert.equal(r.calls.length,1);
+ const old=await run({method:'GET',url:'/api/welcome-email?receiver=1',fetchImpl:async()=>new Response(JSON.stringify({ok:false}))});assert.equal(old.body.code,'receiver_not_ready');assert.equal(old.messages.length,0);
 });

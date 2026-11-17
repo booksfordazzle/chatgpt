@@ -31,11 +31,11 @@ export function welcomeMessage(email,locale) {
     subject:english?'PRIMAL CORE — Thank you for your trust':'PRIMAL CORE — Σε ευχαριστούμε για την εμπιστοσύνη',
     text:english?'Thank you for your trust. You’ll receive a message when PRIMAL CORE is ready to launch.\n\nPRIMAL CORE\nhttps://primalcore.gr/en\n\nTo stop receiving updates, reply to this email.':'Σε ευχαριστούμε για την εμπιστοσύνη. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.\n\nPRIMAL CORE\nhttps://primalcore.gr/\n\nΑν δεν θέλεις να λαμβάνεις ενημερώσεις, απάντησε σε αυτό το email.'};
 }
-async function claimJob(job,env,fetchImpl) {
+async function claimJob(job,env,fetchImpl,action='claim-welcome-smtp') {
   const endpoint=new URL(env.GOOGLE_APPS_SCRIPT_URL);
   if(endpoint.protocol!=='https:'||endpoint.hostname!=='script.google.com'||!/^\/macros\/s\/[^/]+\/exec$/.test(endpoint.pathname)||endpoint.search||endpoint.username||endpoint.password||endpoint.port)throw Error('invalid_receiver');
   const signal=AbortSignal.timeout(15000);
-  let response=await fetchImpl(endpoint.href,{method:'POST',redirect:'manual',signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({token:env.WAITLIST_SHARED_SECRET,action:'claim-welcome-smtp',...job})});
+  let response=await fetchImpl(endpoint.href,{method:'POST',redirect:'manual',signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({token:env.WAITLIST_SHARED_SECRET,action,...job})});
   if([302,303].includes(response.status)){
     const target=new URL(response.headers.get('location'));
     if(target.protocol!=='https:'||target.hostname!=='script.googleusercontent.com'||target.pathname!=='/macros/echo'||target.port||target.username||target.password)throw Error('invalid_redirect');
@@ -54,7 +54,12 @@ export function createWelcomeHandler({env=process.env,fetchImpl=fetch,createTran
     if(req.method==='GET'){
       // Authenticated readiness check verifies TLS/login without sending any mail.
       const transport=createTransport(settings);
-      try{await transport.verify();return reply(200,{ok:true});}catch(error){return reply(503,{ok:false,retrySafe:true,code:readinessFailure(error)});}finally{transport.close();}
+      try{await transport.verify();}catch(error){return reply(503,{ok:false,retrySafe:true,code:readinessFailure(error)});}finally{transport.close();}
+      if(new URL(req.url || '/', 'https://primalcore.gr').searchParams.get('receiver')==='1'){
+        try{if(!await claimJob({},env,fetchImpl,'check-welcome-smtp'))return reply(503,{ok:false,retrySafe:true,code:'receiver_not_ready'});}
+        catch{return reply(503,{ok:false,retrySafe:true,code:'receiver_check_failed'});}
+      }
+      return reply(200,{ok:true});
     }
     let job;
     try{
