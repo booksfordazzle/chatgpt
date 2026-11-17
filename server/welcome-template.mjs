@@ -1,12 +1,16 @@
 import { readFileSync } from 'node:fs';
 const images = [
-  { filename:'primal-core-logo.jpg', path:new URL('../public/assets/home-wordmark.jpg',import.meta.url), cid:'primal-core-logo', contentType:'image/jpeg' },
+  { filename:'primal-core-bull.png', path:new URL('../public/assets/email-bull.png',import.meta.url), cid:'primal-core-bull', contentType:'image/png' },
   { filename:'primal-core-product.jpg', path:new URL('../public/assets/product-gallery-1-1.jpg',import.meta.url), cid:'primal-core-product', contentType:'image/jpeg' }
 ];
-let imageContents;
-export function welcomeAttachments() {
-  imageContents ||= images.map(image=>readFileSync(image.path));
-  return images.map((image,index)=>({filename:image.filename,content:imageContents[index],cid:image.cid,contentType:image.contentType,contentDisposition:'inline'}));
+const imageContents = new Map();
+export function welcomeAttachments(locale='el') {
+  const lang=locale==='en-US'?'en':'el';
+  const selected=[...images,{filename:`welcome-${lang}.png`,path:new URL(`../public/assets/email-welcome-${lang}.png`,import.meta.url),cid:`primal-core-welcome-${lang}`,contentType:'image/png'}];
+  return selected.map(image=>{
+    if(!imageContents.has(image.cid))imageContents.set(image.cid,readFileSync(image.path));
+    return {filename:image.filename,content:imageContents.get(image.cid),cid:image.cid,contentType:image.contentType,contentDisposition:'inline'};
+  });
 }
 export function welcomeHtml(locale) {
   const en=locale==='en-US';
@@ -25,8 +29,8 @@ export function welcomeHtml(locale) {
 <table role="presentation" width="100%" bgcolor="#000000" style="width:100%;background-color:#000000;"><tr><td align="center" valign="top">
 <!--[if mso]><table role="presentation" width="600" align="center"><tr><td><![endif]-->
 <table role="presentation" class="email-shell" width="600" style="width:100%;max-width:600px;background-color:#000000;" bgcolor="#000000">
-<tr><td class="email-pad email-top" align="center" style="padding:0 36px;"><img src="cid:primal-core-logo" alt="PRIMAL CORE" width="360" style="display:block;width:360px;max-width:100%;height:auto;margin:0 auto;"></td></tr>
-<tr><td class="email-pad" align="center" style="padding:12px 36px 0;"><h1 class="email-title" style="margin:0;font-family:'Google Sans',Arial,Helvetica,sans-serif;font-size:48px;font-weight:400;line-height:1.12;letter-spacing:-1px;color:#f1f0e9;">${heading}</h1></td></tr>
+<tr><td class="email-pad email-top" align="center" style="padding:48px 36px 0;"><img src="cid:primal-core-bull" alt="PRIMAL CORE" width="160" height="117" style="display:block;width:160px;max-width:100%;height:auto;margin:0 auto;"></td></tr>
+<tr><td class="email-pad" align="center" style="padding:32px 36px 0;"><h1 class="email-title" style="margin:0;font-family:'Google Sans',Arial,Helvetica,sans-serif;font-size:48px;font-weight:400;line-height:1.12;letter-spacing:-1px;color:#f1f0e9;"><img src="cid:primal-core-welcome-${en?'en':'el'}" alt="${heading}" width="360" height="76" style="display:block;width:360px;max-width:100%;height:auto;margin:0 auto;font-family:'Google Sans',Arial,Helvetica,sans-serif;color:#f1f0e9;"></h1></td></tr>
 <tr><td style="padding:40px 0 0;"><img src="cid:primal-core-product" alt="${alt}" width="600" style="display:block;width:100%;max-width:600px;height:auto;color:#f1f0e9;font-size:15px;"></td></tr>
 <tr><td class="email-pad" align="center" style="padding:42px 48px 0;"><p style="margin:0;font-family:'Google Sans',Arial,Helvetica,sans-serif;font-size:20px;line-height:1.6;color:#f1f0e9;">${message}</p></td></tr>
 <tr><td class="email-pad" align="center" style="padding:30px 48px 0;"><table role="presentation" width="100%" style="width:100%;max-width:360px;"><tr><td align="center" style="border:1px solid #f1f0e9;mso-padding-alt:16px 24px;"><a class="email-cta" href="${home}" style="display:block;padding:16px 24px;font-size:16px;line-height:24px;color:#f1f0e9;text-decoration:none;text-align:center;">${cta}</a></td></tr></table></td></tr>

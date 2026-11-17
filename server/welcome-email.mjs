@@ -29,7 +29,7 @@ function readinessFailure(error) {
 export function welcomeMessage(email,locale) {
   const english=locale==='en-US';
   return {from:{name:'PRIMAL CORE',address:SENDER},replyTo:SENDER,to:email,envelope:{from:SENDER,to:[email]},
-    html:welcomeHtml(locale),attachments:welcomeAttachments(),
+    html:welcomeHtml(locale),attachments:welcomeAttachments(locale),
     subject:english?'PRIMAL CORE — Welcome':'PRIMAL CORE — Καλώς ήρθες',
     text:english?'Welcome. You’ll receive a message when PRIMAL CORE is ready to launch.\n\nPRIMAL CORE\nhttps://primalcore.gr/en\n\nTo stop receiving updates, reply to this email.':'Καλώς ήρθες. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.\n\nPRIMAL CORE\nhttps://primalcore.gr/\n\nΑν δεν θέλεις να λαμβάνεις ενημερώσεις, απάντησε σε αυτό το email.'};
 }

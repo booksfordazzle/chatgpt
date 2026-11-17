@@ -12,7 +12,7 @@ test('bilingual welcome keeps accessible text, genuine destinations and inline a
   assert(html.includes(locale==='el'?'Καλώς ήρθες':'Welcome'));
   assert(message.text.includes(locale==='el'?'έτοιμο προς διάθεση':'ready to launch'));
   assert.equal(message.from.address,'hello@primalcore.gr');assert.equal(message.replyTo,'hello@primalcore.gr');
-  for(const image of welcomeAttachments()){assert(Buffer.isBuffer(image.content));assert(image.content.length>0);assert(html.includes('cid:'+image.cid));assert.equal(image.contentDisposition,'inline');}
+  for(const image of welcomeAttachments(locale)){assert(Buffer.isBuffer(image.content));assert(image.content.length>0);assert(html.includes('cid:'+image.cid));assert.equal(image.contentDisposition,'inline');}
   assert(!/<img[^>]+src="https?:/.test(html));assert(Buffer.byteLength(html)<20000);
  }
 });
@@ -22,6 +22,6 @@ test('generated email is real multipart plain-text/HTML with both inline CID ima
  const mime=message.toString();
  assert(mime.includes('multipart/alternative'));assert(mime.includes('multipart/related'));
  assert(mime.includes('Content-Type: text/plain'));assert(mime.includes('Content-Type: text/html'));
- for(const image of welcomeAttachments())assert(mime.includes('Content-ID: <'+image.cid+'>'));
+ for(const image of welcomeAttachments('el'))assert(mime.includes('Content-ID: <'+image.cid+'>'));
  transport.close();
 });
