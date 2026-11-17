@@ -13,8 +13,12 @@ function doPost(event) {
     if (!input || typeof input !== 'object' || Array.isArray(input)) return reply(false);
     var props = PropertiesService.getScriptProperties();
     var expected = props.getProperty('WAITLIST_SHARED_SECRET');
-    if (!expected || input.token !== expected || input.consent !== true
-      || input.policyVersion !== '2026-11-15-sheets-v1' || input.consentTextVersion !== 'launch-updates-v1') return reply(false);
+    if (!expected || input.token !== expected) return reply(false);
+    if (input.action === 'claim-welcome-smtp') {
+      lock.waitLock(10000); locked = true;
+      return reply(claimWelcomeSmtp(input, props));
+    }
+    if (input.consent !== true || input.policyVersion !== '2026-11-15-sheets-v1' || input.consentTextVersion !== 'launch-updates-v1') return reply(false);
     var email = typeof input.email === 'string' ? input.email.trim() : '';
     if (email.length > 254 || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email) || /[\r\n\x00]/.test(email)) return reply(false);
     var locale = input.locale === 'en-US' ? 'en-US' : 'el';
@@ -97,32 +101,34 @@ function disableWelcomeEmails() {
 
 /** Enable only the new thank-you flow; old records are never backfilled. */
 function setupWelcomeEmails() {
-  // Request sending permission before changing any settings or triggers.
-  MailApp.getRemainingDailyQuota();
-  if (GmailApp.getAliases().indexOf('hello@primalcore.gr') < 0) {
-    throw new Error('First verify hello@primalcore.gr in Gmail Settings > Accounts > Send mail as.');
-  }
   var props = PropertiesService.getScriptProperties();
   if (!props.getProperty('SPREADSHEET_ID') || !props.getProperty('WAITLIST_SHARED_SECRET')) {
     throw new Error('Run setupWaitlist first in the existing project.');
   }
+  // Verify the private SMTP connection without sending. Password stays on Vercel.
+  var check = UrlFetchApp.fetch('https://primalcore.gr/api/welcome-email', {
+    method: 'get', headers: { Authorization: 'Bearer ' + props.getProperty('WAITLIST_SHARED_SECRET') },
+    muteHttpExceptions: true, followRedirects: false
+  });
+  if (check.getResponseCode() !== 200 || JSON.parse(check.getContentText()).ok !== true) {
+    throw new Error('Configure SMTP settings on Vercel, redeploy, then run setupWelcomeEmails again.');
+  }
   disableWelcomeEmails();
   ScriptApp.newTrigger('sendPendingWelcomeEmails').timeBased().everyMinutes(5).create();
   props.setProperty('WELCOME_EMAIL_VERSION', 'thank-you-v1');
+  props.setProperty('WELCOME_EMAIL_TRANSPORT', 'papaki-smtp-v1');
   props.setProperty('WELCOME_EMAIL_ENABLED', 'true');
 }
 
 /** A bounded queue keeps provider delays/failures separate from registration. */
 function sendPendingWelcomeEmails() {
   var props = PropertiesService.getScriptProperties();
-  if (props.getProperty('WELCOME_EMAIL_ENABLED') !== 'true' || props.getProperty('WELCOME_EMAIL_VERSION') !== 'thank-you-v1') return;
-  // Never fall back to the personal Gmail sender if the alias is unavailable.
-  if (GmailApp.getAliases().indexOf('hello@primalcore.gr') < 0) return;
-  for (var attempt = 0; attempt < 10; attempt++) {
-    if (MailApp.getRemainingDailyQuota() < 1) return; // Leave pending for a later run.
+  if (props.getProperty('WELCOME_EMAIL_ENABLED') !== 'true' || props.getProperty('WELCOME_EMAIL_VERSION') !== 'thank-you-v1' || props.getProperty('WELCOME_EMAIL_TRANSPORT') !== 'papaki-smtp-v1') return;
+  if (props.getProperty('WELCOME_EMAIL_TRANSPORT') !== 'papaki-smtp-v1') return;
+  for (var attempt = 0; attempt < 5; attempt++) {
     var lock = LockService.getScriptLock();
     if (!lock.tryLock(1000)) return;
-    var sheet, headers, rowNumber, email, locale, statusColumn, sentColumn;
+    var sheet, headers, rowNumber, email, locale, registeredAt, statusColumn, sentColumn;
     try {
       if (props.getProperty('WELCOME_EMAIL_ENABLED') !== 'true') return;
       sheet = SpreadsheetApp.openById(props.getProperty('SPREADSHEET_ID')).getSheetByName('Waitlist');
@@ -138,29 +144,48 @@ function sendPendingWelcomeEmails() {
       rowNumber = index + 2;
       email = String(rows[index][0]).replace(/^'/, '');
       locale = rows[index][localeColumn];
+      registeredAt = rows[index][1];
       if (email.length > 254 || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email) || /[\r\n\x00]/.test(email)) return;
       // Claim and flush before sending. Interrupted/ambiguous sends are not retried.
       sheet.getRange(rowNumber, statusColumn + 1, 1, 1).setValues([['sending-thanks-v1']]);
       SpreadsheetApp.flush();
     } finally { lock.releaseLock(); }
-    var sent = false;
+    var sent = false, retrySafe = false;
     try {
-      var subject = locale === 'en-US' ? 'PRIMAL CORE — Thank you for your trust' : 'PRIMAL CORE — Σε ευχαριστούμε για την εμπιστοσύνη';
-      var body = locale === 'en-US'
-          ? 'Thank you for your trust. You’ll receive a message when PRIMAL CORE is ready to launch.\n\nPRIMAL CORE\nhttps://primalcore.gr/en\n\nTo stop receiving updates, reply to this email.'
-          : 'Σε ευχαριστούμε για την εμπιστοσύνη. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.\n\nPRIMAL CORE\nhttps://primalcore.gr/\n\nΑν δεν θέλεις να λαμβάνεις ενημερώσεις, απάντησε σε αυτό το email.';
-      GmailApp.sendEmail(email, subject, body, {
-        from: 'hello@primalcore.gr',
-        name: 'PRIMAL CORE',
-        replyTo: 'hello@primalcore.gr'
+      var response = UrlFetchApp.fetch('https://primalcore.gr/api/welcome-email', {
+        method: 'post', contentType: 'application/json',
+        headers: { Authorization: 'Bearer ' + props.getProperty('WAITLIST_SHARED_SECRET') },
+        payload: JSON.stringify({rowNumber: rowNumber, email: email, locale: locale, registeredAt: registeredAt}),
+        muteHttpExceptions: true, followRedirects: false
       });
-      sent = true;
-    } catch (_) { /* Ambiguous delivery: manual review prevents duplicate sends. */ }
+      var result = JSON.parse(response.getContentText());
+      sent = response.getResponseCode() === 200 && result.ok === true;
+      retrySafe = response.getResponseCode() === 503 && result.retrySafe === true;
+    } catch (_) { /* Uncertain response: never resend automatically. */ }
     lock.waitLock(10000);
     try {
-      sheet.getRange(rowNumber, statusColumn + 1, 1, 1).setValues([[sent ? 'sent-thanks-v1' : 'review-thanks-v1']]);
+      sheet.getRange(rowNumber, statusColumn + 1, 1, 1).setValues([[sent ? 'sent-thanks-v1' : retrySafe ? 'pending-thanks-v1' : 'review-thanks-v1']]);
       if (sent) sheet.getRange(rowNumber, sentColumn + 1, 1, 1).setValues([[new Date().toISOString()]]);
       SpreadsheetApp.flush();
     } finally { lock.releaseLock(); }
+    if (retrySafe) return;
   }
+}
+
+/** Called only by the secret-authenticated SMTP server, under doPost's lock. */
+function claimWelcomeSmtp(input, props) {
+  if (props.getProperty('WELCOME_EMAIL_ENABLED') !== 'true' || props.getProperty('WELCOME_EMAIL_TRANSPORT') !== 'papaki-smtp-v1') return false;
+  if (!Number.isInteger(input.rowNumber) || input.rowNumber < 2) return false;
+  var sheet = SpreadsheetApp.openById(props.getProperty('SPREADSHEET_ID')).getSheetByName('Waitlist');
+  if (!sheet || input.rowNumber > sheet.getLastRow()) return false;
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getDisplayValues()[0];
+  var statusColumn = headers.indexOf('Welcome email status'), sentColumn = headers.indexOf('Welcome email sent at (UTC)');
+  var consentColumn = headers.indexOf('Consent'), localeColumn = headers.indexOf('Locale');
+  if (headers[0] !== 'Email' || statusColumn < 0 || sentColumn < 0 || consentColumn < 0 || localeColumn < 0) return false;
+  var row = sheet.getRange(input.rowNumber, 1, 1, headers.length).getDisplayValues()[0];
+  if (String(row[0]).replace(/^'/, '') !== input.email || row[1] !== input.registeredAt || row[localeColumn] !== input.locale
+    || row[consentColumn] !== 'true' || row[sentColumn] || row[statusColumn] !== 'sending-thanks-v1') return false;
+  sheet.getRange(input.rowNumber, statusColumn + 1, 1, 1).setValues([['smtp-claimed-thanks-v1']]);
+  SpreadsheetApp.flush();
+  return true;
 }

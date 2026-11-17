@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
+import { welcomeMessage } from '../server/welcome-email.mjs';
 import { readFileSync } from 'node:fs';
 const source = readFileSync(new URL('../google-apps-script/Code.gs', import.meta.url), 'utf8');
 const legacyHeaders = ['Email','Registered at (UTC)','Consent','Privacy version','Source'];
@@ -22,8 +23,18 @@ function receiver(initialRows = [], options = {}) {
     LockService: { getScriptLock: () => ({ waitLock: () => { locked = true; }, tryLock: () => { locked = true; return true; }, hasLock: () => locked, releaseLock: () => { locked = false; } }) },
     SpreadsheetApp: { openById: id => { assert.equal(id, props.SPREADSHEET_ID); return { getSheetByName: () => rows.length ? sheet : null, insertSheet: () => sheet }; }, getActiveSpreadsheet: () => ({ getId: () => '1ptOmDxONI9KD_rLRZp0xGsjJezsOyIP0H3gd5HgleRg' }), flush: () => { flushed++; } },
     Utilities: { getUuid: () => 'test-generated-uuid' },
-    MailApp: { getRemainingDailyQuota: () => options.quota ?? 100, sendEmail: message => { assert.equal(locked, false); assert.ok(flushed > 0); if (options.mailFails) throw Error('private provider error'); messages.push(message); } },
-    GmailApp: { getAliases: () => options.aliases ?? ['hello@primalcore.gr'], sendEmail: (to, subject, body, config) => { assert.equal(locked,false); assert.ok(flushed>0); if(options.mailFails)throw Error('private provider error'); messages.push({to,subject,body,...config}); } },
+    UrlFetchApp: { fetch: (url, opts) => {
+      assert.equal(url,'https://primalcore.gr/api/welcome-email');assert.equal(opts.headers.Authorization,'Bearer test-secret');assert.equal(locked,false);
+      let code=200,result={ok:true};
+      if(options.smtpUnavailable){code=503;result={ok:false,retrySafe:true};}
+      else if(opts.method==='post'){
+        const job=JSON.parse(opts.payload);
+        const claim=context.doPost({postData:{contents:JSON.stringify({token:'test-secret',action:'claim-welcome-smtp',...job})}});
+        assert.equal(claim.ok,true);
+        if(options.mailFails){code=502;result={ok:false};}else messages.push(welcomeMessage(job.email,job.locale));
+      }
+      return {getResponseCode:()=>code,getContentText:()=>JSON.stringify(result)};
+    } },
     ScriptApp: { getProjectTriggers: () => triggers, deleteTrigger: trigger => { triggers.splice(triggers.indexOf(trigger), 1); }, newTrigger: name => ({ timeBased() { return this; }, everyMinutes(minutes) { assert.equal(minutes, 5); return this; }, create() { triggers.push({ getHandlerFunction: () => name }); } }) },
     ContentService: { MimeType: { JSON: 'json' }, createTextOutput: text => ({ setMimeType: () => JSON.parse(text) }) }
   };
@@ -125,20 +136,20 @@ test('welcome setup is repeatable and queues only future confirmed signups, pres
   r.submit({email:'new@example.com',locale:'el'}); r.sendMail(); r.sendMail();
   assert.deepEqual(r.rows[1],before); assert.equal(r.messages.length,1);
   assert.equal(r.messages[0].to,'new@example.com');
-  assert(r.messages[0].body.startsWith('Σε ευχαριστούμε για την εμπιστοσύνη. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.'));
-  assert.equal(r.messages[0].replyTo,'hello@primalcore.gr');
+  assert(r.messages[0].text.startsWith('Σε ευχαριστούμε για την εμπιστοσύνη. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.'));
+  assert.equal(r.messages[0].replyTo,'hello@primalcore.gr');assert.equal(r.messages[0].from.address,'hello@primalcore.gr');
   assert.equal(r.rows[2][15],'sent-thanks-v1'); assert(r.rows[2][16]);
   r.submit({email:'NEW@example.com'});r.sendMail();assert.equal(r.messages.length,1);
 });
-test('welcome quota defers pending messages without losing signups and consent remains required', () => {
-  const r=receiver([],{quota:0});r.setupMail();assert.equal(r.submit({}).ok,true);
+test('SMTP pre-send failures defer pending messages without losing signups and consent remains required', () => {
+  const options={};const r=receiver([],options);r.setupMail();options.smtpUnavailable=true;assert.equal(r.submit({}).ok,true);
   assert.equal(r.submit({email:'no@example.com',consent:false}).ok,false);
   r.sendMail();assert.equal(r.messages.length,0);assert.equal(r.rows[1][15],'pending-thanks-v1');
   r.disableMail();r.sendMail();assert.equal(r.messages.length,0);
 });
 test('English welcome localizes the message and ambiguous failures never auto-resend', () => {
   const r=receiver();r.setupMail();r.submit({locale:'en-US'});r.sendMail();
-  assert(r.messages[0].body.startsWith('Thank you for your trust.'));
+  assert(r.messages[0].text.startsWith('Thank you for your trust.'));
   const failed=receiver([],{mailFails:true});failed.setupMail();assert.equal(failed.submit({}).ok,true);
   failed.sendMail();assert.equal(failed.rows[1][15],'review-thanks-v1');failed.sendMail();assert.equal(failed.messages.length,0);
 });
@@ -147,4 +158,18 @@ test('historical pending and in-flight welcome statuses are never backfilled or 
  r.submit({email:'ambiguous@example.com'});r.rows[2][15]='sending-thanks-v1';r.sendMail();assert.equal(r.messages.length,0);
 });
 
-test('verified hello sender is required, with no personal-address fallback',()=>{const r=receiver();r.setupMail();r.submit({});r.sendMail();assert.equal(r.messages[0].from,'hello@primalcore.gr');const missing=receiver([],{aliases:[]});assert.throws(()=>missing.setupMail(),/First verify/);assert.notEqual(missing.props.WELCOME_EMAIL_ENABLED,'true');missing.props.WELCOME_EMAIL_ENABLED='true';missing.props.WELCOME_EMAIL_VERSION='thank-you-v1';missing.submit({});missing.sendMail();assert.equal(missing.messages.length,0);assert.equal(missing.rows[1][15],'pending-thanks-v1');});
+test('SMTP setup checks configuration and does not enable on failure',()=>{
+ const r=receiver([],{smtpUnavailable:true});assert.throws(()=>r.setupMail(),/Configure SMTP/);assert.notEqual(r.props.WELCOME_EMAIL_ENABLED,'true');
+});
+test('SMTP claim requires matching saved consented row and can only succeed once',()=>{
+ const r=receiver();r.setupMail();r.submit({});r.rows[1][15]='sending-thanks-v1';
+ const job={action:'claim-welcome-smtp',rowNumber:2,email:'person@example.com',registeredAt:r.rows[1][1],locale:'el'};
+ assert.equal(r.submit({...job,token:'wrong'}).ok,false);
+ assert.equal(r.submit({...job,email:'other@example.com'}).ok,false);
+ assert.equal(r.submit({...job,registeredAt:'forged'}).ok,false);
+ r.rows[1][2]='false';assert.equal(r.submit(job).ok,false);r.rows[1][2]='true';
+ assert.equal(r.submit(job).ok,true);assert.equal(r.submit(job).ok,false);assert.equal(r.rows[1][15],'smtp-claimed-thanks-v1');
+});
+test('old welcome settings cannot start SMTP until the new transport is enabled',()=>{
+ const r=receiver([],{props:{WELCOME_EMAIL_ENABLED:'true',WELCOME_EMAIL_VERSION:'thank-you-v1'}});r.submit({});r.sendMail();assert.equal(r.messages.length,0);assert.equal(r.rows[1][15],'pending-thanks-v1');
+});

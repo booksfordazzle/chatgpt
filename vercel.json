@@ -8,6 +8,9 @@
   "functions": {
     "api/waitlist.js": {
       "maxDuration": 30
+    },
+    "api/welcome-email.js": {
+      "maxDuration": 60
     }
   },
   "headers": [

@@ -1,44 +1,60 @@
-# Free PRIMAL CORE thank-you email
+# PRIMAL CORE welcome email — direct Papaki SMTP
 
-This revision supersedes the older no-welcome instructions in GOOGLE_SHEETS_SETUP.md.
-The source is ready; pushing to Vercel does **not** update the live Google Apps Script.
+This replaces the Gmail/MailApp/alias approach. Source pushed to Vercel is only half of activation: the owner must configure SMTP secrets there and update the existing Apps Script project. No new paid provider or domain mailbox is needed; the existing Papaki mailbox's sending limits apply. Do not promise unlimited/free delivery beyond that plan.
 
-## Message
+## Message and sender
 
-Greek subject: PRIMAL CORE — Σε ευχαριστούμε για την εμπιστοσύνη
+From: PRIMAL CORE <hello@primalcore.gr>. Reply-To and envelope sender: hello@primalcore.gr.
 
 > Σε ευχαριστούμε για την εμπιστοσύνη. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.
 
-English signups receive the equivalent English message. Both messages include the site link and a reply-to-withdraw sentence. The display name is PRIMAL CORE; both the sender and reply-to are hello@primalcore.gr. The Google account executing the trigger must have this address verified in Gmail Send mail as, using the existing Papaki mailbox SMTP. No new paid email provider is required.
+English registrations receive the equivalent English message. Both include the site link and a reply-to-withdraw sentence. No tracking pixels, attachments or advertising offer. Withdrawal replies must be processed by the owner before any further campaign; a reply is not an automated unsubscribe operation.
 
-## Activate in the existing Google project
+## Activation order
 
-0. In the same Gmail account that runs Apps Script: Settings → See all settings → Accounts and Import → Send mail as → Add another email address. Add PRIMAL CORE / hello@primalcore.gr, use the SMTP host, port and TLS mode supplied by Papaki, and verify through the hello mailbox. Enter mailbox credentials only in Gmail’s settings, never in chat or source code.
-1. Open the existing spreadsheet → Extensions → Apps Script. Save a copy/version of the current source first.
-2. Replace Code.gs with the complete current `google-apps-script/Code.gs` from this branch; save. Preserve all Script Properties, Sheet data and existing deployment URL.
-3. Run `setupWelcomeEmails` once and authorize the Google Gmail permissions required by GmailApp (broader than the previous MailApp send-only scope). The setup checks the verified alias before enabling; the worker leaves records pending if the alias is removed, without falling back to the personal Gmail sender. It installs exactly one five-minute welcome worker and enables only the new flow. Repeating it preserves data and the existing secret. Do not run a manual send to the existing list.
-4. Deploy → Manage deployments → Edit the **existing** web app → Version: New version → Deploy. Keep Execute as: Me, Access: Anyone and the same /exec URL. No Vercel environment change is needed.
-5. Register a **new email you control** on primalcore.gr. Check the private Waitlist tab for `pending-thanks-v1`, then wait for the scheduled worker (normally a few minutes, subject to Google scheduling).
-6. Verify the thank-you in that inbox/spam and the Sheet status `sent-thanks-v1` with a timestamp. Repeat the signup: it must not send a second message. Test English with another controlled new address.
+1. In the existing Apps Script, Run `disableWelcomeEmails` to stop the prior Gmail worker while switching. Keep the Sheet and deployment URL.
+2. In Vercel project Settings → Environment Variables, add the following for **Production only**, server-side. Mark SMTP_PASSWORD sensitive. Do not change the existing GOOGLE_APPS_SCRIPT_URL or WAITLIST_SHARED_SECRET, and never put secrets in chat, public files or source code.
 
-This source never sends while saving a registration. Mail delays or quota limits do not turn a saved signup into an error. Existing historical subscribers (including rows previously marked disabled/pending/sent) are not backfilled. Both existing hero/footer forms use the same receiver and retain their source/consent/version fields. No dependencies or frontend tracking changes.
+| Variable | Value |
+| --- | --- |
+| SMTP_HOST | smtp-gr.securemail.pro |
+| SMTP_PORT | 465 |
+| SMTP_USER | hello@primalcore.gr |
+| SMTP_PASSWORD | The existing hello mailbox password; enter directly in Vercel |
 
-## Limits and status
+Port 465 uses implicit SSL/TLS. Port 587 is supported only with required STARTTLS; certificate validation and TLS 1.2+ are always enforced. Server hostname comes from the existing Papaki 2.0 service and DNS; confirm account details with Papaki if login fails. Do not disable certificate checks. Other SMTP hosts are intentionally rejected in source.
 
-Consumer Gmail Apps Script normally allows 100 email recipients per day, shared with other scripts in the same account and subject to change. The worker checks actual remaining quota, sends at most 10 messages per run and leaves excess pending for later. It runs approximately every five minutes; no exact delivery time or inbox placement is guaranteed.
+3. Redeploy Production after adding the variables. No browser/client environment variables.
+4. Save a backup/version of the current Code.gs. Replace it with the full current google-apps-script/Code.gs. Save. Keep Script Properties, existing secret, Sheet ID and URL. Do not delete any rows or other project triggers.
+5. **First publish** a new version of the existing live receiver deployment: Deploy → Manage deployments → select the Web app whose URL exactly matches Vercel GOOGLE_APPS_SCRIPT_URL → Edit → New version → Deploy. Preserve Execute as: Me and access Anyone. Publishing before setup ensures the new atomic claim action is live before enabling the worker.
+6. Run `setupWelcomeEmails` and approve the Google external-request/trigger permissions. It privately verifies SMTP TLS/login through Vercel **without sending mail**, then installs one five-minute trigger and enables the SMTP flow. No Gmail alias, Gmail permission, SMTP password in Apps Script or Gmail API is required. If the private connection check fails, setup throws a fixed message instead of enabling it.
+7. Use a **new email you control** on primalcore.gr; verify the Sheet, actual inbox/Spam, sender/reply-to, and reply delivery to hello. Repeat the same signup to confirm no second mail. Test English with a second controlled address. Do not use other people's email addresses for tests.
 
-- `disabled`: registered before the new flow was enabled; never automatically sent.
-- `pending-thanks-v1`: new consented registration awaiting quota/worker.
-- `sending-thanks-v1`: claimed and flushed before calling Google. If interrupted, left for manual review rather than retrying a potentially sent message.
-- `sent-thanks-v1`: Google accepted the send, not proof of inbox receipt.
-- `review-thanks-v1`: provider exception; no automatic retry because outcome can be ambiguous. Review before manually requeuing to avoid duplicates.
+## Architecture and duplicate protection
 
-The worker skips rows without consent or with a previous send timestamp. A script lock protects queue claims, then releases before contacting the mail provider. No email address, secret or provider exception is logged.
+The existing receiver stores the consented registration and marks only new records pending. It never delays signup confirmation with an SMTP call. Every five minutes, the Apps Script worker claims up to five pending rows and calls /api/welcome-email over HTTPS using the existing server secret. SMTP credentials stay only on Vercel.
 
-Run `disableWelcomeEmails` to disable future sending and remove only the welcome trigger; Sheet/history and unrelated triggers remain intact. This does not recall mail already in flight. Withdrawal replies require the owner to remove the recipient from pending/future launch lists; this is not an automated unsubscribe or launch campaign service.
+Before SMTP, Vercel calls the authenticated Google receiver to atomically match the row number, email, registration timestamp, language, consent and unsent state. It then changes the state to smtp-claimed-thanks-v1 under a script lock. Each job can be authorized once even if requests are replayed across multiple Vercel instances. Fixed message content and sender prevent an arbitrary mail relay. The /api endpoint is not a browser submission endpoint and denies requests without authentication. Readiness is authenticated and tests TLS/login without sending.
 
-Quota reference: https://developers.google.com/apps-script/guides/services/quotas
+The Google ContentService redirect is restricted to HTTPS script.googleusercontent.com/macros/echo and followed as GET without forwarding secret or body. No email, SMTP credentials or raw provider exceptions are logged/returned. Nodemailer is the one added dependency; it implements SMTP/TLS rather than custom protocol code.
 
-## Gmail alias support lifecycle
+## Status and recovery
 
-Google’s Gmail Help currently announces ending Send as support for third-party addresses in January 2027: https://support.google.com/mail/answer/22370 . This Papaki-alias route is temporary and must be replaced with direct authenticated Papaki SMTP (or an appropriately configured Google Workspace mailbox) before that change. The mailbox remains with Papaki. Do not assume that a working current alias guarantees future support.
+- disabled/blank/legacy pending: not automatically backfilled; preserve historical records.
+- pending-thanks-v1: waiting for worker. Missing server configuration before a send safely leaves it pending.
+- sending-thanks-v1: claimed by worker before HTTP; interrupted work requires review.
+- smtp-claimed-thanks-v1: authorized once by the receiver, before SMTP; interrupted work requires review.
+- sent-thanks-v1: provider accepted the send; not proof of inbox delivery.
+- review-thanks-v1: uncertain/provider failure; no automatic resend. Inspect before manually requeuing, since it might already have been accepted.
+
+The pending rows created by the previous thank-you revision are compatible; sent/review/disabled rows are not automatically sent again. Enabling the new worker therefore may send genuinely pending test registrations. Delete only owner-approved test rows or mark their status disabled before setup if they should not send. Existing consent, dates, source, versions and attribution remain intact. Sending limits/bounces/spam policies are controlled by Papaki; mailbox replies and delivery failures must be monitored.
+
+Run disableWelcomeEmails to pause and remove only the welcome trigger. It does not delete records or recall in-flight mail. No automated launch campaign is implemented.
+
+## DNS and delivery verification
+
+Keep existing MX and SPF. Never add a second SPF record. Check the provider's DKIM instructions for this exact mailbox/product and publish only its supplied selector/value. Current DMARC monitoring can stay p=none while validating; do not enforce reject until legitimate senders pass alignment. Use a controlled received message's full headers to confirm SPF/DKIM/DMARC and From: hello. SMTP acceptance alone does not establish authentication or inbox delivery.
+
+Provider references:
+- https://support.papaki.com/help/how-do-i-set-up-my-email-on-a-mac/?lang=en
+- https://support.papaki.com/help/which-settings-should-i-use-in-a-mail-client/?lang=en
