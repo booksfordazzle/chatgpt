@@ -27,7 +27,7 @@ function receiver(initialRows = [], options = {}) {
     ContentService: { MimeType: { JSON: 'json' }, createTextOutput: text => ({ setMimeType: () => JSON.parse(text) }) }
   };
   vm.createContext(context); vm.runInContext(source, context);
-  return { submit: data => context.doPost({ postData: { contents: JSON.stringify({ token: 'test-secret', consent: true, policyVersion: '2026-11-15-sheets-v1', consentTextVersion: 'launch-updates-v1', email: 'person@example.com', ...data }) } }), rows, props, messages, triggers, setup: () => context.setupWaitlist(), setupMail: () => context.setupWelcomeEmails(), sendMail: () => context.sendPendingWelcomeEmails(), state: () => ({ locked, flushed }) };
+  return { submit: data => context.doPost({ postData: { contents: JSON.stringify({ token: 'test-secret', consent: true, policyVersion: '2026-11-15-sheets-v1', consentTextVersion: 'launch-updates-v1', email: 'person@example.com', ...data }) } }), rows, props, messages, triggers, setup: () => context.setupWaitlist(), setupMail: () => context.setupWelcomeEmails(), disableMail: () => context.disableWelcomeEmails(), sendMail: () => context.sendPendingWelcomeEmails(), state: () => ({ locked, flushed }) };
 }
 test('Sheets saves email, receipt/version/locale/source/attribution and case-insensitive duplicates do not overwrite', () => {
   const r = receiver(); assert.equal(r.submit({ locale: 'en-US', source: 'primal-core-hero', utm: { utm_campaign: 'launch' }, referrerOrigin: 'https://example.com', landingPath: '/en/' }).ok, true);
@@ -70,11 +70,11 @@ test('new signups remain saved and no welcome is queued or sent, even with the o
   r.sendMail(); assert.equal(r.messages.length, 0);
   assert.equal(r.submit({}).ok, true); assert.equal(r.rows.length, 2);
 });
-test('disable helper removes only the welcome trigger, preserves records and cannot re-enable mail', () => {
+test('disable helper removes only the welcome trigger and preserves records', () => {
   const r = receiver([], { props: { WELCOME_EMAIL_ENABLED: 'true' } }); r.submit({});
   const own = { getHandlerFunction: () => 'sendPendingWelcomeEmails' };
   const other = { getHandlerFunction: () => 'otherBusinessTask' };
-  r.triggers.push(own, other); r.setupMail(); r.setupMail();
+  r.triggers.push(own, other); r.disableMail(); r.disableMail();
   assert.equal(r.props.WELCOME_EMAIL_ENABLED, 'false'); assert.deepEqual(r.triggers, [other]);
   assert.equal(r.rows.length, 2); assert.equal(r.props.WAITLIST_SHARED_SECRET, 'test-secret'); assert.equal(r.messages.length, 0);
 });
@@ -114,4 +114,34 @@ test('Vercel handler payload appends all new fields through the real Apps Script
  const row = Object.fromEntries(r.rows[0].map((key,i)=>[key,r.rows[1][i]]));
  assert.equal(row['UTM source'],'instagram'); assert.equal(row['UTM content'],'test-post'); assert.equal(row['device_type'],'mobile'); assert.equal(row.os,'iOS'); assert.equal(row.browser,'Chrome'); assert.equal(row.screen_width,'390');
  assert.equal(row['Consent'],'true'); assert.equal(row['Privacy version'],'2026-11-15-sheets-v1'); assert.equal(row['Consent text version'],'launch-updates-v1');
+});
+
+
+test('welcome setup is repeatable and queues only future confirmed signups, preserving old records', () => {
+  const r = receiver(); r.submit({email:'old@example.com'}); const before=[...r.rows[1]];
+  r.setupMail(); r.setupMail(); assert.equal(r.triggers.length,1);
+  assert.equal(r.props.WAITLIST_SHARED_SECRET,'test-secret');
+  r.submit({email:'new@example.com',locale:'el'}); r.sendMail(); r.sendMail();
+  assert.deepEqual(r.rows[1],before); assert.equal(r.messages.length,1);
+  assert.equal(r.messages[0].to,'new@example.com');
+  assert(r.messages[0].body.startsWith('Σε ευχαριστούμε για την εμπιστοσύνη. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.'));
+  assert.equal(r.messages[0].replyTo,'ermitikos@gmail.com');
+  assert.equal(r.rows[2][15],'sent-thanks-v1'); assert(r.rows[2][16]);
+  r.submit({email:'NEW@example.com'});r.sendMail();assert.equal(r.messages.length,1);
+});
+test('welcome quota defers pending messages without losing signups and consent remains required', () => {
+  const r=receiver([],{quota:0});r.setupMail();assert.equal(r.submit({}).ok,true);
+  assert.equal(r.submit({email:'no@example.com',consent:false}).ok,false);
+  r.sendMail();assert.equal(r.messages.length,0);assert.equal(r.rows[1][15],'pending-thanks-v1');
+  r.disableMail();r.sendMail();assert.equal(r.messages.length,0);
+});
+test('English welcome localizes the message and ambiguous failures never auto-resend', () => {
+  const r=receiver();r.setupMail();r.submit({locale:'en-US'});r.sendMail();
+  assert(r.messages[0].body.startsWith('Thank you for your trust.'));
+  const failed=receiver([],{mailFails:true});failed.setupMail();assert.equal(failed.submit({}).ok,true);
+  failed.sendMail();assert.equal(failed.rows[1][15],'review-thanks-v1');failed.sendMail();assert.equal(failed.messages.length,0);
+});
+test('historical pending and in-flight welcome statuses are never backfilled or resent',()=>{
+ const r=receiver();r.setupMail();r.submit({email:'legacy@example.com'});r.rows[1][15]='pending';
+ r.submit({email:'ambiguous@example.com'});r.rows[2][15]='sending-thanks-v1';r.sendMail();assert.equal(r.messages.length,0);
 });

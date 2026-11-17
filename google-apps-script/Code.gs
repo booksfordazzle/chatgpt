@@ -50,7 +50,7 @@ function doPost(event) {
         'Privacy version': '2026-11-15-sheets-v1', 'Source': source,
         'Consent received at (UTC)': now, 'Consent text version': 'launch-updates-v1', 'Locale': locale,
         'Referrer origin': bounded(input.referrerOrigin, 256), 'Landing path': bounded(input.landingPath, 256),
-        'Welcome email status': 'disabled',
+        'Welcome email status': props.getProperty('WELCOME_EMAIL_ENABLED') === 'true' && props.getProperty('WELCOME_EMAIL_VERSION') === 'thank-you-v1' ? 'pending-thanks-v1' : 'disabled',
         'Device type': ['mobile', 'tablet', 'desktop'].indexOf(input.deviceType) >= 0 ? input.deviceType : 'unknown',
         'device_type': ['mobile', 'tablet', 'desktop'].indexOf(input.device_type) >= 0 ? input.device_type : '',
         'os': ['iOS','Android','Windows','macOS','Linux','Other'].indexOf(input.os) >= 0 ? input.os : '',
@@ -95,8 +95,67 @@ function disableWelcomeEmails() {
   });
 }
 
-/** Kept so an old scheduled trigger is harmless after this source is installed. */
-function sendPendingWelcomeEmails() { return; }
+/** Enable only the new thank-you flow; old records are never backfilled. */
+function setupWelcomeEmails() {
+  // Request sending permission before changing any settings or triggers.
+  MailApp.getRemainingDailyQuota();
+  var props = PropertiesService.getScriptProperties();
+  if (!props.getProperty('SPREADSHEET_ID') || !props.getProperty('WAITLIST_SHARED_SECRET')) {
+    throw new Error('Run setupWaitlist first in the existing project.');
+  }
+  disableWelcomeEmails();
+  ScriptApp.newTrigger('sendPendingWelcomeEmails').timeBased().everyMinutes(5).create();
+  props.setProperty('WELCOME_EMAIL_VERSION', 'thank-you-v1');
+  props.setProperty('WELCOME_EMAIL_ENABLED', 'true');
+}
 
-/** Historical setup entry point now only disables welcome sending. */
-function setupWelcomeEmails() { disableWelcomeEmails(); }
+/** A bounded queue keeps provider delays/failures separate from registration. */
+function sendPendingWelcomeEmails() {
+  var props = PropertiesService.getScriptProperties();
+  if (props.getProperty('WELCOME_EMAIL_ENABLED') !== 'true' || props.getProperty('WELCOME_EMAIL_VERSION') !== 'thank-you-v1') return;
+  for (var attempt = 0; attempt < 10; attempt++) {
+    if (MailApp.getRemainingDailyQuota() < 1) return; // Leave pending for a later run.
+    var lock = LockService.getScriptLock();
+    if (!lock.tryLock(1000)) return;
+    var sheet, headers, rowNumber, email, locale, statusColumn, sentColumn;
+    try {
+      if (props.getProperty('WELCOME_EMAIL_ENABLED') !== 'true') return;
+      sheet = SpreadsheetApp.openById(props.getProperty('SPREADSHEET_ID')).getSheetByName('Waitlist');
+      if (!sheet || sheet.getLastRow() < 2) return;
+      headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getDisplayValues()[0];
+      statusColumn = headers.indexOf('Welcome email status');
+      sentColumn = headers.indexOf('Welcome email sent at (UTC)');
+      var consentColumn = headers.indexOf('Consent'), localeColumn = headers.indexOf('Locale');
+      if (headers[0] !== 'Email' || statusColumn < 0 || sentColumn < 0 || consentColumn < 0 || localeColumn < 0) return;
+      var rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, headers.length).getDisplayValues();
+      var index = rows.findIndex(function(row) { return row[statusColumn] === 'pending-thanks-v1' && row[consentColumn] === 'true' && !row[sentColumn]; });
+      if (index < 0) return;
+      rowNumber = index + 2;
+      email = String(rows[index][0]).replace(/^'/, '');
+      locale = rows[index][localeColumn];
+      if (email.length > 254 || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email) || /[\r\n\x00]/.test(email)) return;
+      // Claim and flush before sending. Interrupted/ambiguous sends are not retried.
+      sheet.getRange(rowNumber, statusColumn + 1, 1, 1).setValues([['sending-thanks-v1']]);
+      SpreadsheetApp.flush();
+    } finally { lock.releaseLock(); }
+    var sent = false;
+    try {
+      MailApp.sendEmail({
+        to: email,
+        subject: locale === 'en-US' ? 'PRIMAL CORE — Thank you for your trust' : 'PRIMAL CORE — Σε ευχαριστούμε για την εμπιστοσύνη',
+        body: locale === 'en-US'
+          ? 'Thank you for your trust. You’ll receive a message when PRIMAL CORE is ready to launch.\n\nPRIMAL CORE\nhttps://primalcore.gr/en\n\nTo stop receiving updates, reply to this email.'
+          : 'Σε ευχαριστούμε για την εμπιστοσύνη. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.\n\nPRIMAL CORE\nhttps://primalcore.gr/\n\nΑν δεν θέλεις να λαμβάνεις ενημερώσεις, απάντησε σε αυτό το email.',
+        name: 'PRIMAL CORE',
+        replyTo: 'ermitikos@gmail.com'
+      });
+      sent = true;
+    } catch (_) { /* Ambiguous delivery: manual review prevents duplicate sends. */ }
+    lock.waitLock(10000);
+    try {
+      sheet.getRange(rowNumber, statusColumn + 1, 1, 1).setValues([[sent ? 'sent-thanks-v1' : 'review-thanks-v1']]);
+      if (sent) sheet.getRange(rowNumber, sentColumn + 1, 1, 1).setValues([[new Date().toISOString()]]);
+      SpreadsheetApp.flush();
+    } finally { lock.releaseLock(); }
+  }
+}

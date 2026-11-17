@@ -1,3 +1,5 @@
+> **17 November 2026 update:** The owner has requested free thank-you emails again. Follow [WELCOME_EMAIL_SETUP.md](WELCOME_EMAIL_SETUP.md) and the current Code.gs. Older instructions below describing disabled welcome sending are historical and superseded; existing storage setup, URL and secret remain unchanged.
+
 # Activate Google Sheets signup storage
 
 The active waitlist now uses the existing Google Sheet, not Supabase. The owner has reported successful live Google storage and receipt of the previous optional welcome emails. Live device-column rollout still requires the Apps Script update below. No existing Sheet or Supabase records have been copied/deleted. The current owner preference is an on-page confirmation redirect only; automatic welcome sending is disabled in the current source.
