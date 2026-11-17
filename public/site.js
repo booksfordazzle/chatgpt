@@ -275,7 +275,15 @@ document.querySelectorAll('[data-testimonial]').forEach(frame => {
       video.load();
       // Keep the selected film in view rather than its below-video switch.
       const headerHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header')) || 0;
-      if (frame.getBoundingClientRect().top < headerHeight) frame.scrollIntoView({ block: 'start', behavior: 'instant' });
+      if (matchMedia('(max-width: 760px)').matches) {
+        // Center the picture itself, excluding Next, padding and scroll margins.
+        requestAnimationFrame(() => {
+          const rect = video.getBoundingClientRect();
+          const viewport = window.visualViewport;
+          const center = viewport ? viewport.offsetTop + viewport.height / 2 : innerHeight / 2;
+          window.scrollTo({ top: window.scrollY + rect.top + rect.height / 2 - center, behavior: 'instant' });
+        });
+      } else if (frame.getBoundingClientRect().top < headerHeight) frame.scrollIntoView({ block: 'start', behavior: 'instant' });
       playSelected();
     });
   }
