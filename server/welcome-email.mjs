@@ -17,7 +17,7 @@ export function smtpSettings(env) {
   if(![465,587].includes(port))throw Error('smtp_port_invalid');
   if(user!==SENDER)throw Error('smtp_user_invalid');
   if(typeof env.SMTP_PASSWORD!=='string'||!env.SMTP_PASSWORD)throw Error('smtp_password_missing');
-  return {host,port,secure:port===465,requireTLS:true,auth:{user:SENDER,pass:env.SMTP_PASSWORD},tls:{minVersion:'TLSv1.2',rejectUnauthorized:true},connectionTimeout:8000,greetingTimeout:8000,socketTimeout:12000,logger:false,debug:false,disableFileAccess:true,disableUrlAccess:true};
+  return {host,port,secure:port===465,requireTLS:true,auth:{user:SENDER,pass:env.SMTP_PASSWORD},tls:{minVersion:'TLSv1.2',rejectUnauthorized:true},connectionTimeout:5000,greetingTimeout:5000,socketTimeout:8000,logger:false,debug:false,disableFileAccess:true,disableUrlAccess:true};
 }
 function readinessFailure(error) {
   if(error?.code==='EAUTH')return 'smtp_auth_failed';
@@ -36,7 +36,7 @@ export function welcomeMessage(email,locale) {
 async function claimJob(job,env,fetchImpl,action='claim-welcome-smtp') {
   const endpoint=new URL(env.GOOGLE_APPS_SCRIPT_URL);
   if(endpoint.protocol!=='https:'||endpoint.hostname!=='script.google.com'||!/^\/macros\/s\/[^/]+\/exec$/.test(endpoint.pathname)||endpoint.search||endpoint.username||endpoint.password||endpoint.port)throw Error('invalid_receiver');
-  const signal=AbortSignal.timeout(15000);
+  const signal=AbortSignal.timeout(8000);
   let response=await fetchImpl(endpoint.href,{method:'POST',redirect:'manual',signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({token:env.WAITLIST_SHARED_SECRET,action,...job})});
   if([302,303].includes(response.status)){
     const target=new URL(response.headers.get('location'));
@@ -58,7 +58,7 @@ export function createWelcomeHandler({env=process.env,fetchImpl=fetch,createTran
       const transport=createTransport(settings);
       try{await transport.verify();}catch(error){return reply(503,{ok:false,retrySafe:true,code:readinessFailure(error)});}finally{transport.close();}
       if(new URL(req.url || '/', 'https://primalcore.gr').searchParams.get('receiver')==='1'){
-        try{if(!await claimJob({},env,fetchImpl,'check-welcome-smtp'))return reply(503,{ok:false,retrySafe:true,code:'receiver_not_ready'});}
+        try{if(!await claimJob({},env,fetchImpl,new URL(req.url || '/', 'https://primalcore.gr').searchParams.get('immediate')==='1'?'check-welcome-immediate':'check-welcome-smtp'))return reply(503,{ok:false,retrySafe:true,code:'receiver_not_ready'});}
         catch{return reply(503,{ok:false,retrySafe:true,code:'receiver_check_failed'});}
       }
       return reply(200,{ok:true});
@@ -70,16 +70,35 @@ export function createWelcomeHandler({env=process.env,fetchImpl=fetch,createTran
       if(req.body!==undefined){const raw=Buffer.isBuffer(req.body)?req.body.toString():typeof req.body==='string'?req.body:JSON.stringify(req.body);if(Buffer.byteLength(raw)>2048)throw Error();job=JSON.parse(raw);}
       else{let raw='';for await(const chunk of req){raw+=chunk.toString();if(Buffer.byteLength(raw)>2048)throw Error();}job=JSON.parse(raw);}
       if(!job||!Number.isSafeInteger(job.rowNumber)||job.rowNumber<2||typeof job.email!=='string'||job.email.length>254||!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(job.email)||/[\r\n\x00<>]/.test(job.email)||!['el','en-US'].includes(job.locale)||typeof job.registeredAt!=='string'||!/^\d{4}-\d\d-\d\dT[\d:.]+Z$/.test(job.registeredAt))throw Error();
-      job={rowNumber:job.rowNumber,email:job.email,locale:job.locale,registeredAt:job.registeredAt};
+      if(job.deliveryMode!==undefined&&!['worker','immediate'].includes(job.deliveryMode))throw Error();
+      job={rowNumber:job.rowNumber,email:job.email,locale:job.locale,registeredAt:job.registeredAt,...(job.deliveryMode==='immediate'?{deliveryMode:'immediate'}:{})};
     }catch{return reply(400,{ok:false});}
+    let message;
+    try{message=welcomeMessage(job.email,job.locale);}catch{return reply(503,{ok:false,retrySafe:true,code:'email_template_unavailable'});}
     // The Sheet atomically authorizes each job once. Replays cannot send twice,
     // even across concurrent Vercel instances or process restarts.
     try{if(!await claimJob(job,env,fetchImpl))return reply(409,{ok:false,code:'job_not_available'});}catch{return reply(502,{ok:false,code:'claim_unavailable'});}
     const transport=createTransport(settings);
     try{
-      const result=await transport.sendMail(welcomeMessage(job.email,job.locale));
+      const result=await transport.sendMail(message);
       if(!result.accepted?.some(address=>String(address).toLowerCase()===job.email.toLowerCase()))throw Error();
       return reply(200,{ok:true});
     }catch{return reply(502,{ok:false,code:'smtp_send_unconfirmed'});}finally{transport.close();}
   };
+}
+
+/** Run under Vercel waitUntil: begin immediately after the saved signup, not a cron. */
+export async function sendImmediateWelcome(job, {env=process.env,fetchImpl=fetch,createTransport=nodemailer.createTransport,report=code=>console.warn('[welcome-email]',code)}={}) {
+  let result={ok:false,code:'smtp_send_unconfirmed'},statusCode=502;
+  try {
+    const response={statusCode:0,setHeader(){},end(body){statusCode=this.statusCode;result=JSON.parse(body)}};
+    await createWelcomeHandler({env,fetchImpl,createTransport})({method:'POST',headers:{authorization:`Bearer ${env.WAITLIST_SHARED_SECRET}`,'content-type':'application/json'},body:{...job,deliveryMode:'immediate'}},response);
+  } catch { /* Outcome unknown; never automatically resend. */ }
+  const outcome=result.ok===true?'accepted':statusCode===503&&result.retrySafe===true?'retry-safe':'unconfirmed';
+  try {
+    const recorded=await claimJob({...job,deliveryMode:'immediate',deliveryResult:outcome},env,fetchImpl,'complete-welcome-immediate');
+    if(!recorded)report('immediate_receipt_unconfirmed');
+  } catch { report('immediate_receipt_unconfirmed'); }
+  report(outcome==='accepted'?'immediate_smtp_accepted':outcome==='retry-safe'?'immediate_deferred_before_send':'immediate_send_unconfirmed');
+  return {ok:result.ok===true};
 }

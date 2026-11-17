@@ -4,7 +4,7 @@ function doPost(event) {
   var locked = false;
   var baseHeaders = ['Email', 'Registered at (UTC)', 'Consent', 'Privacy version', 'Source'];
   var extraHeaders = ['Consent received at (UTC)', 'Consent text version', 'Locale', 'UTM source', 'UTM medium', 'UTM campaign', 'UTM term', 'UTM content', 'Referrer origin', 'Landing path', 'Welcome email status', 'Welcome email sent at (UTC)', 'Device type', 'device_type', 'os', 'browser', 'landing_page', 'referrer_full', 'screen_width'];
-  function reply(ok) { return ContentService.createTextOutput(JSON.stringify({ ok: ok })).setMimeType(ContentService.MimeType.JSON); }
+  function reply(ok, extra) { return ContentService.createTextOutput(JSON.stringify(Object.assign({ ok: ok }, extra || {}))).setMimeType(ContentService.MimeType.JSON); }
   function bounded(value, limit) { return typeof value === 'string' ? value.trim().replace(/[\x00-\x1f\x7f]/g, '').slice(0, limit) : ''; }
   function cell(value) { value = String(value); return /^[=+\-@]/.test(value) ? "'" + value : value; }
   try {
@@ -14,7 +14,11 @@ function doPost(event) {
     var props = PropertiesService.getScriptProperties();
     var expected = props.getProperty('WAITLIST_SHARED_SECRET');
     if (!expected || input.token !== expected) return reply(false);
-    if (input.action === 'check-welcome-smtp') return reply(true);
+    if (input.action === 'check-welcome-smtp' || input.action === 'check-welcome-immediate') return reply(true);
+    if (input.action === 'complete-welcome-immediate') {
+      lock.waitLock(10000); locked = true;
+      return reply(completeWelcomeImmediate(input, props));
+    }
     if (input.action === 'claim-welcome-smtp') {
       lock.waitLock(10000); locked = true;
       return reply(claimWelcomeSmtp(input, props));
@@ -44,6 +48,8 @@ function doPost(event) {
         headers = headers.concat(missing);
       }
     }
+    var welcomeEnabled = props.getProperty('WELCOME_EMAIL_ENABLED') === 'true' && props.getProperty('WELCOME_EMAIL_VERSION') === 'thank-you-v1';
+    var immediateWelcome = welcomeEnabled && input.welcomeDelivery === 'immediate-v1' && props.getProperty('WELCOME_EMAIL_TRANSPORT') === 'papaki-smtp-v1';
     var key = email.toLowerCase();
     var rows = sheet.getLastRow() > 1 ? sheet.getRange(2, 1, sheet.getLastRow() - 1, 1).getDisplayValues() : [];
     var existingIndex = rows.findIndex(function(row) { return String(row[0]).replace(/^'/, '').toLowerCase() === key; });
@@ -55,7 +61,7 @@ function doPost(event) {
         'Privacy version': '2026-11-15-sheets-v1', 'Source': source,
         'Consent received at (UTC)': now, 'Consent text version': 'launch-updates-v1', 'Locale': locale,
         'Referrer origin': bounded(input.referrerOrigin, 256), 'Landing path': bounded(input.landingPath, 256),
-        'Welcome email status': props.getProperty('WELCOME_EMAIL_ENABLED') === 'true' && props.getProperty('WELCOME_EMAIL_VERSION') === 'thank-you-v1' ? 'pending-thanks-v1' : 'disabled',
+        'Welcome email status': welcomeEnabled ? (immediateWelcome ? 'pending-immediate-thanks-v1' : 'pending-thanks-v1') : 'disabled',
         'Device type': ['mobile', 'tablet', 'desktop'].indexOf(input.deviceType) >= 0 ? input.deviceType : 'unknown',
         'device_type': ['mobile', 'tablet', 'desktop'].indexOf(input.device_type) >= 0 ? input.device_type : '',
         'os': ['iOS','Android','Windows','macOS','Linux','Other'].indexOf(input.os) >= 0 ? input.os : '',
@@ -71,6 +77,10 @@ function doPost(event) {
     SpreadsheetApp.flush();
     var savedEmail = sheet.getRange(savedRowNumber, 1, 1, 1).getDisplayValues()[0][0];
     if (String(savedEmail).replace(/^'/, '').toLowerCase() !== key) return reply(false);
+    if (input.welcomeDelivery === 'immediate-v1') {
+      if (existingIndex < 0 && immediateWelcome) return reply(true, {welcomeDelivery: 'immediate', welcomeJob: {rowNumber: savedRowNumber, email: email, locale: locale, registeredAt: now, deliveryMode: 'immediate'}});
+      return reply(true, {welcomeDelivery: existingIndex >= 0 ? 'duplicate' : welcomeEnabled ? 'queued' : 'disabled'});
+    }
     return reply(true);
   } catch (_) {
     // Never log personal data, the shared secret, or raw provider errors.
@@ -133,7 +143,7 @@ function sendPendingWelcomeEmails() {
       var consentColumn = headers.indexOf('Consent'), localeColumn = headers.indexOf('Locale');
       if (headers[0] !== 'Email' || statusColumn < 0 || sentColumn < 0 || consentColumn < 0 || localeColumn < 0) return;
       var rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, headers.length).getDisplayValues();
-      var index = rows.findIndex(function(row) { return row[statusColumn] === 'pending-thanks-v1' && row[consentColumn] === 'true' && !row[sentColumn]; });
+      var index = rows.findIndex(function(row) { var pending = row[statusColumn] === 'pending-thanks-v1' || (row[statusColumn] === 'pending-immediate-thanks-v1' && Date.now() - Date.parse(row[1]) > 60000); return pending && row[consentColumn] === 'true' && !row[sentColumn]; });
       if (index < 0) return;
       rowNumber = index + 2;
       email = String(rows[index][0]).replace(/^'/, '');
@@ -182,7 +192,7 @@ function claimWelcomeSmtp(input, props) {
   if (headers[0] !== 'Email' || statusColumn < 0 || sentColumn < 0 || consentColumn < 0 || localeColumn < 0) return false;
   var row = sheet.getRange(input.rowNumber, 1, 1, headers.length).getDisplayValues()[0];
   if (String(row[0]).replace(/^'/, '') !== input.email || row[1] !== input.registeredAt || row[localeColumn] !== input.locale
-    || row[consentColumn] !== 'true' || row[sentColumn] || row[statusColumn] !== 'sending-thanks-v1') return false;
+    || row[consentColumn] !== 'true' || row[sentColumn] || row[statusColumn] !== (input.deliveryMode === 'immediate' ? 'pending-immediate-thanks-v1' : 'sending-thanks-v1')) return false;
   sheet.getRange(input.rowNumber, statusColumn + 1, 1, 1).setValues([['smtp-claimed-thanks-v1']]);
   SpreadsheetApp.flush();
   return true;
@@ -193,7 +203,7 @@ function checkWelcomeEmailConnection() {
   var status = 0, result = {}, code = 'connection_failed';
   try {
     var secret = PropertiesService.getScriptProperties().getProperty('WAITLIST_SHARED_SECRET');
-    var response = UrlFetchApp.fetch('https://primalcore.gr/api/welcome-email?receiver=1', {
+    var response = UrlFetchApp.fetch('https://primalcore.gr/api/welcome-email?receiver=1&immediate=1', {
       method: 'get', headers: { Authorization: 'Bearer ' + secret },
       muteHttpExceptions: true, followRedirects: false
     });
@@ -205,4 +215,25 @@ function checkWelcomeEmailConnection() {
   var check = {ok: code === 'ready', status: status, code: code};
   console.log('SMTP readiness: HTTP ' + check.status + ' / ' + check.code);
   return check;
+}
+
+/** Record an immediate attempt only; never reset an ambiguous claimed send. */
+function completeWelcomeImmediate(input, props) {
+  if (!Number.isInteger(input.rowNumber) || input.rowNumber < 2 || input.deliveryMode !== 'immediate') return false;
+  var sheet = SpreadsheetApp.openById(props.getProperty('SPREADSHEET_ID')).getSheetByName('Waitlist');
+  if (!sheet || input.rowNumber > sheet.getLastRow()) return false;
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getDisplayValues()[0];
+  var statusColumn = headers.indexOf('Welcome email status'), sentColumn = headers.indexOf('Welcome email sent at (UTC)');
+  var localeColumn = headers.indexOf('Locale');
+  if (headers[0] !== 'Email' || statusColumn < 0 || sentColumn < 0 || localeColumn < 0) return false;
+  var row = sheet.getRange(input.rowNumber, 1, 1, headers.length).getDisplayValues()[0];
+  if (String(row[0]).replace(/^'/, '') !== input.email || row[1] !== input.registeredAt || row[localeColumn] !== input.locale) return false;
+  if (row[statusColumn] === 'sent-thanks-v1' && row[sentColumn]) return true;
+  if (['pending-immediate-thanks-v1', 'smtp-claimed-thanks-v1'].indexOf(row[statusColumn]) < 0 || row[sentColumn]) return false;
+  var accepted = input.deliveryResult === 'accepted' && row[statusColumn] === 'smtp-claimed-thanks-v1';
+  var retrySafe = input.deliveryResult === 'retry-safe' && row[statusColumn] === 'pending-immediate-thanks-v1';
+  sheet.getRange(input.rowNumber, statusColumn + 1, 1, 1).setValues([[accepted ? 'sent-thanks-v1' : retrySafe ? 'pending-thanks-v1' : 'review-thanks-v1']]);
+  if (accepted) sheet.getRange(input.rowNumber, sentColumn + 1, 1, 1).setValues([[new Date().toISOString()]]);
+  SpreadsheetApp.flush();
+  return true;
 }

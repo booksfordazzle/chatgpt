@@ -8,12 +8,10 @@ html .hero-autoplay.is-hero-static .hero-sticky{height:auto;min-height:calc(var(
 .hero-autoplay.is-hero-static .hero-content{position:relative;inset:auto;height:auto;min-height:calc(var(--hero-viewport-height,100svh) - var(--header));padding-block:64px}
 .hero-autoplay.is-hero-static .hero-shade{background:rgba(0,0,0,.3);opacity:1}
 @media(max-width:760px){.hero-autoplay.is-hero-static .hero-content{padding-block:40px 72px}}
-/* Protect text on bright frames without increasing the whole-video overlay. */
-.hero-autoplay #hero-title,.hero-autoplay #hero-waitlist-title{isolation:isolate;text-shadow:0 1px 3px rgba(0,0,0,.9)}
+/* Keep headline text free of drop shadows; retain consent/status legibility. */
+.hero-autoplay #hero-title,.hero-autoplay #hero-waitlist-title{isolation:isolate;text-shadow:none}
 .hero-autoplay.is-hero-static #hero-title,.hero-autoplay #hero-waitlist-title{position:relative}
-.hero-autoplay #hero-title::before,.hero-autoplay #hero-waitlist-title::before{content:"";position:absolute;z-index:-1;inset:-12px -18px;background:rgba(0,0,0,.55);border-radius:12px;filter:blur(16px);pointer-events:none}
 .hero-autoplay .hero-signup .consent{color:#fff}
 .hero-autoplay .hero-signup .consent span{background:rgba(0,0,0,.82);padding:4px 8px;border-radius:4px}
 .hero-autoplay .hero-signup .form-status:not(:empty){background:rgba(0,0,0,.85);padding:8px 12px;border-radius:8px}
 .hero-autoplay #hero-waitlist-title,.hero-autoplay.is-hero-static #hero-title{position:relative}
-.hero-autoplay #hero-title::before,.hero-autoplay #hero-waitlist-title::before{content:"";position:absolute;z-index:-1;inset:-20px -24px;border-radius:8px;background:rgba(0,0,0,.55);filter:blur(14px);pointer-events:none}

@@ -24,7 +24,7 @@ function receiver(initialRows = [], options = {}) {
     SpreadsheetApp: { openById: id => { assert.equal(id, props.SPREADSHEET_ID); return { getSheetByName: () => rows.length ? sheet : null, insertSheet: () => sheet }; }, getActiveSpreadsheet: () => ({ getId: () => '1ptOmDxONI9KD_rLRZp0xGsjJezsOyIP0H3gd5HgleRg' }), flush: () => { flushed++; } },
     Utilities: { getUuid: () => 'test-generated-uuid' },
     UrlFetchApp: { fetch: (url, opts) => {
-      assert.equal(url,opts.method==='get'?'https://primalcore.gr/api/welcome-email?receiver=1':'https://primalcore.gr/api/welcome-email');assert.equal(opts.headers.Authorization,'Bearer test-secret');assert.equal(locked,false);
+      assert.equal(url,opts.method==='get'?'https://primalcore.gr/api/welcome-email?receiver=1&immediate=1':'https://primalcore.gr/api/welcome-email');assert.equal(opts.headers.Authorization,'Bearer test-secret');assert.equal(locked,false);
       let code=200,result={ok:true};
       if(options.smtpUnavailable){code=503;result={ok:false,retrySafe:true};}
       else if(opts.method==='post'){
@@ -177,4 +177,48 @@ test('old welcome settings cannot start SMTP until the new transport is enabled'
 test('authenticated receiver readiness is read-only and never queues or claims messages',()=>{
  const r=receiver();assert.equal(r.submit({action:'check-welcome-smtp',consent:false}).ok,true);assert.equal(r.rows.length,0);assert.equal(r.messages.length,0);
  assert.equal(r.submit({action:'check-welcome-smtp',token:'wrong'}).ok,false);
+});
+
+test('new immediate jobs are confirmed once, skipped by cron, and completed without overwriting consent',()=>{
+ const r=receiver();r.setupMail();
+ const saved=r.submit({welcomeDelivery:'immediate-v1',email:'immediate@example.com',source:'primal-core-footer'});
+ assert.equal(saved.ok,true);assert.equal(saved.welcomeDelivery,'immediate');assert.equal(r.rows[1][15],'pending-immediate-thanks-v1');
+ const job=saved.welcomeJob;r.sendMail();assert.equal(r.messages.length,0);
+ const before=r.rows[1].slice(0,15);assert.equal(r.submit({...job,action:'claim-welcome-smtp'}).ok,true);
+ assert.equal(r.submit({...job,action:'claim-welcome-smtp'}).ok,false);
+ assert.equal(r.submit({...job,action:'complete-welcome-immediate',deliveryResult:'accepted'}).ok,true);
+ assert.equal(r.rows[1][15],'sent-thanks-v1');assert(r.rows[1][16]);assert.deepEqual(r.rows[1].slice(0,15),before);
+ const duplicate=r.submit({welcomeDelivery:'immediate-v1',email:'IMMEDIATE@example.com'});assert.equal(duplicate.welcomeDelivery,'duplicate');assert.equal(duplicate.welcomeJob,undefined);
+});
+test('only definitely unattempted immediate jobs may return to the pending retry queue',()=>{
+ const r=receiver();r.setupMail();const job=r.submit({welcomeDelivery:'immediate-v1'}).welcomeJob;
+ assert.equal(r.submit({...job,action:'complete-welcome-immediate',deliveryResult:'retry-safe'}).ok,true);assert.equal(r.rows[1][15],'pending-thanks-v1');
+ const other=receiver();other.setupMail();const claimed=other.submit({welcomeDelivery:'immediate-v1'}).welcomeJob;other.submit({...claimed,action:'claim-welcome-smtp'});
+ other.submit({...claimed,action:'complete-welcome-immediate',deliveryResult:'retry-safe'});assert.equal(other.rows[1][15],'review-thanks-v1');
+});
+test('both forms schedule an immediate job after real receiver save; client response excludes private job and does not wait for SMTP', {timeout:2000}, async()=>{
+ const {createHandler}=await import('../netlify/functions/waitlist.mjs');
+ const r=receiver();r.setupMail();const jobs=[];
+ const handler=createHandler({env:{GOOGLE_APPS_SCRIPT_URL:'https://script.google.com/macros/s/test/exec',WAITLIST_SHARED_SECRET:'test-secret'},fetchImpl:async(_url,options)=>Response.json(r.submit(JSON.parse(options.body))),onRegistered:job=>{jobs.push(job);return new Promise(()=>{})}});
+ for(const [i,source]of ['primal-core-hero','primal-core-footer'].entries()){
+  const result=await handler({httpMethod:'POST',headers:{accept:'application/json','content-type':'application/json'},body:JSON.stringify({email:`immediate-${i}@example.com`,consent:true,source})});
+  assert.equal(result.statusCode,200);assert.deepEqual(JSON.parse(result.body),{ok:true});assert.equal(jobs.length,i+1);assert.equal(r.rows[i+1][4],source);
+ }
+ const duplicate=await handler({httpMethod:'POST',headers:{accept:'application/json','content-type':'application/json'},body:JSON.stringify({email:'immediate-0@example.com',consent:true,source:'primal-core-footer'})});assert.equal(duplicate.statusCode,200);assert.equal(jobs.length,2);
+});
+test('Vercel immediate sender integrates with real Sheet claim and receipt, with no replay or cron duplicate',async()=>{
+ const {sendImmediateWelcome}=await import('../server/welcome-email.mjs');const r=receiver();r.setupMail();const job=r.submit({welcomeDelivery:'immediate-v1'}).welcomeJob;const messages=[];
+ const options={env:{GOOGLE_APPS_SCRIPT_URL:'https://script.google.com/macros/s/test/exec',WAITLIST_SHARED_SECRET:'test-secret',SMTP_HOST:'smtp-gr.securemail.pro',SMTP_PORT:'465',SMTP_USER:'hello@primalcore.gr',SMTP_PASSWORD:'mock-password'},fetchImpl:async(_url,opts)=>Response.json(r.submit(JSON.parse(opts.body))),createTransport:()=>({sendMail:async message=>{assert.equal(r.state().locked,false);messages.push(message);return{accepted:[message.to]}},close(){}}),report:()=>{}};
+ assert.equal((await sendImmediateWelcome(job,options)).ok,true);assert.equal(messages.length,1);assert.equal(r.rows[1][15],'sent-thanks-v1');
+ await sendImmediateWelcome(job,options);r.sendMail();assert.equal(messages.length,1);assert.equal(r.rows[1][15],'sent-thanks-v1');
+});
+
+test('an immediate job that never started is safely recovered by the existing worker after a grace period',()=>{
+ const r=receiver();r.setupMail();r.submit({welcomeDelivery:'immediate-v1'});r.sendMail();assert.equal(r.messages.length,0);
+ r.rows[1][1]='2020-01-01T00:00:00.000Z';r.sendMail();assert.equal(r.messages.length,1);assert.equal(r.rows[1][15],'sent-thanks-v1');
+});
+test('immediate SMTP failures retain the saved record and are never blindly retried',async()=>{
+ const {sendImmediateWelcome}=await import('../server/welcome-email.mjs');const r=receiver();r.setupMail();const job=r.submit({welcomeDelivery:'immediate-v1'}).welcomeJob;let attempts=0;
+ await sendImmediateWelcome(job,{env:{GOOGLE_APPS_SCRIPT_URL:'https://script.google.com/macros/s/test/exec',WAITLIST_SHARED_SECRET:'test-secret',SMTP_HOST:'smtp-gr.securemail.pro',SMTP_PORT:'465',SMTP_USER:'hello@primalcore.gr',SMTP_PASSWORD:'mock-password'},fetchImpl:async(_url,opts)=>Response.json(r.submit(JSON.parse(opts.body))),createTransport:()=>({sendMail:async()=>{attempts++;throw Error('provider-private')},close(){}}),report:()=>{}});
+ assert.equal(attempts,1);assert.equal(r.rows[1][15],'review-thanks-v1');assert.equal(r.rows[1][2],'true');r.sendMail();assert.equal(attempts,1);assert.equal(r.messages.length,0);
 });

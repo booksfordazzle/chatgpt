@@ -55,3 +55,7 @@ test('read-only end-to-end readiness detects outdated receiver without sending o
  assert.equal(r.statusCode,200);assert.equal(r.messages.length,0);assert.equal(r.calls.length,1);
  const old=await run({method:'GET',url:'/api/welcome-email?receiver=1',fetchImpl:async()=>new Response(JSON.stringify({ok:false}))});assert.equal(old.body.code,'receiver_not_ready');assert.equal(old.messages.length,0);
 });
+
+test('immediate-mode readiness probes the deployed immediate receiver without sending',async()=>{
+ const r=await run({method:'GET',url:'/api/welcome-email?receiver=1&immediate=1',fetchImpl:async(_url,opts)=>{assert.equal(JSON.parse(opts.body).action,'check-welcome-immediate');return Response.json({ok:true})}});assert.equal(r.statusCode,200);assert.equal(r.messages.length,0);
+});

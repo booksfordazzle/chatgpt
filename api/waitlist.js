@@ -1,4 +1,6 @@
-import { handler as sharedWaitlistHandler } from '../netlify/functions/waitlist.mjs';
+import { waitUntil } from '@vercel/functions';
+import { sendImmediateWelcome } from '../server/welcome-email.mjs';
+import { createHandler, handler as sharedWaitlistHandler } from '../netlify/functions/waitlist.mjs';
 
 // Vercel Node adapter: reuse the same validated Google Sheets handler as local/Netlify.
 export function createVercelHandler(waitlistHandler = sharedWaitlistHandler) {
@@ -52,4 +54,7 @@ export function createVercelHandler(waitlistHandler = sharedWaitlistHandler) {
     }
   };
 }
-export default createVercelHandler();
+const immediateHandler = createHandler({onRegistered: job => {
+  waitUntil(sendImmediateWelcome(job).catch(() => console.warn('[welcome-email] immediate_background_failed')));
+}});
+export default createVercelHandler(immediateHandler);

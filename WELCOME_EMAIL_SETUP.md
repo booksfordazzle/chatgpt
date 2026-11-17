@@ -42,15 +42,18 @@ Port 465 uses implicit SSL/TLS. Port 587 is supported only with required STARTTL
 
 ## Architecture and duplicate protection
 
-The existing receiver stores the consented registration and marks only new records pending. It never delays signup confirmation with an SMTP call. Every five minutes, the Apps Script worker claims up to five pending rows and calls /api/welcome-email over HTTPS using the existing server secret. SMTP credentials stay only on Vercel.
+The receiver saves consent before returning a private immediate job for a new registration. Vercel starts that job under `@vercel/functions` `waitUntil` as signup succeeds, without holding the browser response for SMTP. The job never reaches the browser. The five-minute Apps Script trigger is recovery only: it handles legacy pending rows and unstarted immediate jobs older than 60 seconds. SMTP credentials stay only on Vercel.
+
+This removes the normal five-minute application delay. It does not guarantee inbox delivery within three seconds: Papaki and recipient mail servers can queue accepted messages. With the old Google deployment, Vercel remains compatible but continues the old queued behavior until the current Code.gs is published.
 
 Before SMTP, Vercel calls the authenticated Google receiver to atomically match the row number, email, registration timestamp, language, consent and unsent state. It then changes the state to smtp-claimed-thanks-v1 under a script lock. Each job can be authorized once even if requests are replayed across multiple Vercel instances. Fixed message content and sender prevent an arbitrary mail relay. The /api endpoint is not a browser submission endpoint and denies requests without authentication. Readiness is authenticated and tests TLS/login without sending.
 
-The Google ContentService redirect is restricted to HTTPS script.googleusercontent.com/macros/echo and followed as GET without forwarding secret or body. No email, SMTP credentials or raw provider exceptions are logged/returned. Nodemailer is the one added dependency; it implements SMTP/TLS rather than custom protocol code.
+The Google ContentService redirect is restricted to HTTPS script.googleusercontent.com/macros/echo and followed as GET without forwarding secret or body. No email, SMTP credentials or raw provider exceptions are logged/returned. Nodemailer implements SMTP/TLS; `@vercel/functions` keeps immediate background work alive after the HTTP response. Template assets are loaded before claiming the send.
 
 ## Status and recovery
 
 - disabled/blank/legacy pending: not automatically backfilled; preserve historical records.
+- pending-immediate-thanks-v1: saved and ready for the immediate job; recovery may claim it only after 60 seconds.
 - pending-thanks-v1: waiting for worker. Missing server configuration before a send safely leaves it pending.
 - sending-thanks-v1: claimed by worker before HTTP; interrupted work requires review.
 - smtp-claimed-thanks-v1: authorized once by the receiver, before SMTP; interrupted work requires review.
@@ -73,4 +76,8 @@ Provider references:
 
 Run `checkWelcomeEmailConnection` from the current Code.gs editor without deploying or enabling the worker. It performs the same authenticated no-send SMTP readiness check and logs only a numeric HTTP status and an allowlisted code. Never share secret properties or raw provider responses. Fixed reason codes distinguish missing/invalid host, port, username/password presence, shared-secret mismatch, SMTP authentication, DNS, timeout and TLS errors; they are diagnostic hints, not proof of a specific root cause. A `ready` result proves the connection/login check passed at that moment, not inbox delivery. Fix Production environment values, redeploy Vercel and rerun before enabling the worker.
 
-The current `checkWelcomeEmailConnection` also requests `?receiver=1`: after SMTP login verification, Vercel sends a secret-authenticated `check-welcome-smtp` probe to the live Google deployment. This action returns readiness only and never reads/writes subscriber rows or sends. Publish the current Code.gs into the correct existing deployment before using this full-chain check. A rejected probe reports `receiver_not_ready`; network/redirect/provider problems report `receiver_check_failed`. The sender logs only allowlisted HTTP/reason codes (`SMTP send: HTTP …`) on future executions; historical review records remain unchanged and must not be automatically retried. A successful probe does not prove that any particular job is authorized or that SMTP delivery will succeed.
+The current `checkWelcomeEmailConnection` also requests `?receiver=1&immediate=1`: after SMTP login verification, Vercel sends a secret-authenticated `check-welcome-immediate` probe to the live Google deployment. This action returns readiness only and never reads/writes subscriber rows or sends. Publish the current Code.gs into the correct existing deployment before using this full-chain check. A rejected probe reports `receiver_not_ready`; network/redirect/provider problems report `receiver_check_failed`. The sender logs only allowlisted HTTP/reason codes (`SMTP send: HTTP …`) on future executions; historical review records remain unchanged and must not be automatically retried. A successful probe does not prove that any particular job is authorized or that SMTP delivery will succeed.
+
+## Upgrade an already configured installation to immediate sending
+
+Keep all SMTP variables, Script Properties, records and the existing deployment URL. Replace Code.gs with the full current source, save, then edit **PRIMAL CORE — LIVE Receiver — Vercel** in Manage deployments and publish **New version**. Run `checkWelcomeEmailConnection` (expect HTTP 200 / ready), then `setupWelcomeEmails`. Test with one new controlled address. Do not requeue historical sent/review rows. The immediate path is active only after this Google update.

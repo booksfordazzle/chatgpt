@@ -20,7 +20,7 @@ function nonJsonDiagnostic(body) {
   return 'google_non_json_response';
 }
 
-export function createHandler({ env = process.env, fetchImpl = fetch, report = entry => console.warn('[waitlist]', JSON.stringify(entry)) } = {}) {
+export function createHandler({ env = process.env, fetchImpl = fetch, onRegistered, report = entry => console.warn('[waitlist]', JSON.stringify(entry)) } = {}) {
   const limitSubmission = createSubmissionLimiter();
   return async function handler(event) {
     const headers = { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', 'X-Content-Type-Options': 'nosniff' };
@@ -97,7 +97,7 @@ export function createHandler({ env = process.env, fetchImpl = fetch, report = e
       let response = await fetchImpl(endpoint.href, {
         method: 'POST', redirect: 'manual', signal,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, consent: true, token: secret, locale, source,
+        body: JSON.stringify({ email, consent: true, token: secret, locale, source, ...(onRegistered ? { welcomeDelivery: 'immediate-v1' } : {}),
           policyVersion: '2026-11-15-sheets-v1', consentTextVersion: 'launch-updates-v1',
           utm, referrerOrigin, landingPath, deviceType, device_type, os, browser, landing_page, referrer_full, screen_width, viewport })
       });
@@ -118,6 +118,13 @@ export function createHandler({ env = process.env, fetchImpl = fetch, report = e
       try { result = JSON.parse(responseBody); }
       catch { return storageFailure(nonJsonDiagnostic(responseBody)); }
       if (!result || result.ok !== true) return storageFailure('receiver_not_confirmed', 'storage_unconfirmed');
+      if (onRegistered && result.welcomeJob) {
+        const job = result.welcomeJob;
+        if (Number.isSafeInteger(job.rowNumber) && job.rowNumber >= 2 && job.email === email && job.locale === locale && job.deliveryMode === 'immediate' && typeof job.registeredAt === 'string' && /^\d{4}-\d\d-\d\dT[\d:.]+Z$/.test(job.registeredAt)) {
+          try { onRegistered({rowNumber:job.rowNumber,email,locale,registeredAt:job.registeredAt,deliveryMode:'immediate'}); }
+          catch { try { report({code:'welcome_schedule_failed'}); } catch {} }
+        } else { try { report({code:'welcome_job_invalid'}); } catch {} }
+      }
       return reply(200, true);
     } catch (error) {
       return storageFailure(error?.name === 'TimeoutError' || error?.name === 'AbortError' ? 'google_timeout' : 'google_network_error');
