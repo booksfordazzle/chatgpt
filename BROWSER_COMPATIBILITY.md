@@ -28,7 +28,7 @@ Contact and history captures were inspected at both widths in all four browsers,
 
 ## Repeatable browser harness
 
-`tests/browser/hero-autoplay.cjs` accepts `BASE_URL`, `PLAYWRIGHT_MODULE`, `BROWSER_ENGINE` (`chromium` or `firefox`), `BROWSER_NAME`, and optional `BROWSER_EXECUTABLE`. Set `PLAYWRIGHT_BROWSERS_PATH` when the runtime stores browsers outside Playwright's default location. Firefox needed graphics execution outside this workspace's restrictive process sandbox; no website security settings were changed.
+`tests/browser/hero-autoplay.cjs` accepts `BASE_URL`, `PLAYWRIGHT_MODULE`, `BROWSER_ENGINE` (`chromium`, `firefox` or `webkit`), `BROWSER_NAME`, and optional `BROWSER_EXECUTABLE`. Set `PLAYWRIGHT_BROWSERS_PATH` when the runtime stores browsers outside Playwright's default location. Firefox needed graphics execution outside this workspace's restrictive process sandbox; no website security settings were changed.
 
 Production verification follows deployment and checks the new CSS, source declarations and natural Chrome playback without submitting a signup.
 
@@ -42,6 +42,6 @@ Synchronize direct title/signup opacity with the custom properties. Suspend post
 
 ## First-visit verification scope
 
-The owner's iPhone Google-app embedded-browser report is a different context from the earlier desktop Chrome checks. `tests/browser/hero-first-visit.cjs` passed four cases each in Chrome 157 and WebKit 26.5: cold denied-autoplay Greek/English phase checks on every animation frame with no title/signup overlap and normal warm reload, pending-play first-tap retry, and hidden-first-visit clock resumption. The existing hero suite passed all 11 Chrome cases; WebKit has passed seven of 11, with four fallback cases still running at this documentation checkpoint. All 83 unit tests passed. Fresh screenshots: `/tmp/hero-first-visit-review/{chromium,webkit}-{el,en}-{title,signup}.png`. Final visual review is tracked separately.
+The owner's iPhone Google-app embedded-browser report is a different context from the earlier desktop Chrome checks. `tests/browser/hero-first-visit.cjs` passed four cases each in Chrome 157 and WebKit 26.5: cold denied-autoplay Greek/English phase checks on every animation frame with no title/signup overlap and normal warm reload, pending-play first-tap retry, and hidden-first-visit clock resumption. The existing hero suite passed all 11 cases each in Chrome and WebKit, including all four fallback cases. All 83 unit tests passed. Fresh screenshots: `/tmp/hero-first-visit-review/{chromium,webkit}-{el,en}-{title,signup}.png`. Focused visual review disposition: Ship. All four first-visit WebKit cases also passed against production on code commit 39afab5, without submitting any signup.
 
 No actual iOS Google-app browser was available. WebKit evidence uses a 393×700 mobile viewport and controlled autoplay-policy fixtures, not a native iPhone or that embedded browser. The previous Opera/Brave/Firefox matrix belongs to the prior release and has not been rerun for this fix. Do not infer current cross-browser completion or live storage/email verification from those earlier results.
