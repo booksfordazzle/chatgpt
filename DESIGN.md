@@ -251,7 +251,7 @@ Latest owner revision replaces both skin-care reading paragraphs with direct sec
 
 ## Current H1 size
 
-Reduce all website H1 font sizes by 15% from their existing responsive scales in both languages and at all viewports, including hero, philosophy, history, articles, contact and confirmation pages. The final heading-scale.css override preserves existing media breakpoints and selector order. Keep H2/H3 sizes, layout, typeface and email templates unchanged. This supersedes prior H1 size preferences.
+The latest owner-approved quieter scale sets website H1 sizes to 72% of their original responsive scales, replacing the previous 85% scale (approximately 15% further reduction). This applies in both languages and at all viewports, including hero, philosophy, history, articles, contact and confirmation pages. `public/heading-scale.css` preserves the responsive breakpoints and selector order of the original four stylesheets. See the current heading preference below for H2/H3 refinements; this supersedes prior H1 size preferences.
 
 
 ## Latest hero recovery and neutral site background
@@ -266,3 +266,10 @@ The latest owner background preference applies across the site: broad, organic b
 For motion-enabled JavaScript, replace the permanently static blocked/slow/error-autoplay fallback with a bounded approximately 4.2-second poster-clock title → signup reveal, independent of media permission. Keep normal successful playback on its video timeline; if media starts during the poster intro, continue that intro without reset. Never hide focused, filled or completed signup. Synchronize direct opacity with the reveal properties; stop poster animation frames offscreen/hidden and resume on pageshow/visibility. First Play must retry an older pending request. Reduced motion, no JavaScript and fatal bootstrap failure retain static readable title/form; reduced motion clears inline opacity. This supersedes older blocked-autoplay static descriptions only. No layout, type, copy, background or backend changes. Cache version: `autoplay-hero-3`.
 
 Current evidence: 83 passing unit tests; four first-visit cases each in Chrome 157 and WebKit 26.5; 11 existing Chrome hero cases passed, with WebKit seven of 11 passed and four fallback checks still running at this checkpoint. Actual iOS Google-app validation is unavailable: WebKit uses a 393×700 viewport and policy fixtures. Earlier Opera/Brave/Firefox evidence applies to the prior release. See [BROWSER_COMPATIBILITY.md](BROWSER_COMPATIBILITY.md) for precise scope and screenshot paths; final visual review is separate.
+
+
+## Current quieter heading preference
+
+The owner approved smaller titles after the ingredient-film H2 dominated the video. In `public/heading-scale.css`, H1 is 72% and H2 is 75% of the original responsive scales, with a 20px floor for utility H2s. H1/H2 weight is 500. The ingredient-film title is an explicit quieter exception: `clamp(22px, 2.2vw, 28px)` on desktop, fixed 22px at 760px and below, weight 450 and line-height 1.25. Article `.prose h3` is 20px, reduced from 23px to remain below the reduced H2. The heading stylesheet uses cache version 2 across all 49 public pages.
+
+Preserve media placement/compositions, content, paragraph fonts, existing layout and the hero cold-visit recovery. This is a title-scale refinement, not a new design identity or change to email templates. Verification: all 686 H1/H2 size checks across 49 pages at 390px/1440px passed; paragraph font sizes were unchanged and no horizontal overflow was found. All 83 tests and the build passed. Greek/English ingredient and article screenshots are recorded at `/tmp/quiet-title-review/{ingredients,article}-{390,1440}-{el,en}.png`. All four WebKit first-visit regression cases passed; focused visual review disposition: Ship.

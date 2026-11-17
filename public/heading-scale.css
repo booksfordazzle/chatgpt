@@ -1,41 +1,80 @@
-/* Owner-requested 15% reduction for website H1 headings only.
-   Mirrors the existing responsive type rules; H2/H3 and email templates are unchanged. */
+/* Quieter website headings: H1 72% and H2 75% of the original responsive scales.
+   Utility H2s retain a 20px floor; body copy and media placement are unchanged. */
+h1,h2{font-weight:500}
 
 /* styles.css */
-h1{font-size:clamp(32.3px,4.25vw,61.2px)}
-.hero-content #hero-title{font-size:clamp(35.7px,3.9525vw,57.8px)}
-.prose h1{font-size:clamp(30.6px,3.4vw,49.3px)}
-@media(max-width:1100px){.hero-content #hero-title{font-size:45.9px}}
-@media(max-width:760px){.hero-content #hero-title{font-size:clamp(32.3px,7.48vw,49.3px)}
-.intro h1{font-size:35.7px}
-.prose h1{font-size:30.6px}
-.journal h1{font-size:36.55px}}
-.hero-content #hero-title{font-size:clamp(27.2px,3.57vw,54.4px)}
-@media(max-width:760px){.hero-content #hero-title{font-size:clamp(14.45px,4.25vw,30.6px)}}
-.hero-content #hero-title{font-size:clamp(27.2px,3.57vw,54.4px)}
-@media(max-width:760px){.hero-content #hero-title{font-size:clamp(13.6px,3.825vw,28.9px)}}
-.intro h1{font-size:clamp(27.2px,3.4vw,46.75px)}
-@media(max-width:760px){.intro h1{font-size:32.3px}}
-.intro>h1{font-size:clamp(25.5px,2.975vw,44.2px)}
-@media(max-width:760px){.intro>h1{font-size:clamp(25.5px,6.63vw,32.3px)}}
-.confirmation-page h1{font-size:clamp(51px,5.95vw,74.8px)}
-@media(max-width:760px){.confirmation-page h1{font-size:51px}}
-.hero-content #hero-title{font-size:clamp(44.88px,5.8905vw,89.76px)}
-@media(max-width:760px){.hero-content #hero-title{font-size:clamp(22.44px,6.31125vw,47.685px)}}
+h1{font-size:clamp(27.36px,3.6vw,51.84px)}
+h2{font-size:max(20px,clamp(24px,3vw,41.25px))}
+.hero-content #hero-title{font-size:clamp(30.24px,3.348vw,48.96px)}
+.ingredients-visual h2{font-size:max(20px,clamp(24px,2.625vw,36px))}
+.waitlist-grid h2{font-size:max(20px,clamp(24px,2.625vw,36px))}
+.journal-prompt h2{font-size:max(20px,24px)}
+.prose h1{font-size:clamp(25.92px,2.88vw,41.76px)}
+.prose h2{font-size:max(20px,22.5px)}
+.article-grid h2{font-size:max(20px,18px)}
+@media(max-width:1100px){.hero-content #hero-title{font-size:38.88px}}
+@media(max-width:760px){.hero-content #hero-title{font-size:clamp(27.36px,6.336vw,41.76px)}
+.intro h1{font-size:30.24px}
+.ingredients-visual h2{font-size:max(20px,28.5px)}
+.prose h1{font-size:25.92px}
+.prose h2{font-size:max(20px,21px)}
+.article-grid h2{font-size:max(20px,18.75px)}
+.journal h1{font-size:30.96px}}
+.hero-content #hero-title{font-size:clamp(23.04px,3.024vw,46.08px)}
+@media(max-width:760px){.hero-content #hero-title{font-size:clamp(12.24px,3.6vw,25.92px)}}
+.hero-content #hero-title{font-size:clamp(23.04px,3.024vw,46.08px)}
+@media(max-width:760px){.hero-content #hero-title{font-size:clamp(11.52px,3.24vw,24.48px)}}
+.intro h1{font-size:clamp(23.04px,2.88vw,39.6px)}
+@media(max-width:760px){.intro h1{font-size:27.36px}}
+.intro>h1{font-size:clamp(21.6px,2.52vw,37.44px)}
+@media(max-width:760px){.intro>h1{font-size:clamp(21.6px,5.616vw,27.36px)}}
+.ingredient-film .ingredient-film-title{font-size:max(20px,clamp(22.5px,3vw,43.5px))}
+@media(max-width:760px){.ingredient-film .ingredient-film-title{font-size:max(20px,clamp(18.75px,5.1vw,30px))}}
+@media(max-width:1100px){.faq-signup .waitlist-grid h2{font-size:max(20px,27px)}}
+.contact-information h2{font-size:max(20px,18px)}
+.confirmation-page h1{font-size:clamp(43.2px,5.04vw,63.36px)}
+@media(max-width:760px){.confirmation-page h1{font-size:43.2px}}
+@media(max-width:760px){.ingredient-film .ingredient-film-title{font-size:max(20px,clamp(21px,5.25vw,30px))}}
+@media(max-width:760px){.ingredient-film .ingredient-film-title{font-size:max(20px,clamp(24.15px,6.0375vw,34.5px))}}
+.hero-content #hero-title{font-size:clamp(38.016px,4.9896vw,76.032px)}
+@media(max-width:760px){.hero-content #hero-title{font-size:clamp(19.008px,5.346vw,40.392px)}}
+.hero-signup #hero-waitlist-title{font-size:max(20px,clamp(21px,2.625vw,36px))}
+.contact-photo .contact-help h2{font-size:max(20px,clamp(16.5px,1.35vw,21px))}
+@media(max-width:1100px){.contact-photo .contact-help h2{font-size:max(20px,16.5px)}}
+@media(min-width:1101px){.hero-signup #hero-waitlist-title{font-size:max(20px,clamp(39.6px,5.1975vw,79.2px))}}
 
 /* philosophy.css */
-.origin-copy h1{font-size:clamp(51px,5.95vw,81.6px)}
-@media(max-width:1100px){.origin-copy h1{font-size:64.6px}}
-@media(max-width:760px){.origin-copy h1{font-size:clamp(40.8px,10.2vw,54.4px)}}
+.philosophy-page h2{font-size:max(20px,clamp(31.5px,4.2vw,60px))}
+.origin-copy h1{font-size:clamp(43.2px,5.04vw,69.12px)}
+.essence-lockup h2{font-size:max(20px,clamp(27px,3.45vw,48px))}
+@media(max-width:1100px){.origin-copy h1{font-size:54.72px}}
+@media(max-width:760px){.philosophy-page h2{font-size:max(20px,clamp(27px,6.75vw,39px))}
+.origin-copy h1{font-size:clamp(34.56px,8.64vw,46.08px)}
+.manifesto-copy h2{font-size:max(20px,36px)}}
+@media(max-width:760px){.manifesto-copy h2{font-size:max(20px,31.5px)}}
+@media(max-width:760px){.return-copy h2,.manifesto-copy h2{font-size:max(20px,clamp(22.5px,6vw,31.5px))}}
+@media(min-width:1101px){.essence-lockup h2{font-size:max(20px,clamp(27px,3vw,43.5px))}}
 
 /* history.css */
-.history-copy h1{font-size:clamp(40.8px,5.525vw,81.6px)}
-@media(max-width:1100px){.history-copy h1{font-size:64.6px}}
-@media(max-width:760px){.history-copy h1{font-size:clamp(32.3px,8.5vw,45.9px)}
-.history-copy h1{font-size:clamp(35.7px,9.35vw,49.3px)}}
-@media(max-width:760px){.history-copy h1{font-size:clamp(25.5px,8.245vw,35.7px)}}
+.history-copy h1{font-size:clamp(34.56px,4.68vw,69.12px)}
+.history-copy h2{font-size:max(20px,clamp(36px,4.875vw,72px))}
+.history-copy h2{font-size:max(20px,clamp(33px,4.2vw,60px))}
+.history-beliefs h2{font-size:max(20px,clamp(33px,4.2vw,60px))}
+@media(max-width:1100px){.history-copy h1{font-size:54.72px}}
+@media(max-width:760px){.history-copy h1{font-size:clamp(27.36px,7.2vw,38.88px)}
+.history-copy h2{font-size:max(20px,clamp(28.5px,7.5vw,40.5px))}
+.history-copy h1{font-size:clamp(30.24px,7.92vw,41.76px)}}
+@media(max-width:760px){.history-copy h1{font-size:clamp(21.6px,6.984vw,30.24px)}
+.history-development .history-copy h2{font-size:max(20px,clamp(18.75px,5.25vw,25.5px))}}
 
 /* scroll-scenes.css */
-.scroll-chapter .chapter-content h1{font-size:clamp(37.4px,4.59vw,64.6px)}
-.scroll-chapter[data-beat="ancestry"] .chapter-content h1{font-size:clamp(44.2px,5.525vw,76.5px)}
-@media(max-width:760px){.scroll-chapter .chapter-content h1,.scroll-chapter[data-beat="ancestry"] .chapter-content h1{font-size:clamp(25.5px,7.14vw,37.4px)}}
+.scroll-chapter .chapter-content h1{font-size:clamp(31.68px,3.888vw,54.72px)}
+.scroll-chapter .chapter-content h2{font-size:max(20px,clamp(33px,4.05vw,57px))}
+.scroll-chapter[data-beat="ancestry"] .chapter-content h1{font-size:clamp(37.44px,4.68vw,64.8px)}
+@media(max-width:760px){.scroll-chapter .chapter-content h1,.scroll-chapter[data-beat="ancestry"] .chapter-content h1{font-size:clamp(21.6px,6.048vw,31.68px)}
+.scroll-chapter .chapter-content h2{font-size:max(20px,clamp(22.5px,6.3vw,33px))}}
+
+/* The ingredient-film caption accompanies the image rather than dominating it. */
+.ingredient-film .ingredient-film-title{font-size:clamp(22px,2.2vw,28px);font-weight:450;line-height:1.25}
+.prose h3{font-size:20px}
+@media(max-width:760px){.ingredient-film .ingredient-film-title{font-size:22px}}
