@@ -9,13 +9,14 @@ Greek subject: PRIMAL CORE — Σε ευχαριστούμε για την εμ�
 
 > Σε ευχαριστούμε για την εμπιστοσύνη. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.
 
-English signups receive the equivalent English message. Both messages include the site link and a reply-to-withdraw sentence. The display name is PRIMAL CORE; the sender is the Google account executing the trigger. Replies go to ermitikos@gmail.com. No domain mailbox or paid provider is required.
+English signups receive the equivalent English message. Both messages include the site link and a reply-to-withdraw sentence. The display name is PRIMAL CORE; both the sender and reply-to are hello@primalcore.gr. The Google account executing the trigger must have this address verified in Gmail Send mail as, using the existing Papaki mailbox SMTP. No new paid email provider is required.
 
 ## Activate in the existing Google project
 
+0. In the same Gmail account that runs Apps Script: Settings → See all settings → Accounts and Import → Send mail as → Add another email address. Add PRIMAL CORE / hello@primalcore.gr, use the SMTP host, port and TLS mode supplied by Papaki, and verify through the hello mailbox. Enter mailbox credentials only in Gmail’s settings, never in chat or source code.
 1. Open the existing spreadsheet → Extensions → Apps Script. Save a copy/version of the current source first.
 2. Replace Code.gs with the complete current `google-apps-script/Code.gs` from this branch; save. Preserve all Script Properties, Sheet data and existing deployment URL.
-3. Run `setupWelcomeEmails` once and authorize the Google permission to send email. It installs exactly one five-minute welcome worker and enables only the new flow. Repeating it preserves data and the existing secret. Do not run a manual send to the existing list.
+3. Run `setupWelcomeEmails` once and authorize the Google Gmail permissions required by GmailApp (broader than the previous MailApp send-only scope). The setup checks the verified alias before enabling; the worker leaves records pending if the alias is removed, without falling back to the personal Gmail sender. It installs exactly one five-minute welcome worker and enables only the new flow. Repeating it preserves data and the existing secret. Do not run a manual send to the existing list.
 4. Deploy → Manage deployments → Edit the **existing** web app → Version: New version → Deploy. Keep Execute as: Me, Access: Anyone and the same /exec URL. No Vercel environment change is needed.
 5. Register a **new email you control** on primalcore.gr. Check the private Waitlist tab for `pending-thanks-v1`, then wait for the scheduled worker (normally a few minutes, subject to Google scheduling).
 6. Verify the thank-you in that inbox/spam and the Sheet status `sent-thanks-v1` with a timestamp. Repeat the signup: it must not send a second message. Test English with another controlled new address.
@@ -37,3 +38,7 @@ The worker skips rows without consent or with a previous send timestamp. A scrip
 Run `disableWelcomeEmails` to disable future sending and remove only the welcome trigger; Sheet/history and unrelated triggers remain intact. This does not recall mail already in flight. Withdrawal replies require the owner to remove the recipient from pending/future launch lists; this is not an automated unsubscribe or launch campaign service.
 
 Quota reference: https://developers.google.com/apps-script/guides/services/quotas
+
+## Gmail alias support lifecycle
+
+Google’s Gmail Help currently announces ending Send as support for third-party addresses in January 2027: https://support.google.com/mail/answer/22370 . This Papaki-alias route is temporary and must be replaced with direct authenticated Papaki SMTP (or an appropriately configured Google Workspace mailbox) before that change. The mailbox remains with Papaki. Do not assume that a working current alias guarantees future support.

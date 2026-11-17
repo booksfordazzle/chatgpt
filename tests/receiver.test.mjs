@@ -23,6 +23,7 @@ function receiver(initialRows = [], options = {}) {
     SpreadsheetApp: { openById: id => { assert.equal(id, props.SPREADSHEET_ID); return { getSheetByName: () => rows.length ? sheet : null, insertSheet: () => sheet }; }, getActiveSpreadsheet: () => ({ getId: () => '1ptOmDxONI9KD_rLRZp0xGsjJezsOyIP0H3gd5HgleRg' }), flush: () => { flushed++; } },
     Utilities: { getUuid: () => 'test-generated-uuid' },
     MailApp: { getRemainingDailyQuota: () => options.quota ?? 100, sendEmail: message => { assert.equal(locked, false); assert.ok(flushed > 0); if (options.mailFails) throw Error('private provider error'); messages.push(message); } },
+    GmailApp: { getAliases: () => options.aliases ?? ['hello@primalcore.gr'], sendEmail: (to, subject, body, config) => { assert.equal(locked,false); assert.ok(flushed>0); if(options.mailFails)throw Error('private provider error'); messages.push({to,subject,body,...config}); } },
     ScriptApp: { getProjectTriggers: () => triggers, deleteTrigger: trigger => { triggers.splice(triggers.indexOf(trigger), 1); }, newTrigger: name => ({ timeBased() { return this; }, everyMinutes(minutes) { assert.equal(minutes, 5); return this; }, create() { triggers.push({ getHandlerFunction: () => name }); } }) },
     ContentService: { MimeType: { JSON: 'json' }, createTextOutput: text => ({ setMimeType: () => JSON.parse(text) }) }
   };
@@ -125,7 +126,7 @@ test('welcome setup is repeatable and queues only future confirmed signups, pres
   assert.deepEqual(r.rows[1],before); assert.equal(r.messages.length,1);
   assert.equal(r.messages[0].to,'new@example.com');
   assert(r.messages[0].body.startsWith('Σε ευχαριστούμε για την εμπιστοσύνη. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.'));
-  assert.equal(r.messages[0].replyTo,'ermitikos@gmail.com');
+  assert.equal(r.messages[0].replyTo,'hello@primalcore.gr');
   assert.equal(r.rows[2][15],'sent-thanks-v1'); assert(r.rows[2][16]);
   r.submit({email:'NEW@example.com'});r.sendMail();assert.equal(r.messages.length,1);
 });
@@ -145,3 +146,5 @@ test('historical pending and in-flight welcome statuses are never backfilled or 
  const r=receiver();r.setupMail();r.submit({email:'legacy@example.com'});r.rows[1][15]='pending';
  r.submit({email:'ambiguous@example.com'});r.rows[2][15]='sending-thanks-v1';r.sendMail();assert.equal(r.messages.length,0);
 });
+
+test('verified hello sender is required, with no personal-address fallback',()=>{const r=receiver();r.setupMail();r.submit({});r.sendMail();assert.equal(r.messages[0].from,'hello@primalcore.gr');const missing=receiver([],{aliases:[]});assert.throws(()=>missing.setupMail(),/First verify/);assert.notEqual(missing.props.WELCOME_EMAIL_ENABLED,'true');missing.props.WELCOME_EMAIL_ENABLED='true';missing.props.WELCOME_EMAIL_VERSION='thank-you-v1';missing.submit({});missing.sendMail();assert.equal(missing.messages.length,0);assert.equal(missing.rows[1][15],'pending-thanks-v1');});

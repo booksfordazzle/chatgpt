@@ -99,6 +99,9 @@ function disableWelcomeEmails() {
 function setupWelcomeEmails() {
   // Request sending permission before changing any settings or triggers.
   MailApp.getRemainingDailyQuota();
+  if (GmailApp.getAliases().indexOf('hello@primalcore.gr') < 0) {
+    throw new Error('First verify hello@primalcore.gr in Gmail Settings > Accounts > Send mail as.');
+  }
   var props = PropertiesService.getScriptProperties();
   if (!props.getProperty('SPREADSHEET_ID') || !props.getProperty('WAITLIST_SHARED_SECRET')) {
     throw new Error('Run setupWaitlist first in the existing project.');
@@ -113,6 +116,8 @@ function setupWelcomeEmails() {
 function sendPendingWelcomeEmails() {
   var props = PropertiesService.getScriptProperties();
   if (props.getProperty('WELCOME_EMAIL_ENABLED') !== 'true' || props.getProperty('WELCOME_EMAIL_VERSION') !== 'thank-you-v1') return;
+  // Never fall back to the personal Gmail sender if the alias is unavailable.
+  if (GmailApp.getAliases().indexOf('hello@primalcore.gr') < 0) return;
   for (var attempt = 0; attempt < 10; attempt++) {
     if (MailApp.getRemainingDailyQuota() < 1) return; // Leave pending for a later run.
     var lock = LockService.getScriptLock();
@@ -140,14 +145,14 @@ function sendPendingWelcomeEmails() {
     } finally { lock.releaseLock(); }
     var sent = false;
     try {
-      MailApp.sendEmail({
-        to: email,
-        subject: locale === 'en-US' ? 'PRIMAL CORE — Thank you for your trust' : 'PRIMAL CORE — Σε ευχαριστούμε για την εμπιστοσύνη',
-        body: locale === 'en-US'
+      var subject = locale === 'en-US' ? 'PRIMAL CORE — Thank you for your trust' : 'PRIMAL CORE — Σε ευχαριστούμε για την εμπιστοσύνη';
+      var body = locale === 'en-US'
           ? 'Thank you for your trust. You’ll receive a message when PRIMAL CORE is ready to launch.\n\nPRIMAL CORE\nhttps://primalcore.gr/en\n\nTo stop receiving updates, reply to this email.'
-          : 'Σε ευχαριστούμε για την εμπιστοσύνη. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.\n\nPRIMAL CORE\nhttps://primalcore.gr/\n\nΑν δεν θέλεις να λαμβάνεις ενημερώσεις, απάντησε σε αυτό το email.',
+          : 'Σε ευχαριστούμε για την εμπιστοσύνη. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.\n\nPRIMAL CORE\nhttps://primalcore.gr/\n\nΑν δεν θέλεις να λαμβάνεις ενημερώσεις, απάντησε σε αυτό το email.';
+      GmailApp.sendEmail(email, subject, body, {
+        from: 'hello@primalcore.gr',
         name: 'PRIMAL CORE',
-        replyTo: 'ermitikos@gmail.com'
+        replyTo: 'hello@primalcore.gr'
       });
       sent = true;
     } catch (_) { /* Ambiguous delivery: manual review prevents duplicate sends. */ }
