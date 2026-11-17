@@ -246,3 +246,5 @@ This is an extension of the existing dark palette and Google Sans H2 hierarchy. 
 Move the unchanged full-width product photo carousel after the ingredients content and immediately before FAQ/signup. The current sequence is benefits → Industry/testimonial player → new reading section → ingredients heading/film and slider → product photo carousel → FAQ/signup. This supersedes only the earlier instruction placing the photo carousel directly after the player. Preserve carousel imagery, controls, caption, motion/fallback behavior and signup handling; shared design tokens remain unchanged.
 
 Verification for this extension: all 78 tests and the build passed. Geometry checks and Greek/English screenshots at 390px and 1440px are recorded in `/tmp/skin-care-review/{390,1440}-{el,en}.png`; final visual review is tracked separately.
+
+Latest owner revision replaces both skin-care reading paragraphs with direct second-person copy and names PRIMAL CORE in the second paragraph. Preserve the exact current Greek wording in public/index.html, corresponding English translation, heading, paragraph break and placement.
