@@ -6,10 +6,24 @@ function authorized(value, secret) {
   const expected=Buffer.from(`Bearer ${secret}`),actual=Buffer.from(value);
   return actual.length===expected.length && timingSafeEqual(actual,expected);
 }
+const CONFIG_CODES = ['smtp_host_missing','smtp_host_invalid','smtp_port_invalid','smtp_user_invalid','smtp_password_missing','receiver_not_configured'];
 export function smtpSettings(env) {
+  const host=typeof env.SMTP_HOST==='string'?env.SMTP_HOST.trim().toLowerCase():'';
+  const user=typeof env.SMTP_USER==='string'?env.SMTP_USER.trim().toLowerCase():'';
   const port=Number(env.SMTP_PORT);
-  if(env.SMTP_HOST!=='smtp-gr.securemail.pro'||![465,587].includes(port)||env.SMTP_USER!==SENDER||!env.SMTP_PASSWORD)throw Error('smtp_not_configured');
-  return {host:env.SMTP_HOST,port,secure:port===465,requireTLS:true,auth:{user:SENDER,pass:env.SMTP_PASSWORD},tls:{minVersion:'TLSv1.2',rejectUnauthorized:true},connectionTimeout:8000,greetingTimeout:8000,socketTimeout:12000,logger:false,debug:false,disableFileAccess:true,disableUrlAccess:true};
+  if(!host)throw Error('smtp_host_missing');
+  if(host!=='smtp-gr.securemail.pro')throw Error('smtp_host_invalid');
+  if(![465,587].includes(port))throw Error('smtp_port_invalid');
+  if(user!==SENDER)throw Error('smtp_user_invalid');
+  if(typeof env.SMTP_PASSWORD!=='string'||!env.SMTP_PASSWORD)throw Error('smtp_password_missing');
+  return {host,port,secure:port===465,requireTLS:true,auth:{user:SENDER,pass:env.SMTP_PASSWORD},tls:{minVersion:'TLSv1.2',rejectUnauthorized:true},connectionTimeout:8000,greetingTimeout:8000,socketTimeout:12000,logger:false,debug:false,disableFileAccess:true,disableUrlAccess:true};
+}
+function readinessFailure(error) {
+  if(error?.code==='EAUTH')return 'smtp_auth_failed';
+  if(error?.code==='ETIMEDOUT')return 'smtp_timeout';
+  if(['EDNS','ENOTFOUND','EAI_AGAIN'].includes(error?.code))return 'smtp_dns_failed';
+  if(['CERT_HAS_EXPIRED','DEPTH_ZERO_SELF_SIGNED_CERT','ERR_TLS_CERT_ALTNAME_INVALID','UNABLE_TO_VERIFY_LEAF_SIGNATURE'].includes(error?.code))return 'smtp_tls_failed';
+  return 'smtp_connection_failed';
 }
 export function welcomeMessage(email,locale) {
   const english=locale==='en-US';
@@ -33,14 +47,14 @@ async function claimJob(job,env,fetchImpl) {
 export function createWelcomeHandler({env=process.env,fetchImpl=fetch,createTransport=nodemailer.createTransport}={}) {
   return async function(req,res){
     const reply=(code,data)=>{res.statusCode=code;res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json');res.setHeader('X-Content-Type-Options','nosniff');res.end(JSON.stringify(data));};
-    if(!authorized(req.headers?.authorization,env.WAITLIST_SHARED_SECRET))return reply(401,{ok:false});
+    if(!authorized(req.headers?.authorization,env.WAITLIST_SHARED_SECRET))return reply(401,{ok:false,code:'auth_failed'});
     if(!['GET','POST'].includes(req.method)){res.setHeader('Allow','GET, POST');return reply(405,{ok:false});}
     let settings;
-    try{settings=smtpSettings(env);if(!env.GOOGLE_APPS_SCRIPT_URL)throw Error();}catch{return reply(503,{ok:false,retrySafe:true,code:'smtp_not_configured'});}
+    try{settings=smtpSettings(env);if(!env.GOOGLE_APPS_SCRIPT_URL)throw Error('receiver_not_configured');}catch(error){return reply(503,{ok:false,retrySafe:true,code:CONFIG_CODES.includes(error?.message)?error.message:'smtp_not_configured'});}
     if(req.method==='GET'){
       // Authenticated readiness check verifies TLS/login without sending any mail.
       const transport=createTransport(settings);
-      try{await transport.verify();return reply(200,{ok:true});}catch{return reply(503,{ok:false,retrySafe:true,code:'smtp_connection_failed'});}finally{transport.close();}
+      try{await transport.verify();return reply(200,{ok:true});}catch(error){return reply(503,{ok:false,retrySafe:true,code:readinessFailure(error)});}finally{transport.close();}
     }
     let job;
     try{

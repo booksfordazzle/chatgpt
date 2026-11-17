@@ -105,14 +105,8 @@ function setupWelcomeEmails() {
   if (!props.getProperty('SPREADSHEET_ID') || !props.getProperty('WAITLIST_SHARED_SECRET')) {
     throw new Error('Run setupWaitlist first in the existing project.');
   }
-  // Verify the private SMTP connection without sending. Password stays on Vercel.
-  var check = UrlFetchApp.fetch('https://primalcore.gr/api/welcome-email', {
-    method: 'get', headers: { Authorization: 'Bearer ' + props.getProperty('WAITLIST_SHARED_SECRET') },
-    muteHttpExceptions: true, followRedirects: false
-  });
-  if (check.getResponseCode() !== 200 || JSON.parse(check.getContentText()).ok !== true) {
-    throw new Error('Configure SMTP settings on Vercel, redeploy, then run setupWelcomeEmails again.');
-  }
+  var check = checkWelcomeEmailConnection();
+  if (!check.ok) throw new Error('SMTP readiness: HTTP ' + check.status + ' / ' + check.code);
   disableWelcomeEmails();
   ScriptApp.newTrigger('sendPendingWelcomeEmails').timeBased().everyMinutes(5).create();
   props.setProperty('WELCOME_EMAIL_VERSION', 'thank-you-v1');
@@ -188,4 +182,23 @@ function claimWelcomeSmtp(input, props) {
   sheet.getRange(input.rowNumber, statusColumn + 1, 1, 1).setValues([['smtp-claimed-thanks-v1']]);
   SpreadsheetApp.flush();
   return true;
+}
+
+/** Safe diagnosis only: never sends mail, logs settings or changes the queue. */
+function checkWelcomeEmailConnection() {
+  var status = 0, result = {}, code = 'connection_failed';
+  try {
+    var secret = PropertiesService.getScriptProperties().getProperty('WAITLIST_SHARED_SECRET');
+    var response = UrlFetchApp.fetch('https://primalcore.gr/api/welcome-email', {
+      method: 'get', headers: { Authorization: 'Bearer ' + secret },
+      muteHttpExceptions: true, followRedirects: false
+    });
+    status = response.getResponseCode();
+    try { result = JSON.parse(response.getContentText()); } catch (_) {}
+    var allowed = ['auth_failed','smtp_host_missing','smtp_host_invalid','smtp_port_invalid','smtp_user_invalid','smtp_password_missing','receiver_not_configured','smtp_not_configured','smtp_auth_failed','smtp_timeout','smtp_dns_failed','smtp_tls_failed','smtp_connection_failed'];
+    code = status === 200 && result.ok === true ? 'ready' : allowed.indexOf(result.code) >= 0 ? result.code : 'unexpected_response';
+  } catch (_) {}
+  var check = {ok: code === 'ready', status: status, code: code};
+  console.log('SMTP readiness: HTTP ' + check.status + ' / ' + check.code);
+  return check;
 }

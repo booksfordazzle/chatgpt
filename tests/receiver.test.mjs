@@ -159,7 +159,7 @@ test('historical pending and in-flight welcome statuses are never backfilled or 
 });
 
 test('SMTP setup checks configuration and does not enable on failure',()=>{
- const r=receiver([],{smtpUnavailable:true});assert.throws(()=>r.setupMail(),/Configure SMTP/);assert.notEqual(r.props.WELCOME_EMAIL_ENABLED,'true');
+ const r=receiver([],{smtpUnavailable:true});assert.throws(()=>r.setupMail(),/SMTP readiness/);assert.notEqual(r.props.WELCOME_EMAIL_ENABLED,'true');
 });
 test('SMTP claim requires matching saved consented row and can only succeed once',()=>{
  const r=receiver();r.setupMail();r.submit({});r.rows[1][15]='sending-thanks-v1';

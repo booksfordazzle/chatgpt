@@ -58,3 +58,7 @@ Keep existing MX and SPF. Never add a second SPF record. Check the provider's DK
 Provider references:
 - https://support.papaki.com/help/how-do-i-set-up-my-email-on-a-mac/?lang=en
 - https://support.papaki.com/help/which-settings-should-i-use-in-a-mail-client/?lang=en
+
+## Safe readiness diagnosis
+
+Run `checkWelcomeEmailConnection` from the current Code.gs editor without deploying or enabling the worker. It performs the same authenticated no-send SMTP readiness check and logs only a numeric HTTP status and an allowlisted code. Never share secret properties or raw provider responses. Fixed reason codes distinguish missing/invalid host, port, username/password presence, shared-secret mismatch, SMTP authentication, DNS, timeout and TLS errors; they are diagnostic hints, not proof of a specific root cause. A `ready` result proves the connection/login check passed at that moment, not inbox delivery. Fix Production environment values, redeploy Vercel and rerun before enabling the worker.

@@ -5,7 +5,7 @@ const env={WAITLIST_SHARED_SECRET:'private-secret',SMTP_HOST:'smtp-gr.securemail
 const job={rowNumber:2,email:'owned@example.com',locale:'el',registeredAt:'2026-11-17T10:00:00.000Z'};
 async function run({settings=env,body=job,auth='Bearer private-secret',method='POST',fetchImpl=async()=>new Response('{"ok":true}'),fails=false,verifyFails=false}={}){
  const calls=[],messages=[];let closed=0;
- const handler=createWelcomeHandler({env:settings,fetchImpl:async(...args)=>{calls.push(args);return fetchImpl(...args)},createTransport:config=>{assert.equal(config.tls.rejectUnauthorized,true);assert.equal(config.requireTLS,true);return {verify:async()=>{if(verifyFails)throw Error('SECRET')},sendMail:async message=>{messages.push(message);if(fails)throw Error('SECRET');return {accepted:[message.to]}},close:()=>closed++}}});
+ const handler=createWelcomeHandler({env:settings,fetchImpl:async(...args)=>{calls.push(args);return fetchImpl(...args)},createTransport:config=>{assert.equal(config.tls.rejectUnauthorized,true);assert.equal(config.requireTLS,true);return {verify:async()=>{if(verifyFails)throw Object.assign(Error('SECRET'),{code:typeof verifyFails==='string'?verifyFails:undefined})},sendMail:async message=>{messages.push(message);if(fails)throw Error('SECRET');return {accepted:[message.to]}},close:()=>closed++}}});
  const res={setHeader(){},end(body){this.body=JSON.parse(body)}};
  await handler({method,headers:{authorization:auth,'content-type':'application/json'},body},res);return{...res,calls,messages,closed};
 }
@@ -42,4 +42,10 @@ test('a denied or replayed Sheet claim never opens an SMTP send',async()=>{
  const r=await run({fetchImpl:async()=>new Response(JSON.stringify({ok:false}))});assert.equal(r.statusCode,409);assert.equal(r.messages.length,0);
  const failed=await run({fails:true});assert.equal(failed.statusCode,502);assert(!JSON.stringify(failed.body).includes('SECRET'));assert.equal(failed.body.retrySafe,undefined);
  const en=await run({body:{rowNumber:2,email:'qa@example.com',registeredAt:'2026-11-17T10:00:00.000Z',locale:'en-US'}});assert(en.messages[0].text.startsWith('Thank you for your trust.'));
+});
+
+test('readiness reports only fixed configuration and SMTP reason codes without values',async()=>{
+ for(const [failure,code] of [['EAUTH','smtp_auth_failed'],['ETIMEDOUT','smtp_timeout'],['EDNS','smtp_dns_failed'],['CERT_HAS_EXPIRED','smtp_tls_failed'],['untrusted-secret-text','smtp_connection_failed']]){
+  const r=await run({method:'GET',verifyFails:failure});assert.equal(r.body.code,code);assert(!JSON.stringify(r.body).includes('SECRET'));assert.equal(r.messages.length,0);
+ }
 });
