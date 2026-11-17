@@ -106,6 +106,7 @@ if (film) {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let viewportWidth = innerWidth, finishedIntro = false, userPaused = false;
   let nearViewport = true, playPending = false, generation = 0, frameTask = null, loadTimer, alternateSource;
+  let posterClock = null, posterFrame = null;
   const captureViewport = () => {
     const root = document.documentElement;
     root.style.setProperty('--hero-viewport-height', `${innerHeight}px`);
@@ -122,15 +123,66 @@ if (film) {
     scene.style.setProperty('--hero-title-opacity', String(titleOpacity));
     scene.style.setProperty('--hero-signup-opacity', String(signupOpacity));
     scene.style.setProperty('--hero-shade-opacity', String(shade));
+    // Keep the chapter targets in sync with the clock directly as well,
+    // so recovery does not depend on stylesheet-variable resolution timing.
+    title.style.opacity = String(titleOpacity);
+    signup.style.opacity = String(signupOpacity);
     signup.inert = signupOpacity < .05;
     title.setAttribute('aria-hidden', String(titleOpacity < .01));
   }
-  function finishIntro() { finishedIntro = true; paint(0, 1, 1); }
+  function stopPosterFrames() {
+    if (posterFrame !== null) cancelAnimationFrame(posterFrame);
+    posterFrame = null;
+    if (posterClock) posterClock.last = null;
+  }
+  function finishIntro() {
+    finishedIntro = true; stopPosterFrames(); posterClock = null;
+    scene.classList.remove('is-hero-poster-intro'); paint(0, 1, 1);
+  }
+  function resumePosterFrames() {
+    if (!posterClock || posterFrame !== null || reduced.matches || document.hidden || !nearViewport || finishedIntro) return;
+    posterFrame = requestAnimationFrame(advancePoster);
+  }
+  function advancePoster(now) {
+    posterFrame = null;
+    if (!posterClock || reduced.matches || document.hidden || !nearViewport || finishedIntro) {
+      if (posterClock) posterClock.last = null;
+      return;
+    }
+    if (posterClock.last !== null) posterClock.time += (now - posterClock.last) / 1000 * posterClock.rate;
+    posterClock.last = now;
+    updateReveal(); resumePosterFrames();
+  }
+  function startPosterIntro() {
+    scene.classList.remove('is-hero-static'); scene.classList.add('has-timed-reveal');
+    const hasInput = [...signup.querySelectorAll('input[type="email"]')].some(input => input.value.trim());
+    if (finishedIntro || signup.contains(document.activeElement) || hasInput) { finishIntro(); return; }
+    // iOS in-app browsers can deny autoplay on a cold visit. The text still
+    // gets one short intro over the poster, independent of media permission.
+    if (!posterClock) {
+      const duration = Number.isFinite(film.duration) && film.duration > 0 ? film.duration : 10;
+      const fps = Number(desktop.matches ? film.dataset.desktopFps : film.dataset.mobileFps);
+      const start = Math.max(0, duration - 200 / fps);
+      const span = Math.max(.01, duration - .05 - start);
+      const time = Math.max(film.currentTime || 0, Math.max(0, start - 1.25));
+      const end = start + .82 * span;
+      if (time >= end) { finishIntro(); return; }
+      posterClock = {time, duration, fps, rate: (end - time) / 4.2, last: null};
+    }
+    scene.classList.add('is-hero-poster-intro'); updateReveal(); resumePosterFrames();
+  }
   function restoreTimedReveal() {
+    // If playback becomes available halfway through the poster intro, keep
+    // its clock rather than jumping back to the beginning of the video.
+    const hasInput = [...signup.querySelectorAll('input[type="email"]')].some(input => input.value.trim());
+    if (posterClock) {
+      if (finishedIntro || signup.contains(document.activeElement) || hasInput) finishIntro();
+      else resumePosterFrames();
+      return;
+    }
     if (reduced.matches || !scene.classList.contains('is-hero-static')) return;
     // A slow load or blocked first play can recover later. Do not leave a
     // playing video stuck in the static-text fallback, or hide an active form.
-    const hasInput = [...signup.querySelectorAll('input[type="email"]')].some(input => input.value.trim());
     const preserveSignup = finishedIntro || signup.contains(document.activeElement) || hasInput;
     scene.classList.remove('is-hero-static');
     scene.classList.add('has-timed-reveal');
@@ -145,17 +197,20 @@ if (film) {
       restoreTimedReveal(); return;
     }
     if (finishedIntro && !reduced.matches) { finishIntro(); return; }
+    if (!reduced.matches) { startPosterIntro(); return; }
+    stopPosterFrames(); posterClock = null; scene.classList.remove('is-hero-poster-intro');
     scene.classList.remove('has-timed-reveal');
     scene.classList.add('is-hero-static');
+    title.style.removeProperty('opacity'); signup.style.removeProperty('opacity');
     signup.inert = false;
     title.removeAttribute('aria-hidden');
   }
   function updateReveal() {
     if (reduced.matches || scene.classList.contains('is-hero-static')) return;
     if (finishedIntro) { finishIntro(); return; }
-    const duration = Number.isFinite(film.duration) && film.duration > 0 ? film.duration : 10;
-    const time = film.currentTime;
-    const fps = Number(desktop.matches ? film.dataset.desktopFps : film.dataset.mobileFps);
+    const duration = posterClock ? posterClock.duration : Number.isFinite(film.duration) && film.duration > 0 ? film.duration : 10;
+    const time = posterClock ? posterClock.time : film.currentTime;
+    const fps = posterClock ? posterClock.fps : Number(desktop.matches ? film.dataset.desktopFps : film.dataset.mobileFps);
     const start = Math.max(0, duration - 200 / fps);
     const phase = Math.min(1, Math.max(0, (time - start) / Math.max(.01, duration - .05 - start)));
     const ease = value => { const t = Math.min(1, Math.max(0, value)); return t * t * (3 - 2 * t); };
@@ -182,7 +237,7 @@ if (film) {
   function tick() {
     frameTask = null;
     updateReveal();
-    if (film.paused || reduced.matches || document.hidden || !nearViewport || finishedIntro || scene.classList.contains('is-hero-static')) return;
+    if (posterClock || film.paused || reduced.matches || document.hidden || !nearViewport || finishedIntro || scene.classList.contains('is-hero-static')) return;
     frameTask = film.requestVideoFrameCallback ? film.requestVideoFrameCallback(tick) : requestAnimationFrame(tick);
   }
   async function playHero() {
@@ -195,13 +250,13 @@ if (film) {
     finally { if (currentGeneration === generation) { playPending = false; syncToggle(); } }
   }
   function configure() {
-    generation++; playPending = false; cancelFrames(); clearTimeout(loadTimer);
+    generation++; playPending = false; cancelFrames(); stopPosterFrames(); clearTimeout(loadTimer);
     film.pause(); film.defaultMuted = true; film.muted = true; film.playsInline = true;
     film.loop = true; film.autoplay = !reduced.matches && !userPaused; film.controls = false;
     captureViewport(); alignHeadings();
     if (reduced.matches) { readableFallback(); syncToggle(); return; }
     scene.classList.remove('is-hero-static'); scene.classList.add('has-timed-reveal');
-    if (finishedIntro) finishIntro(); else paint(0, 0, 0);
+    if (finishedIntro) finishIntro(); else if (posterClock) { updateReveal(); resumePosterFrames(); } else paint(0, 0, 0);
     const mp4 = desktop.matches ? film.dataset.desktopSrc : film.dataset.mobileSrc;
     const webm = desktop.matches ? film.dataset.desktopWebmSrc : film.dataset.mobileWebmSrc;
     const supportsWebm = Boolean(webm && film.canPlayType('video/webm; codecs="vp9"'));
@@ -228,16 +283,23 @@ if (film) {
     readableFallback(); syncToggle();
   });
   toggle.addEventListener('click', () => {
-    if (!film.paused || playPending) { userPaused = true; film.autoplay = false; film.pause(); finishIntro(); }
-    else { userPaused = false; film.autoplay = true; playHero(); }
+    if (!film.paused) { userPaused = true; film.autoplay = false; film.pause(); finishIntro(); }
+    else {
+      // Some iOS webviews leave an initial play() pending until a gesture.
+      // The visible Play button must retry on that first tap, not pause it.
+      generation++; playPending = false; userPaused = false; film.autoplay = true; playHero();
+    }
   });
   // Never hide/reposition an active email field when the background loops.
   signup.addEventListener('focusin', finishIntro);
   new IntersectionObserver(entries => {
     nearViewport = entries[0].isIntersecting;
-    if (nearViewport) playHero(); else film.pause();
+    if (nearViewport) { playHero(); resumePosterFrames(); } else { film.pause(); stopPosterFrames(); }
   }, { threshold: .01 }).observe(scene);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) film.pause(); else playHero(); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { film.pause(); stopPosterFrames(); }
+    else { playHero(); resumePosterFrames(); }
+  });
   ['touchstart', 'pointerdown'].forEach(event => scene.addEventListener(event, event => {
     // The dedicated button handles its own toggle; a bubbling pointerdown
     // must not start play immediately before click pauses it again.
@@ -248,7 +310,8 @@ if (film) {
     if (innerWidth !== viewportWidth || !matchMedia('(pointer: coarse)').matches) { viewportWidth = innerWidth; captureViewport(); }
     alignHeadings();
   }, { passive: true });
-  addEventListener('pageshow', playHero);
+  addEventListener('pagehide', () => { film.pause(); stopPosterFrames(); });
+  addEventListener('pageshow', () => { stopPosterFrames(); playHero(); resumePosterFrames(); });
   if (typeof ResizeObserver === 'function') new ResizeObserver(alignHeadings).observe(signup);
   document.fonts.ready.then(alignHeadings);
   desktop.addEventListener('change', configure); reduced.addEventListener('change', configure); configure();

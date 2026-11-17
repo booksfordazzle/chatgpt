@@ -9,7 +9,7 @@ async function seek(page,time){await page.locator('[data-film]').evaluate(async(
  const browser=await browserType.launch({executablePath:process.env.BROWSER_EXECUTABLE||undefined,args:engine==='chromium'?['--no-sandbox']:[],timeout:20000});
  console.log('Browser:',process.env.BROWSER_NAME||engine,browser.version());
  for(const width of[390,1440])for(const lang of['','/en/']){
-  const context=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width,height:844},...(engine==='chromium'?{isMobile:width<761}:{}),hasTouch:width<761});const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+  const context=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width,height:844},...(engine!=='firefox'?{isMobile:width<761}:{}),hasTouch:width<761});const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+lang);await page.waitForFunction(()=>{const v=document.querySelector('[data-film]');return v.readyState>=2&&!v.paused&&v.currentTime>.05});await page.evaluate(()=>document.fonts.ready);
   const video=page.locator('[data-film]');const src=await video.getAttribute('src');assert(src.includes(width<761?'hero-loop-mobile.':'hero-loop-desktop.'));
   assert.equal(await video.evaluate(v=>v.loop&&v.muted&&v.playsInline),true);
@@ -46,20 +46,22 @@ async function seek(page,time){await page.locator('[data-film]').evaluate(async(
  for(const preserveInput of [false,true]){
   const context=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:1440,height:844}});const page=await context.newPage();
   await page.addInitScript(()=>{window.allowHeroPlayback=false;const autoplay=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'autoplay');Object.defineProperty(HTMLMediaElement.prototype,'autoplay',{get:autoplay.get,set(value){autoplay.set.call(this,this.hasAttribute('data-film')&&!window.allowHeroPlayback?false:value)}});const play=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){return this.hasAttribute('data-film')&&!window.allowHeroPlayback?Promise.reject(new DOMException('blocked','NotAllowedError')):play.call(this)}});
-  await page.goto(base);await page.waitForFunction(()=>document.querySelector('.hero-film').classList.contains('is-hero-static'));
-  if(preserveInput)await page.locator('.hero-signup [name=email]').fill('preserve@example.invalid');
+  await page.goto(base);await page.waitForFunction(()=>document.querySelector('.hero-film').classList.contains('is-hero-poster-intro'));
+  if(preserveInput){await page.waitForFunction(()=>Number(document.querySelector('.hero-film').style.getPropertyValue('--hero-signup-opacity'))>.99);await page.locator('.hero-signup [name=email]').fill('preserve@example.invalid')}
   await page.evaluate(()=>window.allowHeroPlayback=true);await page.locator('[data-hero-toggle]').click();
   await page.waitForFunction(()=>{const s=document.querySelector('.hero-film'),v=s.querySelector('[data-film]');return !s.classList.contains('is-hero-static')&&!v.paused});
   if(preserveInput){assert((await state(page)).signup>.99);assert.equal(await page.locator('.hero-signup [name=email]').inputValue(),'preserve@example.invalid')}
-  else{const v=page.locator('[data-film]'),duration=await v.evaluate(v=>v.duration),start=duration-200/24,span=duration-.05-start;const s=await seek(page,Math.max(0,start-1.25)+span*.18+.15);assert(s.title>.98&&s.signup<.01)}
+  else{await page.waitForFunction(()=>Number(document.querySelector('.hero-film').style.getPropertyValue('--hero-signup-opacity'))>.99);assert((await state(page)).title<.01)}
   console.log('PASS autoplay fallback recovery and dedicated play toggle; preserve input:',preserveInput);await context.close();
  }
  for(const scenario of['failed','blocked','reduced','no-js']){
   const context=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:390,height:700},reducedMotion:scenario==='reduced'?'reduce':'no-preference',javaScriptEnabled:scenario!=='no-js'});const page=await context.newPage();
   if(scenario==='failed')await page.route(/\/hero-loop-mobile\.(mp4|webm)(\?|$)/,r=>r.abort());
   if(scenario==='blocked')await page.addInitScript(()=>{const autoplay=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'autoplay');Object.defineProperty(HTMLMediaElement.prototype,'autoplay',{get:autoplay.get,set(value){autoplay.set.call(this,this.hasAttribute('data-film')?false:value)}});const original=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){return this.hasAttribute('data-film')?Promise.reject(new DOMException('blocked','NotAllowedError')):original.call(this)}});
-  await page.goto(base);await page.waitForFunction(()=>document.querySelector('.hero-film').classList.contains('is-hero-static')).catch(error=>{if(scenario!=='no-js')throw error});
-  assert.equal(await page.locator('.hero-signup').evaluate(f=>f.inert),false);assert(await page.locator('#hero-title').isVisible());assert(await page.locator('.hero-signup [name=email]').isVisible());console.log('PASS readable poster/form fallback:',scenario);await context.close();
+  await page.goto(base);
+  if(['failed','blocked'].includes(scenario)){await page.waitForFunction(()=>Number(document.querySelector('.hero-film').style.getPropertyValue('--hero-signup-opacity'))>.99);assert((await state(page)).title<.01);assert.equal((await state(page)).static,false)}
+  else{await page.waitForFunction(()=>document.querySelector('.hero-film').classList.contains('is-hero-static'));assert(await page.locator('#hero-title').isVisible())}
+  assert.equal(await page.locator('.hero-signup').evaluate(f=>f.inert),false);assert(await page.locator('.hero-signup [name=email]').isVisible());console.log('PASS readable poster/form fallback:',scenario);await context.close();
  }
  await browser.close();
 })().catch(error=>{console.error(error);process.exit(1)});
