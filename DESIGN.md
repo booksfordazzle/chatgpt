@@ -221,3 +221,7 @@ Desktop hero signup heading (above 1100px): keep “Μπες στην λίστα
 ## Current homepage video order
 
 The manual two-video player starts with the industry film, then switches to the testimonial and wraps back to industry. Apply this order in both languages and at every viewport, including the native no-JavaScript fallback. Preserve deliberate play with sound, controls hidden during playback and mobile centering on Next.
+
+## Benefits before video carousel
+
+Place the complete benefits heading and accordion above the manual Industry/testimonial video carousel in both languages and at every viewport. Preserve the player’s previous desktop width, centered below the benefits, and full available width on mobile. Keep the shared heading-to-film spacing and native accordion behavior.

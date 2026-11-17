@@ -436,3 +436,9 @@ html.has-confirmation-video{overflow:hidden}
 
 /* V.1: desktop waitlist heading matches the main hero headline size. */
 @media(min-width:1101px){.hero-signup #hero-waitlist-title{font-size:clamp(52.8px,6.93vw,105.6px);width:max-content;max-width:none;position:relative;left:50%;transform:translateX(-50%);white-space:nowrap}}
+
+/* Owner: benefits precede the video carousel at every viewport. */
+.ritual.benefits-before-video{grid-template-columns:1fr;gap:var(--heading-film-gap)}
+.benefits-before-video>.testimonial-film{width:calc((100% - 80px)/2);justify-self:center}
+@media(max-width:1100px) and (min-width:761px){.benefits-before-video>.testimonial-film{width:calc((100% - 48px)/2)}}
+@media(max-width:760px){.benefits-before-video>.testimonial-film{width:100%}}
