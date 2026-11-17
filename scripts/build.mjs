@@ -6,7 +6,7 @@ await rm(out, { recursive: true, force: true }); await mkdir(out, { recursive: t
 const escape = value => value.replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;');
 const pages = [];
 const guides = JSON.parse(await readFile('content/guides.json', 'utf8'));
-const reviewedPages = new Set(['index.html', 'blog/index.html', 'en/blog/index.html', ...guides.filter(page => page.indexable).flatMap(page => page.paths)]);
+const reviewedPages = new Set(['index.html', 'en/index.html', 'blog/index.html', 'en/blog/index.html', ...guides.filter(page => page.indexable).flatMap(page => page.paths)]);
 async function visit(dir) {
  for (const entry of await readdir(dir, { withFileTypes: true })) {
   const file = path.join(dir,entry.name); if(entry.isDirectory()){await visit(file);continue;} if(!entry.name.endsWith('.html'))continue;
