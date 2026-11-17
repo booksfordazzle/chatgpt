@@ -1,0 +1,41 @@
+/* Owner-requested 15% reduction for website H1 headings only.
+   Mirrors the existing responsive type rules; H2/H3 and email templates are unchanged. */
+
+/* styles.css */
+h1{font-size:clamp(32.3px,4.25vw,61.2px)}
+.hero-content #hero-title{font-size:clamp(35.7px,3.9525vw,57.8px)}
+.prose h1{font-size:clamp(30.6px,3.4vw,49.3px)}
+@media(max-width:1100px){.hero-content #hero-title{font-size:45.9px}}
+@media(max-width:760px){.hero-content #hero-title{font-size:clamp(32.3px,7.48vw,49.3px)}
+.intro h1{font-size:35.7px}
+.prose h1{font-size:30.6px}
+.journal h1{font-size:36.55px}}
+.hero-content #hero-title{font-size:clamp(27.2px,3.57vw,54.4px)}
+@media(max-width:760px){.hero-content #hero-title{font-size:clamp(14.45px,4.25vw,30.6px)}}
+.hero-content #hero-title{font-size:clamp(27.2px,3.57vw,54.4px)}
+@media(max-width:760px){.hero-content #hero-title{font-size:clamp(13.6px,3.825vw,28.9px)}}
+.intro h1{font-size:clamp(27.2px,3.4vw,46.75px)}
+@media(max-width:760px){.intro h1{font-size:32.3px}}
+.intro>h1{font-size:clamp(25.5px,2.975vw,44.2px)}
+@media(max-width:760px){.intro>h1{font-size:clamp(25.5px,6.63vw,32.3px)}}
+.confirmation-page h1{font-size:clamp(51px,5.95vw,74.8px)}
+@media(max-width:760px){.confirmation-page h1{font-size:51px}}
+.hero-content #hero-title{font-size:clamp(44.88px,5.8905vw,89.76px)}
+@media(max-width:760px){.hero-content #hero-title{font-size:clamp(22.44px,6.31125vw,47.685px)}}
+
+/* philosophy.css */
+.origin-copy h1{font-size:clamp(51px,5.95vw,81.6px)}
+@media(max-width:1100px){.origin-copy h1{font-size:64.6px}}
+@media(max-width:760px){.origin-copy h1{font-size:clamp(40.8px,10.2vw,54.4px)}}
+
+/* history.css */
+.history-copy h1{font-size:clamp(40.8px,5.525vw,81.6px)}
+@media(max-width:1100px){.history-copy h1{font-size:64.6px}}
+@media(max-width:760px){.history-copy h1{font-size:clamp(32.3px,8.5vw,45.9px)}
+.history-copy h1{font-size:clamp(35.7px,9.35vw,49.3px)}}
+@media(max-width:760px){.history-copy h1{font-size:clamp(25.5px,8.245vw,35.7px)}}
+
+/* scroll-scenes.css */
+.scroll-chapter .chapter-content h1{font-size:clamp(37.4px,4.59vw,64.6px)}
+.scroll-chapter[data-beat="ancestry"] .chapter-content h1{font-size:clamp(44.2px,5.525vw,76.5px)}
+@media(max-width:760px){.scroll-chapter .chapter-content h1,.scroll-chapter[data-beat="ancestry"] .chapter-content h1{font-size:clamp(25.5px,7.14vw,37.4px)}}

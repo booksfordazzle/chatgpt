@@ -248,3 +248,7 @@ Move the unchanged full-width product photo carousel after the ingredients conte
 Verification for this extension: all 78 tests and the build passed. Geometry checks and Greek/English screenshots at 390px and 1440px are recorded in `/tmp/skin-care-review/{390,1440}-{el,en}.png`; final visual review is tracked separately.
 
 Latest owner revision replaces both skin-care reading paragraphs with direct second-person copy and names PRIMAL CORE in the second paragraph. Preserve the exact current Greek wording in public/index.html, corresponding English translation, heading, paragraph break and placement.
+
+## Current H1 size
+
+Reduce all website H1 font sizes by 15% from their existing responsive scales in both languages and at all viewports, including hero, philosophy, history, articles, contact and confirmation pages. The final heading-scale.css override preserves existing media breakpoints and selector order. Keep H2/H3 sizes, layout, typeface and email templates unchanged. This supersedes prior H1 size preferences.
