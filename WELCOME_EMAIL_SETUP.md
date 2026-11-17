@@ -81,3 +81,5 @@ The current `checkWelcomeEmailConnection` also requests `?receiver=1&immediate=1
 ## Upgrade an already configured installation to immediate sending
 
 Keep all SMTP variables, Script Properties, records and the existing deployment URL. Replace Code.gs with the full current source, save, then edit **PRIMAL CORE — LIVE Receiver — Vercel** in Manage deployments and publish **New version**. Run `checkWelcomeEmailConnection` (expect HTTP 200 / ready), then `setupWelcomeEmails`. Test with one new controlled address. Do not requeue historical sent/review rows. The immediate path is active only after this Google update.
+
+Immediate readiness now also tries the read-only legacy probe when the immediate probe is rejected. `receiver_version_outdated` means the configured live URL accepts the shared secret but runs an older SMTP receiver without immediate support. Publish the current source into that exact deployment. `receiver_not_ready` means both probes were rejected; check the deployment URL and unchanged shared-secret match. Neither probe sends mail or changes subscriber rows. This diagnosis does not establish whether a previously accepted message reached an inbox.

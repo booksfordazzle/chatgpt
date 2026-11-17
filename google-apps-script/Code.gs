@@ -209,7 +209,7 @@ function checkWelcomeEmailConnection() {
     });
     status = response.getResponseCode();
     try { result = JSON.parse(response.getContentText()); } catch (_) {}
-    var allowed = ['auth_failed','smtp_host_missing','smtp_host_invalid','smtp_port_invalid','smtp_user_invalid','smtp_password_missing','receiver_not_configured','smtp_not_configured','smtp_auth_failed','smtp_timeout','smtp_dns_failed','smtp_tls_failed','smtp_connection_failed','receiver_not_ready','receiver_check_failed'];
+    var allowed = ['auth_failed','smtp_host_missing','smtp_host_invalid','smtp_port_invalid','smtp_user_invalid','smtp_password_missing','receiver_not_configured','smtp_not_configured','smtp_auth_failed','smtp_timeout','smtp_dns_failed','smtp_tls_failed','smtp_connection_failed','receiver_not_ready','receiver_version_outdated','receiver_check_failed'];
     code = status === 200 && result.ok === true ? 'ready' : allowed.indexOf(result.code) >= 0 ? result.code : 'unexpected_response';
   } catch (_) {}
   var check = {ok: code === 'ready', status: status, code: code};

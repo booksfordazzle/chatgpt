@@ -58,7 +58,7 @@ export function createWelcomeHandler({env=process.env,fetchImpl=fetch,createTran
       const transport=createTransport(settings);
       try{await transport.verify();}catch(error){return reply(503,{ok:false,retrySafe:true,code:readinessFailure(error)});}finally{transport.close();}
       if(new URL(req.url || '/', 'https://primalcore.gr').searchParams.get('receiver')==='1'){
-        try{if(!await claimJob({},env,fetchImpl,new URL(req.url || '/', 'https://primalcore.gr').searchParams.get('immediate')==='1'?'check-welcome-immediate':'check-welcome-smtp'))return reply(503,{ok:false,retrySafe:true,code:'receiver_not_ready'});}
+        try{const immediate=new URL(req.url || '/', 'https://primalcore.gr').searchParams.get('immediate')==='1';if(!await claimJob({},env,fetchImpl,immediate?'check-welcome-immediate':'check-welcome-smtp')){const legacy=immediate&&await claimJob({},env,fetchImpl,'check-welcome-smtp');return reply(503,{ok:false,retrySafe:true,code:legacy?'receiver_version_outdated':'receiver_not_ready'});}}
         catch{return reply(503,{ok:false,retrySafe:true,code:'receiver_check_failed'});}
       }
       return reply(200,{ok:true});
