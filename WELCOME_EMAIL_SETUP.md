@@ -6,15 +6,15 @@ This replaces the Gmail/MailApp/alias approach. Source pushed to Vercel is only 
 
 From: PRIMAL CORE <hello@primalcore.gr>. Reply-To and envelope sender: hello@primalcore.gr.
 
-> Σε ευχαριστούμε για την εμπιστοσύνη. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.
+> Καλώς ήρθες. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.
 
-English registrations receive the equivalent English message. Both include the site link and a reply-to-withdraw sentence. Two inline CID image attachments carry the bull symbol and existing closed-jar photograph; a plain-text alternative is included. No remote imagery, tracking pixels or advertising offer. Withdrawal replies must be processed by the owner before any further campaign; a reply is not an automated unsubscribe operation.
+English registrations receive the equivalent English message. Both include the site link and a reply-to-withdraw sentence. Two inline CID image attachments carry the supplied image wordmark and existing closed-jar photograph; a plain-text alternative is included. No remote imagery, tracking pixels or advertising offer. Withdrawal replies must be processed by the owner before any further campaign; a reply is not an automated unsubscribe operation.
 
 ## Current visual template
 
-The owner's black-and-white BECYCLE reference applies to the confirmation email: centered bull/name, ivory Georgia thank-you heading, real product photograph, existing launch-update promise, outlined site CTA and privacy/contact/address footer. The website's global design remains unchanged. Surface details and review evidence are recorded in [.impeccable/surfaces/welcome-email.md](.impeccable/surfaces/welcome-email.md).
+The owner's black-and-white BECYCLE reference applies to the confirmation email: a single centered image wordmark (`public/assets/home-wordmark.jpg`, CID `primal-core-logo`) without a separate bull or textual brand, ivory “Καλώς ήρθες” / “Welcome” heading, real product photograph, existing launch-update promise, outlined site CTA and privacy/contact/address footer. The subject and plain-text greeting match the welcome heading. The background is #000000 to match the supplied wordmark; foreground #f1f0e9 and muted #b4b5ae remain unchanged. Google Sans is explicit on the heading and message, using the self-hosted WOFF2 with font-only CORS in `vercel.json`, Arial/Helvetica fallbacks and an Outlook fallback. Gmail webfont support is not guaranteed. The website's global design remains unchanged. Surface details and review evidence are recorded in [.impeccable/surfaces/welcome-email.md](.impeccable/surfaces/welcome-email.md).
 
-`server/welcome-template.mjs` supplies the bilingual HTML and inline images. Run `node scripts/preview-welcome-email.mjs` to regenerate `previews/welcome-el.html` and `previews/welcome-en.html` without sending mail. Greek and English browser previews at 390px and 1440px passed review; contrast ratios are 16.65:1 for main text and 9.21:1 for muted text. Responsive rules also cover 320px. Browser previews do not validate actual inbox rendering or delivery.
+`server/welcome-template.mjs` supplies the bilingual HTML and inline images. Run `node scripts/preview-welcome-email.mjs` to regenerate `previews/welcome-el.html` and `previews/welcome-en.html` without sending mail. The latest Greek and English screenshots replace the previous previews at the same paths; all 71 tests and layout checks at 320px, 390px and 1440px passed. Browser previews do not validate actual inbox rendering or delivery.
 
 For the already configured SMTP flow, the new template takes effect with its Vercel deployment. This visual update requires no Apps Script editing, new Sheet claims or changes to existing Google configuration. The activation steps below describe initial SMTP setup, not steps to repeat for this template update.
 

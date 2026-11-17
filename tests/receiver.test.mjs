@@ -136,7 +136,7 @@ test('welcome setup is repeatable and queues only future confirmed signups, pres
   r.submit({email:'new@example.com',locale:'el'}); r.sendMail(); r.sendMail();
   assert.deepEqual(r.rows[1],before); assert.equal(r.messages.length,1);
   assert.equal(r.messages[0].to,'new@example.com');
-  assert(r.messages[0].text.startsWith('Σε ευχαριστούμε για την εμπιστοσύνη. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.'));
+  assert(r.messages[0].text.startsWith('Καλώς ήρθες. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.'));
   assert.equal(r.messages[0].replyTo,'hello@primalcore.gr');assert.equal(r.messages[0].from.address,'hello@primalcore.gr');
   assert.equal(r.rows[2][15],'sent-thanks-v1'); assert(r.rows[2][16]);
   r.submit({email:'NEW@example.com'});r.sendMail();assert.equal(r.messages.length,1);
@@ -149,7 +149,7 @@ test('SMTP pre-send failures defer pending messages without losing signups and c
 });
 test('English welcome localizes the message and ambiguous failures never auto-resend', () => {
   const r=receiver();r.setupMail();r.submit({locale:'en-US'});r.sendMail();
-  assert(r.messages[0].text.startsWith('Thank you for your trust.'));
+  assert(r.messages[0].text.startsWith('Welcome.'));
   const failed=receiver([],{mailFails:true});failed.setupMail();assert.equal(failed.submit({}).ok,true);
   failed.sendMail();assert.equal(failed.rows[1][15],'review-thanks-v1');failed.sendMail();assert.equal(failed.messages.length,0);
 });

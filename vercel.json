@@ -11,7 +11,7 @@
     },
     "api/welcome-email.js": {
       "maxDuration": 60,
-      "includeFiles": "public/{apple-touch-icon.png,assets/product-gallery-1-1.jpg}"
+      "includeFiles": "public/assets/{home-wordmark.jpg,product-gallery-1-1.jpg}"
     }
   },
   "headers": [
@@ -88,6 +88,19 @@
         {
           "key": "X-Robots-Tag",
           "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/assets/GoogleSans.woff2",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Cross-Origin-Resource-Policy",
+          "value": "cross-origin"
         }
       ]
     }

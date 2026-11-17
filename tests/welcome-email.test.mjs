@@ -17,7 +17,7 @@ test('SMTP relay denies unauthenticated callers, malformed recipients and oversi
 test('SMTP has fixed authenticated hello identity, TLS verification, no Gmail fallback or arbitrary destination host',async()=>{
  assert.equal(smtpSettings(env).secure,true);assert.equal(smtpSettings({...env,SMTP_PORT:'587'}).secure,false);
  for(const setting of[{SMTP_HOST:'attacker.test'},{SMTP_USER:'other@example.com'},{SMTP_PORT:'25'},{SMTP_PASSWORD:''}])assert.throws(()=>smtpSettings({...env,...setting}));
- const r=await run();assert.equal(r.statusCode,200);assert.equal(r.messages[0].from.address,'hello@primalcore.gr');assert.equal(r.messages[0].replyTo,'hello@primalcore.gr');assert.deepEqual(r.messages[0].envelope.to,[job.email]);assert(r.messages[0].text.startsWith('Σε ευχαριστούμε για την εμπιστοσύνη.'));
+ const r=await run();assert.equal(r.statusCode,200);assert.equal(r.messages[0].from.address,'hello@primalcore.gr');assert.equal(r.messages[0].replyTo,'hello@primalcore.gr');assert.deepEqual(r.messages[0].envelope.to,[job.email]);assert(r.messages[0].text.startsWith('Καλώς ήρθες.'));
  assert.equal(JSON.parse(r.calls[0][1].body).action,'claim-welcome-smtp');assert.equal(r.closed,1);
 });
 test('Sheet durable claim denies duplicate jobs before SMTP; provider errors are never reported as delivery',async()=>{
@@ -41,7 +41,7 @@ test('authenticated readiness verifies SMTP without claiming a row or sending',a
 test('a denied or replayed Sheet claim never opens an SMTP send',async()=>{
  const r=await run({fetchImpl:async()=>new Response(JSON.stringify({ok:false}))});assert.equal(r.statusCode,409);assert.equal(r.messages.length,0);
  const failed=await run({fails:true});assert.equal(failed.statusCode,502);assert(!JSON.stringify(failed.body).includes('SECRET'));assert.equal(failed.body.retrySafe,undefined);
- const en=await run({body:{rowNumber:2,email:'qa@example.com',registeredAt:'2026-11-17T10:00:00.000Z',locale:'en-US'}});assert(en.messages[0].text.startsWith('Thank you for your trust.'));
+ const en=await run({body:{rowNumber:2,email:'qa@example.com',registeredAt:'2026-11-17T10:00:00.000Z',locale:'en-US'}});assert(en.messages[0].text.startsWith('Welcome.'));
 });
 
 test('readiness reports only fixed configuration and SMTP reason codes without values',async()=>{
