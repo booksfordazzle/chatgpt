@@ -273,6 +273,9 @@ document.querySelectorAll('[data-testimonial]').forEach(frame => {
       count.textContent = `${index + 1} / ${films.length}`;
       count.setAttribute('aria-label', `${english ? 'Video' : 'Βίντεο'} ${index + 1} ${english ? 'of' : 'από'} ${films.length}`);
       video.load();
+      // Keep the selected film in view rather than its below-video switch.
+      const headerHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header')) || 0;
+      if (frame.getBoundingClientRect().top < headerHeight) frame.scrollIntoView({ block: 'start', behavior: 'instant' });
       playSelected();
     });
   }

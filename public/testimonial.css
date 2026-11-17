@@ -1,6 +1,6 @@
 /* Use each film's natural proportions, without a surrounding black frame. */
-.testimonial-film[data-industry-src]{background:transparent;border:0;box-shadow:none;overflow:visible;border-radius:0}
-.testimonial-film[data-industry-src] video{height:auto;aspect-ratio:auto;object-fit:contain}
+.testimonial-film[data-industry-src]{background:transparent;border:0;box-shadow:none;overflow:visible;border-radius:0;scroll-margin-top:calc(var(--header) + 20px)}
+.testimonial-film[data-industry-src] video{height:auto;aspect-ratio:9/16;object-fit:contain}
 .testimonial-navigation{display:flex;height:68px;padding:12px 0;align-items:center;justify-content:flex-end;gap:16px}
 .testimonial-navigation[hidden]{display:none}
 .testimonial-count{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
