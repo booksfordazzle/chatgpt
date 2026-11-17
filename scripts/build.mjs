@@ -1,12 +1,13 @@
 import { cp, mkdir, readdir, readFile, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
+import { discoveryPages, llmsFiles, structuredData } from './geo.mjs';
 import { SITE_URL, SOCIAL_IMAGE, canonicalPath } from '../site.config.mjs';
 const out = process.env.OUTPUT_DIR || 'dist';
 await rm(out, { recursive: true, force: true }); await mkdir(out, { recursive: true }); await cp('public', out, { recursive: true });
 const escape = value => value.replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;');
 const pages = [];
 const guides = JSON.parse(await readFile('content/guides.json', 'utf8'));
-const reviewedPages = new Set(['index.html', 'en/index.html', 'blog/index.html', 'en/blog/index.html', ...guides.filter(page => page.indexable).flatMap(page => page.paths)]);
+const reviewedPages = new Set(['index.html', 'en/index.html', 'blog/index.html', 'en/blog/index.html', ...discoveryPages, ...guides.filter(page => page.indexable).flatMap(page => page.paths)]);
 async function visit(dir) {
  for (const entry of await readdir(dir, { withFileTypes: true })) {
   const file = path.join(dir,entry.name); if(entry.isDirectory()){await visit(file);continue;} if(!entry.name.endsWith('.html'))continue;
@@ -39,12 +40,19 @@ async function visit(dir) {
     return `href="${escape(SITE_URL + canonicalPath(target.pathname.slice(1)))}"`;
   }));
   html = html.replace('</head>',metadata+'</head>');
+  // Explicitly requested public discovery pages become indexable; private/provisional pages retain noindex.
+  if(discoveryPages.includes(relative))html=html.replace(/<meta\b(?=[^>]*name="robots")(?=[^>]*content="[^"]*noindex)[^>]*>/gi,'');
+  html = structuredData(html, relative, url);
   // Only reviewed complete pages are eligible; provisional ingredient declarations stay noindexed.
   if(reviewedPages.has(relative)&&!/<meta\b(?=[^>]*name="robots")(?=[^>]*content="[^"]*noindex)/i.test(html))pages.push(url);
   await writeFile(file,html);
  }
 }
 await visit(out);
-await writeFile(path.join(out,'robots.txt'),`User-agent: *\nAllow: /\nSitemap: ${SITE_URL}/sitemap.xml\n`);
+const robots=(await readFile('public/robots.txt','utf8')).replace(/^Sitemap:.*$/m,`Sitemap: ${SITE_URL}/sitemap.xml`);
+await writeFile(path.join(out,'robots.txt'),robots);
+const {summary,full}=llmsFiles(await readFile('public/index.html','utf8'),await readFile('public/en/index.html','utf8'));
+await writeFile(path.join(out,'llms.txt'),summary);
+await writeFile(path.join(out,'llms-full.txt'),full);
 await writeFile(path.join(out,'sitemap.xml'),'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+pages.map(url=>`<url><loc>${escape(url)}</loc></url>`).join('')+'</urlset>');
 console.log(`Built ${out}. Canonical target (not a claim of deployment): ${SITE_URL}; sitemap URLs: ${pages.length}`);
