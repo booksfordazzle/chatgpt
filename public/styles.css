@@ -445,3 +445,12 @@ html.has-confirmation-video{overflow:hidden}
 
 /* Plain owner-selected benefit checkmark. */
 .benefit-check{display:inline-block;width:24px;text-align:center;font-size:24px;line-height:1;font-weight:500}
+
+/* Owner-supplied reading section after the Industry player. */
+.skin-care-story{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:80px;align-items:start}
+.skin-care-story h2{max-width:18ch}
+.skin-care-copy{max-width:70ch;color:var(--muted);font-size:18px;line-height:1.8}
+.skin-care-copy p{margin:0}
+.skin-care-copy p+p{margin-top:24px}
+@media(max-width:1100px){.skin-care-story{gap:48px}}
+@media(max-width:760px){.skin-care-story{grid-template-columns:1fr;gap:var(--heading-content-gap)}.skin-care-copy{font-size:17px}}

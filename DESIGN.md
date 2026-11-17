@@ -235,3 +235,14 @@ Latest benefit copy supersedes gentle skin care: “Πλούσια θρεπτι�
 Latest benefit ordering: “Πλούσια θρεπτική φροντίδα” / “Rich nourishing care” is second; preserve the relative order of the other four benefits.
 
 Latest description for the second benefit, “Πλούσια θρεπτική φροντίδα”: Ένας πλούσιος συνδυασμός φυσικής προέλευσης συστατικών, με λιπαρά οξέα και φυσικούς κηρώδεις εστέρες, που χαρίζει στην επιδερμίδα αίσθηση θρέψης, αφήνοντάς την απαλή και με φυσική λάμψη. Use the corresponding English translation; this supersedes the earlier ingredient-list wording.
+
+
+## Latest homepage reading section and carousel order
+
+Place the new `.skin-care-story` reading section immediately after the manual Industry/testimonial player in both languages. Greek H2: “Λιγότερη ξηρότητα. Πιο λεία όψη.” English H2: “Less dryness. A smoother appearance.” Preserve the two owner-requested Greek paragraphs and their English translation as implemented in `public/index.html` and `public/en/index.html`, with their paragraph break.
+
+This is an extension of the existing dark palette and Google Sans H2 hierarchy. Use two equal desktop columns with an 80px gap, reducing to 48px at tablet widths. At 760px and below, stack the heading above the copy using the existing `--heading-content-gap`. Body text is 18px, 17px on mobile, with 1.8 line-height; retain the 24px paragraph gap and existing section gutters/spacing.
+
+Move the unchanged full-width product photo carousel after the ingredients content and immediately before FAQ/signup. The current sequence is benefits → Industry/testimonial player → new reading section → ingredients heading/film and slider → product photo carousel → FAQ/signup. This supersedes only the earlier instruction placing the photo carousel directly after the player. Preserve carousel imagery, controls, caption, motion/fallback behavior and signup handling; shared design tokens remain unchanged.
+
+Verification for this extension: all 78 tests and the build passed. Geometry checks and Greek/English screenshots at 390px and 1440px are recorded in `/tmp/skin-care-review/{390,1440}-{el,en}.png`; final visual review is tracked separately.
