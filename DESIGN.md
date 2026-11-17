@@ -231,3 +231,5 @@ Latest benefits/media revision: retain the three existing benefits and append th
 Latest vitamin E copy: Η βιταμίνη Ε (Tocopherol) είναι γνωστή για τις αντιοξειδωτικές της ιδιότητες. Συμβάλλει στην προστασία της επιδερμίδας από τις ελεύθερες ρίζες, βοηθώντας στη διατήρηση της υγιούς και περιποιημένης όψης της. Use the corresponding English translation in the ingredient slider; this supersedes its earlier premature-aging/barrier/moisture claims.
 
 Latest benefit copy supersedes gentle skin care: “Πλούσια θρεπτική φροντίδα” — “Ένας πλούσιος συνδυασμός από beef tallow, μελισσοκέρι, μαστίχα Χίου και έλαιο jojoba που θρέφει την επιδερμίδα, αφήνοντάς την απαλή, ελαστική και με φυσική λάμψη.” Keep the plain ✓ and localized English equivalent.
+
+Latest benefit ordering: “Πλούσια θρεπτική φροντίδα” / “Rich nourishing care” is second; preserve the relative order of the other four benefits.
