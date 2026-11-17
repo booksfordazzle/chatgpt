@@ -225,3 +225,5 @@ The manual two-video player starts with the industry film, then switches to the 
 ## Benefits before video carousel
 
 Place the complete benefits heading and accordion above the manual Industry/testimonial video carousel in both languages and at every viewport. Preserve the player’s previous desktop width, centered below the benefits, and full available width on mobile. Keep the shared heading-to-film spacing and native accordion behavior.
+
+Latest benefits/media revision: retain the three existing benefits and append the owner’s gentle-care and dryness-protection benefits, localized in English. All benefit icons use the plain ✓ glyph. Place the unchanged full-width photo carousel immediately after the Industry/testimonial player and before the five-ingredients heading and film, in both languages and at all widths.
