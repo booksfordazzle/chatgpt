@@ -233,3 +233,5 @@ Latest vitamin E copy: Η βιταμίνη Ε (Tocopherol) είναι γνωστ
 Latest benefit copy supersedes gentle skin care: “Πλούσια θρεπτική φροντίδα” — “Ένας πλούσιος συνδυασμός από beef tallow, μελισσοκέρι, μαστίχα Χίου και έλαιο jojoba που θρέφει την επιδερμίδα, αφήνοντάς την απαλή, ελαστική και με φυσική λάμψη.” Keep the plain ✓ and localized English equivalent.
 
 Latest benefit ordering: “Πλούσια θρεπτική φροντίδα” / “Rich nourishing care” is second; preserve the relative order of the other four benefits.
+
+Latest description for the second benefit, “Πλούσια θρεπτική φροντίδα”: Ένας πλούσιος συνδυασμός φυσικής προέλευσης συστατικών, με λιπαρά οξέα και φυσικούς κηρώδεις εστέρες, που χαρίζει στην επιδερμίδα αίσθηση θρέψης, αφήνοντάς την απαλή και με φυσική λάμψη. Use the corresponding English translation; this supersedes the earlier ingredient-list wording.
