@@ -253,9 +253,10 @@ document.querySelectorAll('[data-testimonial]').forEach(frame => {
   video.controls = false;
   async function playSelected() {
     const currentSelection = selection;
-    video.controls = true; video.muted = false; video.volume = 1; status.hidden = true;
+    // Keep native controls from shading the picture during playback.
+    video.controls = false; video.muted = false; video.volume = 1; status.hidden = true;
     try { await video.play(); if (currentSelection === selection) button.hidden = true; }
-    catch { if (currentSelection === selection) { status.hidden = false; button.hidden = false; } }
+    catch { if (currentSelection === selection) { video.controls = true; status.hidden = false; button.hidden = false; } }
   }
   button.addEventListener('click', playSelected);
   if (navigation && films.length > 1) {
@@ -275,8 +276,10 @@ document.querySelectorAll('[data-testimonial]').forEach(frame => {
       playSelected();
     });
   }
-  video.addEventListener('play', () => { button.hidden = true; status.hidden = true; });
-  video.addEventListener('ended', () => { button.hidden = false; });
+  video.addEventListener('play', () => { video.controls = false; button.hidden = true; status.hidden = true; });
+  // A tap can pause without the native shaded overlay; the play button resumes.
+  video.addEventListener('click', () => { if (!video.paused) { video.pause(); button.hidden = false; } });
+  video.addEventListener('ended', () => { video.controls = true; button.hidden = false; });
 });
 
 const slider = document.querySelector('.ingredient-slider');
