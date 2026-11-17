@@ -229,3 +229,5 @@ Place the complete benefits heading and accordion above the manual Industry/test
 Latest benefits/media revision: retain the three existing benefits and append the owner’s gentle-care and dryness-protection benefits, localized in English. All benefit icons use the plain ✓ glyph. Place the unchanged full-width photo carousel immediately after the Industry/testimonial player and before the five-ingredients heading and film, in both languages and at all widths.
 
 Latest vitamin E copy: Η βιταμίνη Ε (Tocopherol) είναι γνωστή για τις αντιοξειδωτικές της ιδιότητες. Συμβάλλει στην προστασία της επιδερμίδας από τις ελεύθερες ρίζες, βοηθώντας στη διατήρηση της υγιούς και περιποιημένης όψης της. Use the corresponding English translation in the ingredient slider; this supersedes its earlier premature-aging/barrier/moisture claims.
+
+Latest benefit copy supersedes gentle skin care: “Πλούσια θρεπτική φροντίδα” — “Ένας πλούσιος συνδυασμός από beef tallow, μελισσοκέρι, μαστίχα Χίου και έλαιο jojoba που θρέφει την επιδερμίδα, αφήνοντάς την απαλή, ελαστική και με φυσική λάμψη.” Keep the plain ✓ and localized English equivalent.
