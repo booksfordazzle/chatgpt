@@ -1,0 +1,19 @@
+/* One normal-flow viewport: no sticky runway or scroll-controlled media. */
+html .hero-film.hero-autoplay{height:auto}
+html .hero-autoplay .hero-sticky,html .hero-autoplay .hero-sticky:has(.hero-signup){position:relative;top:auto;height:calc(var(--hero-viewport-height,100svh) - var(--header));min-height:0}
+.hero-autoplay .hero-video,.hero-autoplay .hero-poster{object-position:center}
+.hero-autoplay .hero-playback-toggle{position:absolute;z-index:3;right:20px;bottom:16px;display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid #8f9387;border-radius:50%;background:rgba(8,9,8,.65);color:#fff;cursor:pointer}
+.hero-autoplay .hero-playback-toggle[hidden]{display:none}
+html .hero-autoplay.is-hero-static .hero-sticky{height:auto;min-height:calc(var(--hero-viewport-height,100svh) - var(--header))}
+.hero-autoplay.is-hero-static .hero-content{position:relative;inset:auto;height:auto;min-height:calc(var(--hero-viewport-height,100svh) - var(--header));padding-block:64px}
+.hero-autoplay.is-hero-static .hero-shade{background:rgba(0,0,0,.3);opacity:1}
+@media(max-width:760px){.hero-autoplay.is-hero-static .hero-content{padding-block:40px 72px}}
+/* Protect text on bright frames without increasing the whole-video overlay. */
+.hero-autoplay #hero-title,.hero-autoplay #hero-waitlist-title{isolation:isolate;text-shadow:0 1px 3px rgba(0,0,0,.9)}
+.hero-autoplay.is-hero-static #hero-title,.hero-autoplay #hero-waitlist-title{position:relative}
+.hero-autoplay #hero-title::before,.hero-autoplay #hero-waitlist-title::before{content:"";position:absolute;z-index:-1;inset:-12px -18px;background:rgba(0,0,0,.55);border-radius:12px;filter:blur(16px);pointer-events:none}
+.hero-autoplay .hero-signup .consent{color:#fff}
+.hero-autoplay .hero-signup .consent span{background:rgba(0,0,0,.82);padding:4px 8px;border-radius:4px}
+.hero-autoplay .hero-signup .form-status:not(:empty){background:rgba(0,0,0,.85);padding:8px 12px;border-radius:8px}
+.hero-autoplay #hero-waitlist-title,.hero-autoplay.is-hero-static #hero-title{position:relative}
+.hero-autoplay #hero-title::before,.hero-autoplay #hero-waitlist-title::before{content:"";position:absolute;z-index:-1;inset:-20px -24px;border-radius:8px;background:rgba(0,0,0,.55);filter:blur(14px);pointer-events:none}

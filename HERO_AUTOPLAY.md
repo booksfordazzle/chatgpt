@@ -1,0 +1,7 @@
+# Homepage hero autoplay
+
+The latest owner revision replaces the homepage scroll-controlled hero with one normal-flow viewport of responsive muted, inline looping video. Desktop uses `public/assets/hero-loop-desktop.mp4` (1280×720, 24fps, 10 seconds); mobile uses `public/assets/hero-loop-mobile.mp4` (608×1080, 60fps, 10.033 seconds), with matching posters. Both exports retain the supplied video stream, remove audio and use faststart.
+
+`public/site.js` drives playback-time title/signup fades and responsive source selection; `public/hero-autoplay.css` scopes layout, pause control and bright-frame readability. Signup stays visible after its first reveal and on field focus. Manual pause is preserved; offscreen/hidden playback stops. Reduced motion, no JavaScript, blocked autoplay, errors and long waits retain usable poster/form fallbacks. Existing signup attribution and backend are unchanged. See [.impeccable/surfaces/home-hero.md](.impeccable/surfaces/home-hero.md) for the saved behavior.
+
+The existing `tests/browser/hero-mobile.cjs` entry delegates to `tests/browser/hero-autoplay.cjs`. The browser harness uses `BASE_URL` (default `http://localhost:8080`) and accepts `PLAYWRIGHT_MODULE`. The 71 default tests and browser checks passed: Greek/English at 390px/1440px, autoplay/looping, no scroll seeking, reveal phases, email retention, resize, pause, mocked submission and four fallback cases. This is browser evidence, not a guarantee for every browser version or verification of live storage/inbox delivery.

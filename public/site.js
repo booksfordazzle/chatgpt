@@ -95,102 +95,129 @@ form.addEventListener('submit', async event => {
 // One capture shared by both forms, refreshed for current viewport on submit.
 document.querySelectorAll('.waitlist-form').forEach(populateAttributionFields);
 attribution.ready.then(() => document.querySelectorAll('.waitlist-form').forEach(populateAttributionFields));
-// A sticky scroll scene on both desktop and mobile; reduced motion keeps the poster.
+// Responsive silent autoplay hero. Text advances once with playback, never scroll.
 const film = document.querySelector('[data-film]');
 if (film) {
-  // Mobile browser chrome changes height during scroll; keep the scene geometry stable.
-  let heroViewportWidth = innerWidth;
-  const captureHeroViewport = () => {
+  const scene = film.closest('.hero-film');
+  const title = scene.querySelector('#hero-title');
+  const signup = scene.querySelector('.hero-signup');
+  const toggle = scene.querySelector('[data-hero-toggle]');
+  const desktop = matchMedia('(min-width: 761px)');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let viewportWidth = innerWidth, finishedIntro = false, userPaused = false;
+  let nearViewport = true, playPending = false, generation = 0, frameTask = null, loadTimer;
+  const captureViewport = () => {
     const root = document.documentElement;
     root.style.setProperty('--hero-viewport-height', `${innerHeight}px`);
     root.classList.toggle('hero-viewport-medium', innerHeight <= 950);
     root.classList.toggle('hero-viewport-short', innerHeight <= 800);
     root.classList.toggle('hero-viewport-small', innerHeight <= 650);
   };
-  captureHeroViewport();
-  addEventListener('resize', () => {
-    if (innerWidth !== heroViewportWidth || !matchMedia('(pointer: coarse)').matches) {
-      heroViewportWidth = innerWidth;
-      captureHeroViewport();
-    }
-  }, { passive: true });
-  const desktop = matchMedia('(min-width: 761px)');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  let loaded = false, scheduled = false;
-  const heroScene = film.closest('.hero-film');
-  const heroContent = heroScene.querySelector('.hero-content');
-  const heroTitle = heroScene.querySelector('#hero-title');
-  const heroSignup = heroScene.querySelector('.hero-signup');
-  function alignHeroHeadings() {
-    const heading = heroSignup.querySelector('#hero-waitlist-title');
-    const offset = heading.offsetTop + heading.offsetHeight / 2 - heroSignup.offsetHeight / 2;
-    heroScene.style.setProperty('--hero-heading-offset', `${offset}px`);
+  function alignHeadings() {
+    const heading = signup.querySelector('#hero-waitlist-title');
+    const offset = heading.offsetTop + heading.offsetHeight / 2 - signup.offsetHeight / 2;
+    scene.style.setProperty('--hero-heading-offset', `${offset}px`);
   }
-  function scrub() {
-    scheduled = false;
-    if (reduced.matches) return;
-    // The supplied films are 10s / 602 mobile frames. Keep text responsive while
-    // metadata or decoding is delayed by a mobile browser or data-saving mode.
-    const duration = Number.isFinite(film.duration) && film.duration > 0 ? film.duration : (desktop.matches ? 10 : 602 / 60);
-    const distance = heroScene.offsetHeight - film.parentElement.offsetHeight;
-    const progress = Math.min(1, Math.max(0, (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header')) - heroScene.getBoundingClientRect().top) / Math.max(1, distance)));
-    const time = progress * Math.max(0, duration - .05);
+  function paint(titleOpacity, signupOpacity, shade) {
+    scene.style.setProperty('--hero-title-opacity', String(titleOpacity));
+    scene.style.setProperty('--hero-signup-opacity', String(signupOpacity));
+    scene.style.setProperty('--hero-shade-opacity', String(shade));
+    signup.inert = signupOpacity < .05;
+    title.setAttribute('aria-hidden', String(titleOpacity < .01));
+  }
+  function finishIntro() { finishedIntro = true; paint(0, 1, 1); }
+  function readableFallback() {
+    clearTimeout(loadTimer);
+    if (finishedIntro && !reduced.matches) { finishIntro(); return; }
+    scene.classList.remove('has-timed-reveal');
+    scene.classList.add('is-hero-static');
+    signup.inert = false;
+    title.removeAttribute('aria-hidden');
+  }
+  function updateReveal() {
+    if (reduced.matches || scene.classList.contains('is-hero-static')) return;
+    if (finishedIntro) { finishIntro(); return; }
+    const duration = Number.isFinite(film.duration) && film.duration > 0 ? film.duration : 10;
+    const time = film.currentTime;
     const fps = Number(desktop.matches ? film.dataset.desktopFps : film.dataset.mobileFps);
-    const revealStart = Math.max(0, duration - 200 / fps);
-    const phase = Math.min(1, Math.max(0, (time - revealStart) / Math.max(.01, duration - .05 - revealStart)));
+    const start = Math.max(0, duration - 200 / fps);
+    const phase = Math.min(1, Math.max(0, (time - start) / Math.max(.01, duration - .05 - start)));
     const ease = value => { const t = Math.min(1, Math.max(0, value)); return t * t * (3 - 2 * t); };
-    const earlierTitleStart = Math.max(0, revealStart - 1.25);
-    const titleFadeDuration = .18 * Math.max(.01, duration - .05 - revealStart);
-    const titleIn = ease((time - earlierTitleStart) / titleFadeDuration);
+    const titleIn = ease((time - Math.max(0, start - 1.25)) / (.18 * Math.max(.01, duration - .05 - start)));
     const titleOut = ease((phase - .4) / .15);
-    const titleOpacity = titleIn * (1 - titleOut);
-    const signupOpacity = ease((phase - .62) / .2);
-    heroScene.style.setProperty('--hero-title-opacity', String(titleOpacity));
-    heroScene.style.setProperty('--hero-signup-opacity', String(signupOpacity));
-    heroScene.style.setProperty('--hero-shade-opacity', String(titleIn));
-    heroSignup.inert = signupOpacity < .05;
-    heroTitle.setAttribute('aria-hidden', String(titleOpacity < .01));
-    if (film.readyState >= 1 && !film.seeking && Math.abs(film.currentTime - time) > .06) {
-      try { film.currentTime = time; } catch {} // Retry on media readiness, never hide the form.
-    }
+    const signupIn = ease((phase - .62) / .2);
+    paint(titleIn * (1 - titleOut), signupIn, titleIn);
+    if (signupIn >= .999) finishIntro();
   }
-  function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(scrub); } }
+  function syncToggle() {
+    toggle.hidden = reduced.matches || Boolean(film.error);
+    const paused = film.paused;
+    toggle.setAttribute('aria-label', english ? (paused ? 'Play background video' : 'Pause background video') : (paused ? 'Αναπαραγωγή βίντεο φόντου' : 'Παύση βίντεο φόντου'));
+    toggle.innerHTML = paused
+      ? '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z" fill="currentColor"/></svg>'
+      : '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="M7 5h3v14H7zM14 5h3v14h-3z" fill="currentColor"/></svg>';
+  }
+  function cancelFrames() {
+    if (frameTask === null) return;
+    if (film.cancelVideoFrameCallback) film.cancelVideoFrameCallback(frameTask);
+    else cancelAnimationFrame(frameTask);
+    frameTask = null;
+  }
+  function tick() {
+    frameTask = null;
+    updateReveal();
+    if (film.paused || reduced.matches || document.hidden || !nearViewport || finishedIntro || scene.classList.contains('is-hero-static')) return;
+    frameTask = film.requestVideoFrameCallback ? film.requestVideoFrameCallback(tick) : requestAnimationFrame(tick);
+  }
+  async function playHero() {
+    if (reduced.matches || userPaused || !nearViewport || document.hidden || playPending || film.error) return;
+    const currentGeneration = generation;
+    playPending = true;
+    film.muted = true;
+    try { await film.play(); }
+    catch { if (currentGeneration === generation) readableFallback(); }
+    finally { if (currentGeneration === generation) { playPending = false; syncToggle(); } }
+  }
   function configure() {
-    film.pause();
-    film.muted = true; film.playsInline = true;
-    alignHeroHeadings();
-    heroScene.classList.toggle('has-timed-reveal', !reduced.matches);
-    for (const name of ['title', 'signup', 'shade']) heroScene.style.setProperty(`--hero-${name}-opacity`, '0');
-    heroContent.inert = false;
-    heroSignup.inert = !reduced.matches;
-    heroTitle.removeAttribute('aria-hidden');
-    if (reduced.matches) { film.classList.remove('is-ready'); return; }
+    generation++; playPending = false; cancelFrames(); clearTimeout(loadTimer);
+    film.pause(); film.defaultMuted = true; film.muted = true; film.playsInline = true;
+    film.loop = true; film.autoplay = !reduced.matches && !userPaused; film.controls = false;
+    captureViewport(); alignHeadings();
+    if (reduced.matches) { readableFallback(); syncToggle(); return; }
+    scene.classList.remove('is-hero-static'); scene.classList.add('has-timed-reveal');
+    if (finishedIntro) finishIntro(); else paint(0, 0, 0);
     const source = desktop.matches ? film.dataset.desktopSrc : film.dataset.mobileSrc;
-    if (!loaded || film.getAttribute('src') !== source) { loaded = true; film.classList.remove('is-ready'); film.src = source; film.preload = 'auto'; film.load(); }
-    else if (film.readyState >= 2) film.classList.add('is-ready');
-    schedule();
+    film.poster = desktop.matches ? film.dataset.desktopPoster : film.dataset.mobilePoster;
+    if (film.getAttribute('src') !== source) { film.classList.remove('is-ready'); film.src = source; film.preload = 'auto'; film.load(); }
+    loadTimer = setTimeout(() => { if (film.readyState < 3 || film.paused) readableFallback(); }, 6000);
+    playHero(); syncToggle();
   }
-  film.addEventListener('loadedmetadata', schedule);
-  film.addEventListener('loadeddata', () => { if (!reduced.matches) film.classList.add('is-ready'); schedule(); });
-  film.addEventListener('canplay', schedule);
-  film.addEventListener('seeked', schedule);
-  film.addEventListener('error', () => { film.classList.remove('is-ready'); schedule(); });
-  // Some mobile media policies require one real gesture before paused-frame seeking.
-  // Prime the muted decoder once, then immediately return to scroll-controlled playback.
-  let primed = false;
-  function primeMobileDecoder() {
-    if (primed || desktop.matches || reduced.matches || film.readyState >= 2) return;
-    primed = true;
-    film.play().then(() => { film.pause(); schedule(); }).catch(() => { primed = false; schedule(); });
-  }
-  heroScene.addEventListener('touchstart', primeMobileDecoder, { passive: true });
-  heroScene.addEventListener('pointerdown', primeMobileDecoder, { passive: true });
-  addEventListener('pageshow', () => { scheduled = false; alignHeroHeadings(); schedule(); });
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) schedule(); });
-  addEventListener('scroll', schedule, { passive: true }); addEventListener('resize', schedule, { passive: true });
-  addEventListener('resize', alignHeroHeadings, { passive: true });
-  if (typeof ResizeObserver === 'function') new ResizeObserver(alignHeroHeadings).observe(heroSignup);
-  document.fonts.ready.then(() => { alignHeroHeadings(); schedule(); });
+  film.addEventListener('playing', () => { if (userPaused || reduced.matches || document.hidden || !nearViewport) { film.pause(); return; } clearTimeout(loadTimer); film.classList.add('is-ready'); cancelFrames(); tick(); syncToggle(); });
+  film.addEventListener('pause', () => { cancelFrames(); syncToggle(); });
+  film.addEventListener('timeupdate', updateReveal);
+  film.addEventListener('loadedmetadata', updateReveal);
+  film.addEventListener('waiting', () => { clearTimeout(loadTimer); loadTimer = setTimeout(() => { if (film.readyState < 3) readableFallback(); }, 6000); });
+  film.addEventListener('canplay', playHero);
+  film.addEventListener('error', () => { cancelFrames(); film.classList.remove('is-ready'); readableFallback(); syncToggle(); });
+  toggle.addEventListener('click', () => {
+    if (!film.paused || playPending) { userPaused = true; film.autoplay = false; film.pause(); finishIntro(); }
+    else { userPaused = false; film.autoplay = true; playHero(); }
+  });
+  // Never hide/reposition an active email field when the background loops.
+  signup.addEventListener('focusin', () => { if (scene.classList.contains('has-timed-reveal')) finishIntro(); });
+  new IntersectionObserver(entries => {
+    nearViewport = entries[0].isIntersecting;
+    if (nearViewport) playHero(); else film.pause();
+  }, { threshold: .01 }).observe(scene);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) film.pause(); else playHero(); });
+  ['touchstart', 'pointerdown'].forEach(event => scene.addEventListener(event, () => { if (film.paused) playHero(); }, { passive: true }));
+  addEventListener('resize', () => {
+    if (innerWidth !== viewportWidth || !matchMedia('(pointer: coarse)').matches) { viewportWidth = innerWidth; captureViewport(); }
+    alignHeadings();
+  }, { passive: true });
+  addEventListener('pageshow', playHero);
+  if (typeof ResizeObserver === 'function') new ResizeObserver(alignHeadings).observe(signup);
+  document.fonts.ready.then(alignHeadings);
   desktop.addEventListener('change', configure); reduced.addEventListener('change', configure); configure();
 }
 

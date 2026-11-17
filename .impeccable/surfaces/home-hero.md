@@ -1,0 +1,11 @@
+# Homepage hero
+
+Latest owner revision: Greek and English homepages use silent, muted, inline autoplay with looping video in one normal-flow viewport. There is no sticky stage, scroll runway or scroll seeking. This supersedes historical homepage hero scroll instructions while preserving the rest of the V.1 site, existing headings, signup source attribution and confirmed-storage backend.
+
+Use the newly supplied films: mobile 608×1080, 60fps, 10.033 seconds; desktop 1280×720, 24fps, 10 seconds. `hero-loop-mobile.mp4` and `hero-loop-desktop.mp4` preserve the video stream, remove audio and use faststart, with matching responsive posters. Select desktop at 761px and above and mobile below that breakpoint. Implementation is in the hero block of `public/site.js` and the scoped `public/hero-autoplay.css`.
+
+Preserve the playback-time reveal: the title starts 1.25 seconds before the final 200-frame window, holds, fades out, then signup fades in. Timing uses the selected film's frame rate. Signup remains visible through subsequent loops and on focus so an active field and entered address are not lost. Apply the global 30% video dimming only after title reveal begins; retain localized heading scrims, consent backing and readable status text for bright frames.
+
+Provide the 44px pause/play control. Manual pause reveals signup and remains respected when the scene reenters view or the document returns. Stop background playback offscreen and while the document is hidden. Reduced motion, no JavaScript, media errors and blocked autoplay retain a readable static poster with a usable form; prolonged loading/waiting also reveals the readable fallback after six seconds. Preserve entered form values through responsive source changes and playback loops.
+
+Verification: 71 default tests passed. Browser checks covered Greek/English at 390px and 1440px, autoplay and looping, no seeking on scroll, reveal phases, email retention, resize, manual pause and a mocked successful submission, plus four fallback cases. These checks do not establish support in every Safari/browser version, real signup storage or live email delivery. Other site sections, ingredient/testimonial behavior and signup services remain outside this revision.
