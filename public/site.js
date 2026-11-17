@@ -241,14 +241,14 @@ document.querySelectorAll('[data-loop-video]').forEach(video => {
   sync();
 });
 
-// Keep the original testimonial first; load the second film only on selection.
+// Industry first, testimonial second; load the second film only on selection.
 document.querySelectorAll('[data-testimonial]').forEach(frame => {
   const video = frame.querySelector('video');
   const button = frame.querySelector('.testimonial-play');
   const status = frame.querySelector('.testimonial-status');
   const navigation = frame.querySelector('[data-testimonial-navigation]');
   const films = [{ src: video.getAttribute('src'), poster: video.getAttribute('poster'), label: video.getAttribute('aria-label') }];
-  if (frame.dataset.industrySrc) films.push({ src: frame.dataset.industrySrc, poster: frame.dataset.industryPoster, label: english ? 'Second PRIMAL CORE video' : 'Δεύτερο βίντεο PRIMAL CORE' });
+  if (frame.dataset.nextVideoSrc) films.push({ src: frame.dataset.nextVideoSrc, poster: frame.dataset.nextVideoPoster, label: english ? 'Play testimonial with sound' : 'Μαρτυρία PRIMAL CORE με ήχο' });
   let index = 0, selection = 0;
   video.controls = false;
   async function playSelected() {

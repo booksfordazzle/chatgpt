@@ -215,3 +215,7 @@ Restore real FormSubmit CAPTCHA through native POST; AJAX previously bypassed it
 At desktop widths above 1100px, “Μπες στην λίστα αναμονής” / “Join the waitlist” uses the same font-size clamp as the main hero headline: clamp(52.8px,6.93vw,105.6px). Preserve mobile/tablet sizes, existing centered alignment, fade sequence and signup controls. This snapshot is named V.1.
 
 Desktop hero signup heading (above 1100px): keep “Μπες στην λίστα αναμονής” on one centered line at the V.1 font size. The heading may extend beyond the 640px email form; mobile remains unchanged.
+
+## Current homepage video order
+
+The manual two-video player starts with the industry film, then switches to the testimonial and wraps back to industry. Apply this order in both languages and at every viewport, including the native no-JavaScript fallback. Preserve deliberate play with sound, controls hidden during playback and mobile centering on Next.
