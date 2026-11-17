@@ -1,0 +1,8 @@
+/* Broad, still pools of neutral light, shared by every public route. */
+:root{--site-background:radial-gradient(ellipse 85vw 75vh at 96% 8%,rgba(57,57,57,.48),transparent 72%),radial-gradient(ellipse 75vw 85vh at 0% 66%,rgba(43,43,43,.38),transparent 76%),linear-gradient(155deg,#000 3%,#171717 48%,#020202 96%);--bg:#080808}
+body{background-color:#000;background-image:var(--site-background);background-attachment:fixed}
+.history-page,.philosophy-page,.scroll-chapter,.chapter-frame,.subtraction-scene,.materials-scene,.manifesto-scene,.history-beliefs{background-color:transparent;background-image:none}
+/* Keep the photographic chapters readable while the common surface continues. */
+.scroll-chapter .chapter-veil,.history-shade,.manifesto-shade{background:linear-gradient(90deg,rgba(5,5,5,.98),rgba(20,20,20,.92) 35%,rgba(8,8,8,.65) 60%,rgba(0,0,0,.12))}
+@media(max-width:760px){.scroll-chapter .chapter-veil,.history-shade,.manifesto-shade{background:linear-gradient(110deg,rgba(4,4,4,.95),rgba(24,24,24,.8) 58%,rgba(0,0,0,.55))}}
+@media print{body{background:#fff}.scroll-chapter .chapter-veil,.history-shade,.manifesto-shade{background:none}}

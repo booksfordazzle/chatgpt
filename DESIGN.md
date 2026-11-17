@@ -252,3 +252,10 @@ Latest owner revision replaces both skin-care reading paragraphs with direct sec
 ## Current H1 size
 
 Reduce all website H1 font sizes by 15% from their existing responsive scales in both languages and at all viewports, including hero, philosophy, history, articles, contact and confirmation pages. The final heading-scale.css override preserves existing media breakpoints and selector order. Keep H2/H3 sizes, layout, typeface and email templates unchanged. This supersedes prior H1 size preferences.
+
+
+## Latest hero recovery and neutral site background
+
+Restore playback-time hero title/signup fades when playback recovers from an initial block or slow-load fallback. A rejected earlier play promise must not override healthy native autoplay. Preserve an already revealed, focused or filled signup during recovery; avoid duplicate pause toggling from bubbling pointer events. Keep responsive MP4 plus same-film VP9 WebM capability selection and a single supported alternate attempt on media failure. This is a playback fix: heading sizes, copy, forms, backend and the existing normal-flow hero layout remain unchanged. Implementation and current four-browser evidence are recorded in [HERO_AUTOPLAY.md](HERO_AUTOPLAY.md) and [the hero surface brief](.impeccable/surfaces/home-hero.md).
+
+The latest owner background preference applies across the site: broad, organic black-to-dark-grey radial/linear gradients with no colored cast, supplied by `public/site-background.css` linked from all 49 public pages. Keep the background still and continuous through transparent history/philosophy chapter surfaces. Use neutral responsive chapter veils to retain photographic text readability, and the white print fallback. Preserve the rest of the existing identity, typography, spacing and content. Current evidence: 83 passing unit tests, 11 hero cases in each actual Linux Chrome/Firefox/Opera/Brave browser, and 16 contact/history screenshots at 390px/1440px. Mobile viewport emulation is not native mobile-device validation; final visual review is separate.

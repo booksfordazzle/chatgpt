@@ -105,7 +105,7 @@ if (film) {
   const desktop = matchMedia('(min-width: 761px)');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let viewportWidth = innerWidth, finishedIntro = false, userPaused = false;
-  let nearViewport = true, playPending = false, generation = 0, frameTask = null, loadTimer;
+  let nearViewport = true, playPending = false, generation = 0, frameTask = null, loadTimer, alternateSource;
   const captureViewport = () => {
     const root = document.documentElement;
     root.style.setProperty('--hero-viewport-height', `${innerHeight}px`);
@@ -126,8 +126,24 @@ if (film) {
     title.setAttribute('aria-hidden', String(titleOpacity < .01));
   }
   function finishIntro() { finishedIntro = true; paint(0, 1, 1); }
+  function restoreTimedReveal() {
+    if (reduced.matches || !scene.classList.contains('is-hero-static')) return;
+    // A slow load or blocked first play can recover later. Do not leave a
+    // playing video stuck in the static-text fallback, or hide an active form.
+    const hasInput = [...signup.querySelectorAll('input[type="email"]')].some(input => input.value.trim());
+    const preserveSignup = finishedIntro || signup.contains(document.activeElement) || hasInput;
+    scene.classList.remove('is-hero-static');
+    scene.classList.add('has-timed-reveal');
+    if (preserveSignup) finishIntro();
+    else updateReveal();
+  }
   function readableFallback() {
     clearTimeout(loadTimer);
+    // Native autoplay can succeed while an earlier play() promise rejects.
+    // Never switch a healthy, playing film back to permanently static text.
+    if (!reduced.matches && !film.paused && film.readyState >= 3 && !film.error) {
+      restoreTimedReveal(); return;
+    }
     if (finishedIntro && !reduced.matches) { finishIntro(); return; }
     scene.classList.remove('has-timed-reveal');
     scene.classList.add('is-hero-static');
@@ -175,7 +191,7 @@ if (film) {
     playPending = true;
     film.muted = true;
     try { await film.play(); }
-    catch { if (currentGeneration === generation) readableFallback(); }
+    catch { if (currentGeneration === generation && film.paused) readableFallback(); }
     finally { if (currentGeneration === generation) { playPending = false; syncToggle(); } }
   }
   function configure() {
@@ -186,31 +202,48 @@ if (film) {
     if (reduced.matches) { readableFallback(); syncToggle(); return; }
     scene.classList.remove('is-hero-static'); scene.classList.add('has-timed-reveal');
     if (finishedIntro) finishIntro(); else paint(0, 0, 0);
-    const source = desktop.matches ? film.dataset.desktopSrc : film.dataset.mobileSrc;
+    const mp4 = desktop.matches ? film.dataset.desktopSrc : film.dataset.mobileSrc;
+    const webm = desktop.matches ? film.dataset.desktopWebmSrc : film.dataset.mobileWebmSrc;
+    const supportsWebm = Boolean(webm && film.canPlayType('video/webm; codecs="vp9"'));
+    const source = !film.canPlayType('video/mp4; codecs="avc1.42E01E"') && supportsWebm ? webm : mp4;
+    alternateSource = source === mp4 && supportsWebm ? webm : null;
     film.poster = desktop.matches ? film.dataset.desktopPoster : film.dataset.mobilePoster;
     if (film.getAttribute('src') !== source) { film.classList.remove('is-ready'); film.src = source; film.preload = 'auto'; film.load(); }
     loadTimer = setTimeout(() => { if (film.readyState < 3 || film.paused) readableFallback(); }, 6000);
     playHero(); syncToggle();
   }
-  film.addEventListener('playing', () => { if (userPaused || reduced.matches || document.hidden || !nearViewport) { film.pause(); return; } clearTimeout(loadTimer); film.classList.add('is-ready'); cancelFrames(); tick(); syncToggle(); });
+  film.addEventListener('playing', () => { if (userPaused || reduced.matches || document.hidden || !nearViewport) { film.pause(); return; } clearTimeout(loadTimer); restoreTimedReveal(); film.classList.add('is-ready'); cancelFrames(); tick(); syncToggle(); });
   film.addEventListener('pause', () => { cancelFrames(); syncToggle(); });
   film.addEventListener('timeupdate', updateReveal);
   film.addEventListener('loadedmetadata', updateReveal);
   film.addEventListener('waiting', () => { clearTimeout(loadTimer); loadTimer = setTimeout(() => { if (film.readyState < 3) readableFallback(); }, 6000); });
   film.addEventListener('canplay', playHero);
-  film.addEventListener('error', () => { cancelFrames(); film.classList.remove('is-ready'); readableFallback(); syncToggle(); });
+  film.addEventListener('error', () => {
+    cancelFrames(); film.classList.remove('is-ready');
+    if (alternateSource) {
+      const source = alternateSource; alternateSource = null; playPending = false;
+      readableFallback();
+      film.src = source; film.load(); playHero(); return;
+    }
+    readableFallback(); syncToggle();
+  });
   toggle.addEventListener('click', () => {
     if (!film.paused || playPending) { userPaused = true; film.autoplay = false; film.pause(); finishIntro(); }
     else { userPaused = false; film.autoplay = true; playHero(); }
   });
   // Never hide/reposition an active email field when the background loops.
-  signup.addEventListener('focusin', () => { if (scene.classList.contains('has-timed-reveal')) finishIntro(); });
+  signup.addEventListener('focusin', finishIntro);
   new IntersectionObserver(entries => {
     nearViewport = entries[0].isIntersecting;
     if (nearViewport) playHero(); else film.pause();
   }, { threshold: .01 }).observe(scene);
   document.addEventListener('visibilitychange', () => { if (document.hidden) film.pause(); else playHero(); });
-  ['touchstart', 'pointerdown'].forEach(event => scene.addEventListener(event, () => { if (film.paused) playHero(); }, { passive: true }));
+  ['touchstart', 'pointerdown'].forEach(event => scene.addEventListener(event, event => {
+    // The dedicated button handles its own toggle; a bubbling pointerdown
+    // must not start play immediately before click pauses it again.
+    if (event.target.closest('[data-hero-toggle]')) return;
+    if (film.paused) playHero();
+  }, { passive: true }));
   addEventListener('resize', () => {
     if (innerWidth !== viewportWidth || !matchMedia('(pointer: coarse)').matches) { viewportWidth = innerWidth; captureViewport(); }
     alignHeadings();
