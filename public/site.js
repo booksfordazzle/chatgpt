@@ -241,17 +241,40 @@ document.querySelectorAll('[data-loop-video]').forEach(video => {
   sync();
 });
 
-// The testimonial waits for a deliberate click, then plays inline with audio.
+// Keep the original testimonial first; load the second film only on selection.
 document.querySelectorAll('[data-testimonial]').forEach(frame => {
   const video = frame.querySelector('video');
   const button = frame.querySelector('.testimonial-play');
   const status = frame.querySelector('.testimonial-status');
+  const navigation = frame.querySelector('[data-testimonial-navigation]');
+  const films = [{ src: video.getAttribute('src'), poster: video.getAttribute('poster'), label: video.getAttribute('aria-label') }];
+  if (frame.dataset.industrySrc) films.push({ src: frame.dataset.industrySrc, poster: frame.dataset.industryPoster, label: english ? 'Second PRIMAL CORE video' : 'Δεύτερο βίντεο PRIMAL CORE' });
+  let index = 0, selection = 0;
   video.controls = false;
-  button.addEventListener('click', async () => {
+  async function playSelected() {
+    const currentSelection = selection;
     video.controls = true; video.muted = false; video.volume = 1; status.hidden = true;
-    try { await video.play(); button.hidden = true; }
-    catch { status.hidden = false; button.hidden = false; }
-  });
+    try { await video.play(); if (currentSelection === selection) button.hidden = true; }
+    catch { if (currentSelection === selection) { status.hidden = false; button.hidden = false; } }
+  }
+  button.addEventListener('click', playSelected);
+  if (navigation && films.length > 1) {
+    navigation.hidden = false;
+    const count = navigation.querySelector('.testimonial-count');
+    navigation.querySelector('.testimonial-next').addEventListener('click', () => {
+      video.pause();
+      index = (index + 1) % films.length;
+      selection++;
+      video.src = films[index].src; video.poster = films[index].poster;
+      video.setAttribute('aria-label', films[index].label);
+      button.setAttribute('aria-label', english ? 'Play video with sound' : 'Αναπαραγωγή βίντεο με ήχο');
+      button.hidden = false; status.hidden = true;
+      count.textContent = `${index + 1} / ${films.length}`;
+      count.setAttribute('aria-label', `${english ? 'Video' : 'Βίντεο'} ${index + 1} ${english ? 'of' : 'από'} ${films.length}`);
+      video.load();
+      playSelected();
+    });
+  }
   video.addEventListener('play', () => { button.hidden = true; status.hidden = true; });
   video.addEventListener('ended', () => { button.hidden = false; });
 });
