@@ -323,14 +323,22 @@ document.querySelectorAll('[data-loop-video]').forEach(video => {
   const toggle = frame.querySelector('.media-toggle');
   const status = document.getElementById(video.dataset.statusId);
   const name = video.dataset.videoName;
-  let userPaused = false, nearViewport = false, playPending = false;
+  let userPaused = false, nearViewport = false, playPending = false, sourceLoaded = false;
   video.defaultMuted = true; video.muted = true;
   video.setAttribute('muted', ''); video.setAttribute('playsinline', '');
-  video.autoplay = true; video.loop = true; video.controls = false;
-  // Pick the source explicitly: some mobile WebKit versions ignore <source media>.
-  const source = [...video.querySelectorAll('source')].find(source => !source.media || matchMedia(source.media).matches);
+  // Do not let native autoplay eagerly buffer an offscreen film at page load.
+  // The observer loads it just before encounter, including for reduced motion.
+  video.autoplay = false; video.preload = 'none'; video.loop = true; video.controls = false;
   if (matchMedia('(max-width: 760px)').matches && video.dataset.mobilePoster) video.poster = video.dataset.mobilePoster;
-  if (source) { video.src = source.getAttribute('src'); video.load(); }
+  function loadSource() {
+    if (sourceLoaded) return;
+    sourceLoaded = true;
+    // Pick at first encounter: some mobile WebKit versions ignore <source media>.
+    const source = [...video.querySelectorAll('source')].find(source => !source.media || matchMedia(source.media).matches);
+    if (matchMedia('(max-width: 760px)').matches && video.dataset.mobilePoster) video.poster = video.dataset.mobilePoster;
+    video.preload = 'auto'; video.autoplay = true;
+    if (source) { video.src = source.getAttribute('src'); video.load(); }
+  }
   function sync() {
     toggle.setAttribute('aria-label', (video.paused ? translate("Αναπαραγωγή βίντεο ") : translate("Παύση βίντεο ")) + name);
     toggle.innerHTML = video.paused
@@ -339,6 +347,7 @@ document.querySelectorAll('[data-loop-video]').forEach(video => {
   }
   async function play() {
     if (playPending || userPaused || !nearViewport || document.hidden) return;
+    loadSource();
     playPending = true; status.textContent = ''; video.muted = true;
     try { await video.play(); }
     catch (error) {
@@ -357,9 +366,12 @@ document.querySelectorAll('[data-loop-video]').forEach(video => {
   new IntersectionObserver(entries => {
     nearViewport = entries[0].isIntersecting;
     if (nearViewport) play(); else video.pause();
-  }, { threshold: .01 }).observe(video);
+  }, { threshold: .01, rootMargin: '200px 0px' }).observe(video);
   document.addEventListener('visibilitychange', () => { if (document.hidden) video.pause(); else play(); });
-  ['touchstart', 'touchend', 'pointerdown'].forEach(event => document.addEventListener(event, () => { if (video.paused) play(); }, { passive: true }));
+  ['touchstart', 'touchend', 'pointerdown'].forEach(event => document.addEventListener(event, event => {
+    if (event.target.closest('.ingredient-toggle') === toggle) return;
+    if (video.paused) play();
+  }, { passive: true }));
   addEventListener('pageshow', play);
   sync();
 });

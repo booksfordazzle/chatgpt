@@ -1,34 +1,56 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /.netlify/functions/
 
 User-agent: GPTBot
 Allow: /
+Disallow: /api/
+Disallow: /.netlify/functions/
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /api/
+Disallow: /.netlify/functions/
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /api/
+Disallow: /.netlify/functions/
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /api/
+Disallow: /.netlify/functions/
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /api/
+Disallow: /.netlify/functions/
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /api/
+Disallow: /.netlify/functions/
 
 User-agent: anthropic-ai
 Allow: /
+Disallow: /api/
+Disallow: /.netlify/functions/
 
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /api/
+Disallow: /.netlify/functions/
 
 User-agent: Claude-SearchBot
 Allow: /
+Disallow: /api/
+Disallow: /.netlify/functions/
 
 User-agent: Claude-User
 Allow: /
+Disallow: /api/
+Disallow: /.netlify/functions/
 
 Sitemap: https://primalcore.gr/sitemap.xml
