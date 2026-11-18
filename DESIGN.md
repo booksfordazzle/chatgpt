@@ -277,3 +277,5 @@ Preserve media placement/compositions, content, paragraph fonts, existing layout
 ## Latest exact title adjustment
 
 Subtract another 5px from every title-size declaration in heading-scale.css, including the article H3 adjustment, while keeping body copy unchanged. The ingredient-film caption is now 23px maximum on desktop and 17px on mobile, with opacity 0.9 in both languages. Preserve placement, weights and hero animation behavior; use heading stylesheet cache version 3 on all pages. This supersedes the previous title sizes.
+
+Latest owner adjustment: increase the title sizes by exactly 5px, reversing the previous 5px subtraction. Preserve the quieter 500/450 weights and ingredient-film title opacity 0.9. The film caption returns to 28px maximum on desktop and 22px on mobile; utility H2 minimum is 20px and article H3 is 20px. Use heading-scale.css cache version 4. Body copy, placement and hero fades are unchanged.

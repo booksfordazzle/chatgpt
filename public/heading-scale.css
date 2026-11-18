@@ -1,84 +1,83 @@
-/* Each title size below subtracts another 5px from the previous scale. */
-/* Base scale before the final 5px subtraction: H1 72%, H2 75%.
-   The former 20px utility H2 floor becomes 15px. Body copy and placement are unchanged. */
+/* Website titles increased by 5px, restoring the quieter H1/H2 scale.
+   H1 is 72% and H2 75% of the original responsive scales, with a 20px utility H2 floor. */
 h1,h2{font-weight:500}
 
 /* styles.css */
-h1{font-size:calc(clamp(27.36px,3.6vw,51.84px) - 5px)}
-h2{font-size:calc(max(20px,clamp(24px,3vw,41.25px)) - 5px)}
-.hero-content #hero-title{font-size:calc(clamp(30.24px,3.348vw,48.96px) - 5px)}
-.ingredients-visual h2{font-size:calc(max(20px,clamp(24px,2.625vw,36px)) - 5px)}
-.waitlist-grid h2{font-size:calc(max(20px,clamp(24px,2.625vw,36px)) - 5px)}
-.journal-prompt h2{font-size:calc(max(20px,24px) - 5px)}
-.prose h1{font-size:calc(clamp(25.92px,2.88vw,41.76px) - 5px)}
-.prose h2{font-size:calc(max(20px,22.5px) - 5px)}
-.article-grid h2{font-size:calc(max(20px,18px) - 5px)}
-@media(max-width:1100px){.hero-content #hero-title{font-size:calc(38.88px - 5px)}}
-@media(max-width:760px){.hero-content #hero-title{font-size:calc(clamp(27.36px,6.336vw,41.76px) - 5px)}
-.intro h1{font-size:calc(30.24px - 5px)}
-.ingredients-visual h2{font-size:calc(max(20px,28.5px) - 5px)}
-.prose h1{font-size:calc(25.92px - 5px)}
-.prose h2{font-size:calc(max(20px,21px) - 5px)}
-.article-grid h2{font-size:calc(max(20px,18.75px) - 5px)}
-.journal h1{font-size:calc(30.96px - 5px)}}
-.hero-content #hero-title{font-size:calc(clamp(23.04px,3.024vw,46.08px) - 5px)}
-@media(max-width:760px){.hero-content #hero-title{font-size:calc(clamp(12.24px,3.6vw,25.92px) - 5px)}}
-.hero-content #hero-title{font-size:calc(clamp(23.04px,3.024vw,46.08px) - 5px)}
-@media(max-width:760px){.hero-content #hero-title{font-size:calc(clamp(11.52px,3.24vw,24.48px) - 5px)}}
-.intro h1{font-size:calc(clamp(23.04px,2.88vw,39.6px) - 5px)}
-@media(max-width:760px){.intro h1{font-size:calc(27.36px - 5px)}}
-.intro>h1{font-size:calc(clamp(21.6px,2.52vw,37.44px) - 5px)}
-@media(max-width:760px){.intro>h1{font-size:calc(clamp(21.6px,5.616vw,27.36px) - 5px)}}
-.ingredient-film .ingredient-film-title{font-size:calc(max(20px,clamp(22.5px,3vw,43.5px)) - 5px)}
-@media(max-width:760px){.ingredient-film .ingredient-film-title{font-size:calc(max(20px,clamp(18.75px,5.1vw,30px)) - 5px)}}
-@media(max-width:1100px){.faq-signup .waitlist-grid h2{font-size:calc(max(20px,27px) - 5px)}}
-.contact-information h2{font-size:calc(max(20px,18px) - 5px)}
-.confirmation-page h1{font-size:calc(clamp(43.2px,5.04vw,63.36px) - 5px)}
-@media(max-width:760px){.confirmation-page h1{font-size:calc(43.2px - 5px)}}
-@media(max-width:760px){.ingredient-film .ingredient-film-title{font-size:calc(max(20px,clamp(21px,5.25vw,30px)) - 5px)}}
-@media(max-width:760px){.ingredient-film .ingredient-film-title{font-size:calc(max(20px,clamp(24.15px,6.0375vw,34.5px)) - 5px)}}
-.hero-content #hero-title{font-size:calc(clamp(38.016px,4.9896vw,76.032px) - 5px)}
-@media(max-width:760px){.hero-content #hero-title{font-size:calc(clamp(19.008px,5.346vw,40.392px) - 5px)}}
-.hero-signup #hero-waitlist-title{font-size:calc(max(20px,clamp(21px,2.625vw,36px)) - 5px)}
-.contact-photo .contact-help h2{font-size:calc(max(20px,clamp(16.5px,1.35vw,21px)) - 5px)}
-@media(max-width:1100px){.contact-photo .contact-help h2{font-size:calc(max(20px,16.5px) - 5px)}}
-@media(min-width:1101px){.hero-signup #hero-waitlist-title{font-size:calc(max(20px,clamp(39.6px,5.1975vw,79.2px)) - 5px)}}
+h1{font-size:clamp(27.36px,3.6vw,51.84px)}
+h2{font-size:max(20px,clamp(24px,3vw,41.25px))}
+.hero-content #hero-title{font-size:clamp(30.24px,3.348vw,48.96px)}
+.ingredients-visual h2{font-size:max(20px,clamp(24px,2.625vw,36px))}
+.waitlist-grid h2{font-size:max(20px,clamp(24px,2.625vw,36px))}
+.journal-prompt h2{font-size:max(20px,24px)}
+.prose h1{font-size:clamp(25.92px,2.88vw,41.76px)}
+.prose h2{font-size:max(20px,22.5px)}
+.article-grid h2{font-size:max(20px,18px)}
+@media(max-width:1100px){.hero-content #hero-title{font-size:38.88px}}
+@media(max-width:760px){.hero-content #hero-title{font-size:clamp(27.36px,6.336vw,41.76px)}
+.intro h1{font-size:30.24px}
+.ingredients-visual h2{font-size:max(20px,28.5px)}
+.prose h1{font-size:25.92px}
+.prose h2{font-size:max(20px,21px)}
+.article-grid h2{font-size:max(20px,18.75px)}
+.journal h1{font-size:30.96px}}
+.hero-content #hero-title{font-size:clamp(23.04px,3.024vw,46.08px)}
+@media(max-width:760px){.hero-content #hero-title{font-size:clamp(12.24px,3.6vw,25.92px)}}
+.hero-content #hero-title{font-size:clamp(23.04px,3.024vw,46.08px)}
+@media(max-width:760px){.hero-content #hero-title{font-size:clamp(11.52px,3.24vw,24.48px)}}
+.intro h1{font-size:clamp(23.04px,2.88vw,39.6px)}
+@media(max-width:760px){.intro h1{font-size:27.36px}}
+.intro>h1{font-size:clamp(21.6px,2.52vw,37.44px)}
+@media(max-width:760px){.intro>h1{font-size:clamp(21.6px,5.616vw,27.36px)}}
+.ingredient-film .ingredient-film-title{font-size:max(20px,clamp(22.5px,3vw,43.5px))}
+@media(max-width:760px){.ingredient-film .ingredient-film-title{font-size:max(20px,clamp(18.75px,5.1vw,30px))}}
+@media(max-width:1100px){.faq-signup .waitlist-grid h2{font-size:max(20px,27px)}}
+.contact-information h2{font-size:max(20px,18px)}
+.confirmation-page h1{font-size:clamp(43.2px,5.04vw,63.36px)}
+@media(max-width:760px){.confirmation-page h1{font-size:43.2px}}
+@media(max-width:760px){.ingredient-film .ingredient-film-title{font-size:max(20px,clamp(21px,5.25vw,30px))}}
+@media(max-width:760px){.ingredient-film .ingredient-film-title{font-size:max(20px,clamp(24.15px,6.0375vw,34.5px))}}
+.hero-content #hero-title{font-size:clamp(38.016px,4.9896vw,76.032px)}
+@media(max-width:760px){.hero-content #hero-title{font-size:clamp(19.008px,5.346vw,40.392px)}}
+.hero-signup #hero-waitlist-title{font-size:max(20px,clamp(21px,2.625vw,36px))}
+.contact-photo .contact-help h2{font-size:max(20px,clamp(16.5px,1.35vw,21px))}
+@media(max-width:1100px){.contact-photo .contact-help h2{font-size:max(20px,16.5px)}}
+@media(min-width:1101px){.hero-signup #hero-waitlist-title{font-size:max(20px,clamp(39.6px,5.1975vw,79.2px))}}
 
 /* philosophy.css */
-.philosophy-page h2{font-size:calc(max(20px,clamp(31.5px,4.2vw,60px)) - 5px)}
-.origin-copy h1{font-size:calc(clamp(43.2px,5.04vw,69.12px) - 5px)}
-.essence-lockup h2{font-size:calc(max(20px,clamp(27px,3.45vw,48px)) - 5px)}
-@media(max-width:1100px){.origin-copy h1{font-size:calc(54.72px - 5px)}}
-@media(max-width:760px){.philosophy-page h2{font-size:calc(max(20px,clamp(27px,6.75vw,39px)) - 5px)}
-.origin-copy h1{font-size:calc(clamp(34.56px,8.64vw,46.08px) - 5px)}
-.manifesto-copy h2{font-size:calc(max(20px,36px) - 5px)}}
-@media(max-width:760px){.manifesto-copy h2{font-size:calc(max(20px,31.5px) - 5px)}}
-@media(max-width:760px){.return-copy h2,.manifesto-copy h2{font-size:calc(max(20px,clamp(22.5px,6vw,31.5px)) - 5px)}}
-@media(min-width:1101px){.essence-lockup h2{font-size:calc(max(20px,clamp(27px,3vw,43.5px)) - 5px)}}
+.philosophy-page h2{font-size:max(20px,clamp(31.5px,4.2vw,60px))}
+.origin-copy h1{font-size:clamp(43.2px,5.04vw,69.12px)}
+.essence-lockup h2{font-size:max(20px,clamp(27px,3.45vw,48px))}
+@media(max-width:1100px){.origin-copy h1{font-size:54.72px}}
+@media(max-width:760px){.philosophy-page h2{font-size:max(20px,clamp(27px,6.75vw,39px))}
+.origin-copy h1{font-size:clamp(34.56px,8.64vw,46.08px)}
+.manifesto-copy h2{font-size:max(20px,36px)}}
+@media(max-width:760px){.manifesto-copy h2{font-size:max(20px,31.5px)}}
+@media(max-width:760px){.return-copy h2,.manifesto-copy h2{font-size:max(20px,clamp(22.5px,6vw,31.5px))}}
+@media(min-width:1101px){.essence-lockup h2{font-size:max(20px,clamp(27px,3vw,43.5px))}}
 
 /* history.css */
-.history-copy h1{font-size:calc(clamp(34.56px,4.68vw,69.12px) - 5px)}
-.history-copy h2{font-size:calc(max(20px,clamp(36px,4.875vw,72px)) - 5px)}
-.history-copy h2{font-size:calc(max(20px,clamp(33px,4.2vw,60px)) - 5px)}
-.history-beliefs h2{font-size:calc(max(20px,clamp(33px,4.2vw,60px)) - 5px)}
-@media(max-width:1100px){.history-copy h1{font-size:calc(54.72px - 5px)}}
-@media(max-width:760px){.history-copy h1{font-size:calc(clamp(27.36px,7.2vw,38.88px) - 5px)}
-.history-copy h2{font-size:calc(max(20px,clamp(28.5px,7.5vw,40.5px)) - 5px)}
-.history-copy h1{font-size:calc(clamp(30.24px,7.92vw,41.76px) - 5px)}}
-@media(max-width:760px){.history-copy h1{font-size:calc(clamp(21.6px,6.984vw,30.24px) - 5px)}
-.history-development .history-copy h2{font-size:calc(max(20px,clamp(18.75px,5.25vw,25.5px)) - 5px)}}
+.history-copy h1{font-size:clamp(34.56px,4.68vw,69.12px)}
+.history-copy h2{font-size:max(20px,clamp(36px,4.875vw,72px))}
+.history-copy h2{font-size:max(20px,clamp(33px,4.2vw,60px))}
+.history-beliefs h2{font-size:max(20px,clamp(33px,4.2vw,60px))}
+@media(max-width:1100px){.history-copy h1{font-size:54.72px}}
+@media(max-width:760px){.history-copy h1{font-size:clamp(27.36px,7.2vw,38.88px)}
+.history-copy h2{font-size:max(20px,clamp(28.5px,7.5vw,40.5px))}
+.history-copy h1{font-size:clamp(30.24px,7.92vw,41.76px)}}
+@media(max-width:760px){.history-copy h1{font-size:clamp(21.6px,6.984vw,30.24px)}
+.history-development .history-copy h2{font-size:max(20px,clamp(18.75px,5.25vw,25.5px))}}
 
 /* scroll-scenes.css */
-.scroll-chapter .chapter-content h1{font-size:calc(clamp(31.68px,3.888vw,54.72px) - 5px)}
-.scroll-chapter .chapter-content h2{font-size:calc(max(20px,clamp(33px,4.05vw,57px)) - 5px)}
-.scroll-chapter[data-beat="ancestry"] .chapter-content h1{font-size:calc(clamp(37.44px,4.68vw,64.8px) - 5px)}
-@media(max-width:760px){.scroll-chapter .chapter-content h1,.scroll-chapter[data-beat="ancestry"] .chapter-content h1{font-size:calc(clamp(21.6px,6.048vw,31.68px) - 5px)}
-.scroll-chapter .chapter-content h2{font-size:calc(max(20px,clamp(22.5px,6.3vw,33px)) - 5px)}}
+.scroll-chapter .chapter-content h1{font-size:clamp(31.68px,3.888vw,54.72px)}
+.scroll-chapter .chapter-content h2{font-size:max(20px,clamp(33px,4.05vw,57px))}
+.scroll-chapter[data-beat="ancestry"] .chapter-content h1{font-size:clamp(37.44px,4.68vw,64.8px)}
+@media(max-width:760px){.scroll-chapter .chapter-content h1,.scroll-chapter[data-beat="ancestry"] .chapter-content h1{font-size:clamp(21.6px,6.048vw,31.68px)}
+.scroll-chapter .chapter-content h2{font-size:max(20px,clamp(22.5px,6.3vw,33px))}}
 
 /* The ingredient-film caption accompanies the image rather than dominating it. */
-.ingredient-film .ingredient-film-title{font-size:calc(clamp(22px,2.2vw,28px) - 5px);font-weight:450;line-height:1.25}
-.prose h3{font-size:calc(20px - 5px)}
-@media(max-width:760px){.ingredient-film .ingredient-film-title{font-size:calc(22px - 5px)}}
+.ingredient-film .ingredient-film-title{font-size:clamp(22px,2.2vw,28px);font-weight:450;line-height:1.25}
+.prose h3{font-size:20px}
+@media(max-width:760px){.ingredient-film .ingredient-film-title{font-size:22px}}
 
 /* Owner: ingredient-film title is 90% visible. */
 .ingredient-film .ingredient-film-title{opacity:.9}
