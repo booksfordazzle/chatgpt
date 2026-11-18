@@ -27,17 +27,18 @@ test('AI discovery explicitly permits requested agents and advertises the actual
  }
 });
 
-test('bilingual Product and FAQ data match visible content and never invent purchasing or free-from claims',async()=>{
+test('prelaunch homepages retain bilingual FAQ and brand schema without Product snippet markup',async()=>{
  for(const [relative,lang]of [['index.html','el'],['en/index.html','en']]){
   const html=await load(relative),nodes=graph(html),source=await readFile('public/'+relative,'utf8');
-  for(const type of ['Organization','Brand','WebSite','WebPage','Product','FAQPage'])assert.equal(nodes.filter(n=>n['@type']===type).length,1,type);
+  for(const type of ['Organization','Brand','WebSite','WebPage','FAQPage'])assert.equal(nodes.filter(n=>n['@type']===type).length,1,type);
   assert.equal(nodes.find(n=>n['@type']==='WebPage').inLanguage,lang);
   const faq=nodes.find(n=>n['@type']==='FAQPage');assert.equal(faq.inLanguage,lang);
   assert.deepEqual(faq.mainEntity.map(q=>({title:q.name,text:q.acceptedAnswer.text})),homeContent(source).faq);
-  const product=nodes.find(n=>n['@type']==='Product');assert.equal(product.size,'50ml');assert.equal(product.offers,undefined);assert.equal(product.aggregateRating,undefined);assert.equal(product.review,undefined);
-  assert.equal(product.additionalProperty.filter(p=>p.name==='Ingredient presented in development').length,5);
-  assert(!JSON.stringify(product).includes('Free From'));
-  for(const url of [...product.image,nodes.find(n=>n['@type']==='Organization').logo.url])await access('public'+new URL(url).pathname);
+  assert(!nodes.some(n=>n['@type']==='Product'));
+  assert(!JSON.stringify(nodes).includes('/#product'),'No dangling Product references');
+  assert.equal(nodes.find(n=>n['@type']==='WebPage').about['@id'],'https://primalcore.gr/#organization');
+  assert(!JSON.stringify(nodes).match(/\"(?:offers|price|aggregateRating|review)\"\s*:/),'No fabricated purchasing or review fields');
+  await access('public'+new URL(nodes.find(n=>n['@type']==='Organization').logo.url).pathname);
   const body=s=>s.slice(s.indexOf('<body')).replace(/href="[^"]*"/g,'href=""');assert.equal(body(html),body(source),'Only pre-existing clean-route link rebasing may differ in the body');
  }
 });
