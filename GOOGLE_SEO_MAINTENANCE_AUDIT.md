@@ -32,3 +32,6 @@ The mobile simulated Lighthouse baseline on production scored SEO 100/100, perfo
 
 ## Deliberate limits
 The prelaunch Product description has no invented offers, price, reviews or ratings. It therefore does not meet Product rich-result requirements; adding fictional commercial data would be incorrect. FAQ markup does not guarantee a FAQ search display. The embedded films support product pages rather than dedicated watch pages: a video-indexing report may treat them accordingly. No unrequested watch pages, AMP, News, shopping feeds, tracking scripts or speculative AI files were added. Search inclusion, favicon refresh, ranking and AI citations remain search-engine decisions and cannot be guaranteed on a deadline.
+
+## Production verification
+The updated production serves the new script, 22-page/66-image sitemap and all 11 crawler-group endpoint exclusions. A nested unknown route returns 404 with root-relative bootstrap. Live Greek desktop and English mobile checks pass deferred video loading, autoplay and pause/resume. The same mobile Lighthouse configuration after deployment scored performance 91 and SEO 100; initial transfer fell from 4,311,602 to 1,862,019 bytes (about 57%). LCP stayed 2.9 seconds and CLS stayed 0. Single-run laboratory scores vary; this is not a field-performance guarantee.
