@@ -37,7 +37,7 @@ export function structuredData(html,relative,url) {
     graph.push({'@type':'FAQPage','@id':url+'#faq',inLanguage:lang,isPartOf:{'@id':url+'#webpage'},mainEntity:faq.map(item=>({'@type':'Question',name:item.title,acceptedAnswer:{'@type':'Answer',text:item.text}}))});
   }
   const editorial = html.match(/<p class="note editorial-meta">[\s\S]*?<time datetime="(\d{4}-\d{2}-\d{2})"/);
-  if(editorial){
+  if(editorial && !relative.endsWith('index.html')){
     const main=html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)?.[1]||'';
     const image=main.match(/<img\b[^>]*src="([^"]+)"/)?.[1]||html.match(/<meta\b(?=[^>]*property="og:image")(?=[^>]*content="([^"]+)")[^>]*>/)?.[1];
     // Publication dates are unknown: emit only the actual visible edit date.

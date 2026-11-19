@@ -21,7 +21,7 @@ test('editorial schema reflects visible authorship, headline and actual edit dat
 });
 test('blog cards provide excerpts and retain explicit crawlable article destinations',async()=>{
  for(const f of['blog/index.html','en/blog/index.html']){
-  const html=await load(f),cards=[...html.matchAll(/<article>([\s\S]*?)<\/article>/g)];assert.equal(cards.length,14);
+  const html=await load(f);assert(!html.includes('\"@type\":\"BlogPosting\"'),'The blog listing is not an individual article');const cards=[...html.matchAll(/<article>([\s\S]*?)<\/article>/g)];assert.equal(cards.length,14);
   for(const [,card]of cards){assert.match(card,/<a href="[^"]+">/);assert.match(card,/<h2>.+?<\/h2>/);assert(plainText(card.match(/<\/a><p>([\s\S]*?)<\/p>/)[1]).length>30)}
  }
 });
