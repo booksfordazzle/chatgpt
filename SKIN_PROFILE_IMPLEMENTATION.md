@@ -1,0 +1,86 @@
+# PRIMAL CORE Skin Profile — draft implementation
+
+Status: implemented and locally verified on `codex/skin-profile`. Greek first release. Production has not been changed. The supplied implementation brief explicitly says: “Report all assumptions, unresolved infrastructure dependencies and privacy or scientific content issues before production deployment” and “Do not deploy unreviewed content automatically.”
+
+## Review the experience
+
+Run `npm run dev` (or `PORT=8097 npm run dev`) and open `/skin-profile`. A self-contained, offline review copy is delivered separately at `/workspace/audits/skin-profile/preview.html`; its network actions are intentionally disabled. The source page is `public/skin-profile.html`.
+
+The INKEY PDFs are reference evidence only. We borrowed one-question pacing and structured morning/evening results, not its branding, product tiers, shopping basket, clinical claims, prices or review ratings. Existing owner photography, Google Sans, header/footer and product-development truth are reused. No new health score or diagnosis.
+
+## Code boundaries
+
+- `public/skin-profile/questions.mjs`: 10 questions and three optional research questions.
+- `engine.mjs`: deterministic mapping, override, secondary priority and habits; age is not used to infer a diagnosis or change medical advice.
+- `content.mjs`: all five educational priorities and copy/email export.
+- `app.mjs`: presentation, navigation, memory-only answers, consent and optional-action orchestration.
+- `profile.css`: scoped flat obsidian/ivory/sand surface; no changes to global CSS or home hero.
+- `api/skin-profile.js` / `server/skin-profile.mjs`: capabilities, fixed result-email template, aggregate research and allowlisted analytics.
+- `supabase/migrations/202611190001_skin_profile_counts.sql`: optional private aggregate counter storage; never personal response rows.
+
+Results precede both email forms. Result delivery and marketing are separate forms and separate server routes. No marketing is created by result-email requests. Existing waitlist behavior is preserved. The draft adds a dedicated `primal-core-skin-profile` source and a separate education/development/launch consent purpose; the payload still contains only email/explicit consent and bounded campaign attribution, never the quiz profile or raw answers.
+
+## Data flow and consent
+
+The ten answers are tab-memory only. No cookies, localStorage, sessionStorage, profile URLs, authentication or AI API. Reload/close deliberately loses answers. Optional result delivery posts only email, primary/secondary priority codes and named habit flags after the visitor checks an explicit one-time delivery request. The server generates a fixed plain-text message; it does not accept arbitrary HTML, store the profile, log message data or write an email receipt to a CRM. SMTP/mailboxes necessarily process and retain the email according to their service settings, disclosed in the page.
+
+Marketing opt-in is separate, unchecked and uses existing waitlist consent logging/withdrawal. Optional research posts only choice indices for interest, spend and main information need, after explicit anonymous submission consent. No email, quiz result, IP field, UTM or visitor/session ID is accepted by this endpoint. Only daily per-option counts are stored; there are no response-level joins. The UI asks for the single main information need in question C.
+
+Analytics are optional, unchecked, memory-scoped and default off at the server. An allowlist accepts event names only. No answers, profile, step numbers, age, email or free text is accepted; aggregate counts are events, not unique people. UTM values are preserved only in tab memory for an explicit marketing signup, with length/character limits and email-like values discarded. No quiz data is placed in outgoing URLs.
+
+Ephemeral rate-limit buckets use salted hashes of recipient and platform-verified IP headers for abuse control, not persisted analytics. Hosting and SMTP access logs remain infrastructure processing; do not enable request-body logging. The aggregate counters prune rows older than 90 days on writes; schedule equivalent cleanup if a strict calendar retention boundary is wanted during inactivity.
+
+## Configuration — server only
+
+Existing SMTP: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`. Existing strict TLS settings and fixed `hello@primalcore.gr` identity are reused.
+
+New switches:
+
+```
+SKIN_PROFILE_EMAIL_ENABLED=false
+SKIN_PROFILE_SUPABASE_URL=https://<project>.supabase.co
+SKIN_PROFILE_SUPABASE_SERVICE_ROLE_KEY=<server-only service role>
+SKIN_PROFILE_ANALYTICS_ENABLED=false
+```
+
+Email remains disabled unless explicitly enabled and SMTP validates. Research remains disabled without both Supabase settings. Analytics additionally requires its switch. No secrets appear in HTML or browser bundles. The public capabilities response exposes booleans only. Unconfigured features display an honest unavailable state; the quiz, complete result and copy fallback still work.
+
+The existing active waitlist uses Apps Script/Sheets; the repository's older Supabase waitlist migration does not prove that Supabase is provisioned. This new optional aggregate table does not silently write to the waitlist Sheet. Apply only the new migration in an intended Supabase project, or deliberately adapt this isolated aggregate adapter later. Do not deploy the old waitlist migration as part of this feature.
+
+## Before production
+
+1. Owner reviews Greek questions, educational copy and five result priorities; no dermatologist review or scientific validation is claimed. Medical/clinical sign-off was not supplied. Keep final formula/proven efficacy/current availability claims absent. Referenced AAD education does not validate the quiz algorithm.
+2. Review the page-specific privacy notice, processor/retention settings and marketing wording against actual operation. It does not replace the existing privacy policy or invent legal approval.
+3. Configure intended database and apply the aggregate migration if research is enabled. Review table/RPC grants; the browser has no DB credentials or table access.
+4. Review public-email abuse controls with hosting-level/distributed rate limits before enabling email; the in-process limiter is best-effort and cannot prevent distributed abuse. Enable only after controlled testing. There is no arbitrary message input or bulk-mail endpoint.
+5. Deploy a reviewed preview, verify CSP/module MIME types, then request one real result email to an address the owner controls. This work sent no real email. Unit/browser mocks prove wiring, not production inbox delivery. SMTP acceptance is reported as acceptance, not arrival. Unknown outcomes are not automatically retried.
+6. Separately test a consented waitlist signup and anonymous aggregate counter write. Do not log quiz bodies or enable advertising pixels. No production data or configuration was mutated by this implementation.
+7. Once approved, merge into the production branch. Page stays `noindex` and outside the 22-page sitemap until an explicit indexing/navigation decision is made. Add a suitable site entry link as part of that release, rather than publishing an unreviewed tool into the existing menu.
+
+## Verification
+
+- `npm test`: 101 passing tests (existing suite + question options, 5 profiles, both comfort overrides, secondary ordering, missing answers, habits, explicit consent, email validation, fixed SMTP identity, strict payload schemas, origin rejection, feature gates and failure states).
+- `node scripts/test-skin-profile-database.mjs`: isolated PostgreSQL 17, no host ports or external network; migration, count increments, constraints, service-role-only RPC and denial of anonymous reads tested. Container removed afterward.
+- `PLAYWRIGHT_BROWSERS_PATH=/workspace/work/browsers node tests/browser/skin-profile.cjs`: widths 320, 375, 390, 430, 1440; adult gate, required selection, backward persistence, comfort override, forms/consent separation, skipped research, strict research payload, no answer persistence/transmission, UTM filtering and no horizontal overflow; reduced-motion and no-JavaScript fallbacks included.
+- Native radio keyboard behavior, visible focus, status/error announcements and 56px answer targets. No score graphics or pseudo-scientific diagrams were introduced.
+- No actual SMTP sends, subscriptions, production research writes or analytics events during tests. Network effects were intercepted or injected.
+
+Remaining external dependencies: production SMTP check, optional Supabase project/credentials/migration, hosting abuse protection, owner copy/privacy review and explicit release approval. No live-inbox or distributed-load guarantees are claimed.
+
+## Value First conversion and reporting (owner steering)
+
+The implemented sequence is full educational results → optional guide delivery → product concept → expressed interest → optional research/Early Access. Neither completion nor results require an email. Guide delivery is not marketing consent. Its form and marketing subscription remain independent and both use explicit actions; newsletter consent starts unchecked. The guide title is “Κράτησε τη ρουτίνα σου.”, CTA “Στείλε μου τον οδηγό”, product concept “Η περιποίηση, πίσω στα ουσιώδη.” with “Ενδιαφέρομαι να το γνωρίσω”, development/illustrative-concept labels and no purchase obligation.
+
+The wider educational/development/launch subscription has version `skin-profile-education-launch-v1`. **Before deploying the frontend, deploy the reviewed Apps Script revision**: it validates this new purpose only for the Skin Profile source and records dedicated consent/version/time columns, preserving the original signup and original consent receipt for existing addresses. Previously withdrawn addresses are not silently reactivated. Existing launch-only signup sources continue to use `launch-updates-v1`. Add this new purpose to the production privacy documentation during release review; no production Sheet or receiver was changed here.
+
+`skin_profile_funnel_daily` and `supabase/reports/skin_profile_funnel.sql` distinguish visitors, completions, guide requests, confirmed marketing signup events and product-interest clicks. They are **consented event aggregates, not unique people or an identified lead-scoring CRM**. Actual marketing addresses/permission remain in the existing private waitlist, independently of quiz/research. Result-delivery addresses are not retained in a prospecting database. A guide request may fail delivery and is labelled as a request, not a delivered email. Never sum these rows as unique prospects or assume every guide recipient is a subscriber.
+
+`qualified_lead` and `customer` are explicitly `not_measured`/NULL, not made-up totals. The budget question asks what someone usually spends; it is not willingness to pay for this concept. Separate marginal research counts do not allow reconstruction of an individual's interest × budget combination. No visitor is labelled qualified on that basis.
+
+Phase 2 randomized price testing is deferred. It needs reviewed product quantity/concept, randomized indicative price variants, an explicit research notice, price-specific interest measurement, a deliberate qualification criterion and a privacy-preserving assignment/data model. No prices, live purchase offers, discounts, paid orders or inferred customers were invented. Instagram/TikTok/DM acquisition automation is outside this implementation; a reviewed release can use ordinary campaign links to `/skin-profile`. No social messages were sent.
+
+## Final review evidence
+
+Independent finish review: SHIP for local owner review, after the Value First revision and verified image/font-loaded recaptures. Two initial nonblocking notes (logo home destination and immediate pending-form announcements) were resolved. The documentation check preserved global DESIGN.md, shared CSS and existing site identity. Launcher/detector were unavailable in this environment; no automated design-detector result is claimed.
+
+For educational mailings, recipients must have both active global Consent and the separate Skin Profile marketing consent receipt; withdrawal is not overridden by a historical purpose receipt. The reporting view is not a substitute for actual permission records.

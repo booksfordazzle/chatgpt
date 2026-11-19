@@ -1,6 +1,6 @@
 import { createSubmissionLimiter, rejectsBrowserOrigin } from './lib/request-guard.mjs';
 const EMAIL = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
-const SOURCES = new Set(['primal-core-waitlist', 'primal-core-hero', 'primal-core-footer', 'primal_core_hero', 'primal_core_footer']);
+const SOURCES = new Set(['primal-core-waitlist', 'primal-core-skin-profile', 'primal-core-hero', 'primal-core-footer', 'primal_core_hero', 'primal_core_footer']);
 const CAMPAIGN_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
 const clean = (value, limit) => typeof value === 'string'
   ? value.trim().replace(/[\x00-\x1f\x7f]/g, '').slice(0, limit) : null;
@@ -98,7 +98,7 @@ export function createHandler({ env = process.env, fetchImpl = fetch, onRegister
         method: 'POST', redirect: 'manual', signal,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, consent: true, token: secret, locale, source, ...(onRegistered ? { welcomeDelivery: 'immediate-v1' } : {}),
-          policyVersion: '2026-11-15-sheets-v1', consentTextVersion: 'launch-updates-v1',
+          policyVersion: '2026-11-15-sheets-v1', consentTextVersion: source === 'primal-core-skin-profile' ? 'skin-profile-education-launch-v1' : 'launch-updates-v1',
           utm, referrerOrigin, landingPath, deviceType, device_type, os, browser, landing_page, referrer_full, screen_width, viewport })
       });
       // Apps Script ContentService serves its JSON through this Google-only redirect.

@@ -150,3 +150,9 @@ test('new technical attribution reaches the receiver with unchanged consent and 
  await handler(event({ os: '=FORMULA()', browser: 'unsafe', landing_page: '//attacker.test', referrer_full: 'javascript:alert(1)', screen_width: '-1' }));
  for (const field of ['os', 'browser', 'landing_page', 'referrer_full', 'screen_width']) assert.equal(saved[field], '');
 });
+
+test('Skin Profile marketing has its own explicit purpose/version and contains no quiz or research answers',async()=>{
+ let sent;const handler=createHandler({env,fetchImpl:async(_url,options)=>{sent=JSON.parse(options.body);return confirmed();}});
+ const r=await handler(event({source:'primal-core-skin-profile',profile:'C',answers:[1,2,3],spend:3}));
+ assert.equal(r.statusCode,200);assert.equal(sent.source,'primal-core-skin-profile');assert.equal(sent.consentTextVersion,'skin-profile-education-launch-v1');assert.equal(sent.profile,undefined);assert.equal(sent.answers,undefined);assert.equal(sent.spend,undefined);
+});
