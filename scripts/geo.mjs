@@ -36,6 +36,13 @@ export function structuredData(html,relative,url) {
     const {faq}=homeContent(html);
     graph.push({'@type':'FAQPage','@id':url+'#faq',inLanguage:lang,isPartOf:{'@id':url+'#webpage'},mainEntity:faq.map(item=>({'@type':'Question',name:item.title,acceptedAnswer:{'@type':'Answer',text:item.text}}))});
   }
+  const editorial = html.match(/<p class="note editorial-meta">[\s\S]*?<time datetime="(\d{4}-\d{2}-\d{2})"/);
+  if(editorial){
+    const main=html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)?.[1]||'';
+    const image=main.match(/<img\b[^>]*src="([^"]+)"/)?.[1]||html.match(/<meta\b(?=[^>]*property="og:image")(?=[^>]*content="([^"]+)")[^>]*>/)?.[1];
+    // Publication dates are unknown: emit only the actual visible edit date.
+    graph.push({'@type':'BlogPosting','@id':url+'#article',url,headline:plainText(main.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1]||''),inLanguage:lang,mainEntityOfPage:{'@id':url+'#webpage'},author:{'@id':organization},publisher:{'@id':organization},dateModified:editorial[1],...(image?{image:[new URL(image,origin+'/'+relative).href]}:{})});
+  }
   const json=JSON.stringify({'@context':'https://schema.org','@graph':graph}).replaceAll('<','\\u003c');
   return html.replace('</head>',`<script type="application/ld+json">${json}</script></head>`);
 }
