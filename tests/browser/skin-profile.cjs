@@ -4,7 +4,7 @@ const base=process.env.BASE_URL||'http://localhost:8097';
 const fs=require('node:fs');
 async function capture(page,options){await page.waitForTimeout(220);await page.evaluate(async()=>{for(const i of document.images)i.loading='eager';await document.fonts.ready;await Promise.all([...document.images].map(i=>i.decode()));scrollTo(0,0);});await page.screenshot(options);}
 (async()=>{const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
- for(const width of[320,375,390,430,1440]){
+ for(const width of[320,375,390,430,768,1024,1440,1920]){
   const context=await browser.newContext({viewport:{width,height:900},reducedMotion:width===320?'reduce':'no-preference'});const page=await context.newPage();const posts=[],errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/api/skin-profile',async route=>{const request=route.request();if(request.method()==='GET')return route.fulfill({json:{email:true,research:true,analytics:true}});posts.push(JSON.parse(request.postData()));return route.fulfill({json:{ok:true,status:'accepted'}});});
   await page.route('**/api/waitlist',async route=>{posts.push({action:'marketing',...JSON.parse(route.request().postData())});return route.fulfill({json:{ok:true}});});

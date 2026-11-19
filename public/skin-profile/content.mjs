@@ -15,3 +15,12 @@ export const identities={
 export const habits={cleanse:'Επανεξέτασε το κοινό σαπούνι, το αφρόλουτρο ή το συχνό scrub στο πρόσωπο. Ένα ήπιο καθαριστικό μπορεί να ταιριάζει καλύτερα.',moisturize:'Δοκίμασε μια συνεπή συνήθεια ενυδάτωσης, ανάλογα με τις ανάγκες σου και τις οδηγίες του προϊόντος.',sun:'Η προστασία από τον ήλιο δεν αφορά μόνο το καλοκαίρι. Εξέτασε καθημερινά την έκθεση και χρησιμοποίησε κατάλληλη προστασία.',keep:'Η υπάρχουσα ρουτίνα σου σε καλύπτει. Δεν χρειάζεται να αντικαταστήσεις ανεκτά προϊόντα ή να προσθέσεις βήματα χωρίς λόγο.'};
 export const disclaimer='Εκπαιδευτική κατεύθυνση, όχι κλινικός τύπος δέρματος, διάγνωση ή σύσταση προϊόντος.';
 export function resultText(r){const p=profiles[r.primary];return ['PRIMAL CORE — Η καθημερινή σου φροντίδα',identities[r.primary].title,identities[r.primary].subtitle,identities[r.primary].intro,p.reason,r.secondary?'Δεύτερη προτεραιότητα: '+profiles[r.secondary].name:'','ΠΡΩΙ',...p.morning.map(t=>'• '+t),'ΒΡΑΔΥ',...p.evening.map(t=>'• '+t),'ΣΥΣΤΑΤΙΚΑ',...p.ingredients.map(([n,t])=>n+': '+t),...r.habits.map(h=>habits[h]),disclaimer,'Πηγές: American Academy of Dermatology — https://www.aad.org/public/everyday-care/skin-care-basics/dry/dermatologists-tips-relieve-dry-skin','https://www.aad.org/public/everyday-care/sun-protection/sunscreen/how-to-select-sunscreen','https://primalcore.gr/skin-profile'].filter(Boolean).join('\n\n');}
+
+// Existing owner imagery is illustrative; it is not a measurement of the result.
+export const profileVisuals={
+ M:{src:'assets/code-material.webp',position:'65% center'},
+ A:{src:'assets/code-face-720.webp',position:'55% center'},
+ C:{src:'assets/code-material.webp',position:'50% center'},
+ B:{src:'assets/audit-product-gallery-2-1.webp',position:'center'},
+ E:{src:'assets/audit-product-gallery-1-1.webp',position:'center'}
+};
