@@ -67,3 +67,10 @@ The exact landing refinement removes its `.profile-lead`, caption and fine-print
 `all-results-preview.html` is an isolated offline review gallery with six review buttons: home plus the five profiles. These controls are not part of the production interface. The build and current eight-width browser flow passed. Offline-gallery QA verified the exact landing description/CTA, all five selectors and decoded images, with zero JS errors, HTTP requests or horizontal overflow. The independent owner-image review returned SHIP for this narrow update after inspecting four landing/result captures at 390px/1440px and the source contact sheet/diff; CALM was the photographed result, with the other mappings checked in source. No production deployment or live-service validation is claimed.
 
 Owner copy refinement, 20 November 2026: the generic no-diagnosis notice is removed from the question flow and remains on the final result only, using the owner’s exact wording. The result export retains this same notice. Existing privacy information and result-specific professional/emergency guidance are preserved.
+
+
+## Latest portrait and question-copy refinement — 20 November 2026
+
+At desktop widths (761px and above), the portrait background is transparent, removing the previous #111 grey contain gutters without cropping or grading the image; mobile is unchanged. The adult label is exactly “Είμαι 18 ετών και άνω”. Q04 inserts an explicit line break before “ποιο θα ήταν;” through an escaped title newline rendered as `<br>`; question meaning, options and scoring are unchanged.
+
+Playwright checks at 390px and 1440px passed for desktop-only background behavior, the exact label, Q04 line break and no horizontal overflow; syntax checks passed. New landing/Q04 screenshots cover both widths. The minimal-results reviewer returned SHIP with no material findings after inspecting the updated desktop landing and Q04 captures. Build and whitespace checks also passed. No global design or implementation contracts changed.
