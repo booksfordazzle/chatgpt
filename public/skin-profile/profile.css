@@ -209,3 +209,8 @@
  #profile-quiz .profile-controls,#profile-research .profile-controls{position:static;flex:none;width:100%;margin:0;padding:12px 4px calc(18px + env(safe-area-inset-bottom,0px));background:var(--profile-bg);border-top:1px solid var(--profile-line);display:flex;justify-content:space-between;align-items:center;z-index:2}
  #question-error{flex:none}
 }
+
+/* Mobile questions are text-only; result photography remains visible. */
+@media(max-width:900px){
+ #profile-quiz .profile-question-visual,#profile-research .profile-question-visual{display:none}
+}

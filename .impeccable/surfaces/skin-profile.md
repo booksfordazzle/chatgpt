@@ -1,3 +1,5 @@
+> Latest owner instruction: hide supporting question photos on mobile (up to 900px) throughout quiz and research; preserve result photographs and desktop imagery. Keep navigation outside the content scroller.
+
 > Latest CTA placement: keep the single bold/glowing research button below the contribution sentence in the research invitation. Mobile order puts it after the four result disclosures. Supersedes the intro-adjacent CTA position.
 
 > Owner CTA refinement: research start label uses Google Sans 700 with a stronger warm breathing glow. Reduced motion keeps a static glow; navigation, layout and submission behavior are unchanged.
