@@ -1,6 +1,14 @@
 # Skin Profile — direction contract
 
-## Current centered questions and unified result — 20 November 2026
+## Current reference disclosures and footer — 20 November 2026
+
+The latest owner reference supersedes the flat/open result block: group four native `details` rows in the right result header beneath title, subtitle and introduction, with the portrait on the left. All four start closed and have plus/minus row affordances. Exact summaries: “Τι μας έδειξαν οι απαντήσεις σου”, “Τι συμβαίνει στο δέρμα σου;”, “Τι χρειάζεται να αλλάξεις;”, “Τι μπορείς να περιμένεις;”. The first uses the primary profile's `reason`; the other three use story prose, retaining sources. There is no separate flat explanation section. The two previously removed invitation paragraphs remain absent.
+
+Remove the old full-width main privacy bar. Existing privacy information and unchecked optional statistics consent now live inside the universal footer in a compact native disclosure with an underlined text summary, without a plus icon or bordered bar. It is available in every view, superseding the intro-only rule. Keep footer navigation and social links unchanged. The exact medical note is italic “Τα αποτελέσματα αυτά δεν αποτελούν ιατρική διάγνωση.”, the footer's last child and visible only for results.
+
+Eight-width flow and the build passed. Offline disclosure-opening, keyboard and footer checks at 390px/1440px and the fresh reference-accordion finish review are in progress. Clean exports and per-profile examples were regenerated. Earlier flat-layout checks and reviews are historical evidence, not validation of this new disclosure arrangement. Engine/API, v2 migration/default-off prerequisites, sources and the privacy data model remain unchanged; no global design/code edits or deployment are part of this documentation update.
+
+## Prior centered-question and flat-result revision — 20 November 2026
 
 Above 900px, center the right question-panel wrapper exactly on the left portrait's vertical midpoint; the root centers the composition in the available viewport while allowing long content to overflow normally. Preserve the original centered contain treatment of desktop portraits and the existing mobile banner. Selected answers have 12px corners, no border and a soft offset warm glow. Pointer focus has no outline; keyboard focus-visible retains a 2px outline.
 
@@ -27,7 +35,7 @@ Current imagery verification: 102 unit tests and eight-width full flows passed; 
 
 THE PRIMAL SKIN PROFILE retains all ten quiz questions and the unchanged engine. The header “THE SKIN INTELLIGENCE SERIES” is visible on every question, including mobile. Remove the home backlink, body series/DISCOVER labels and numeric quiz label; retain thin native progress. Forward/back controls use bold SVG arrows only with accessible labels. Q02 has its explicit line break. These instructions supersede earlier desktop-header hiding and body-label descriptions below.
 
-Keep all five identities and supplied images and core stories, now presented in one static explanation section with three subsections and sources, without disclosures or a separate observations accordion. Remove displayed secondary priority and all priority taglines from both UI and legacy export; internal primary/secondary scoring remains unchanged. Medical/general notices appear only as an italic `result-final-note` after the footer on result views and are hidden on other quiz/research views. AAD sources remain inside the explanation; CALM retains its medical/emergency story guidance.
+Keep all five identities, supplied images and core stories. The current result header contains four closed native disclosures with exact summaries specified above; the earlier static section is superseded. Remove displayed secondary priority and all priority taglines from both UI and legacy export; internal primary/secondary scoring remains unchanged. The current short italic medical note is the footer’s last child and appears only in results, as specified above; the earlier longer after-footer notice is superseded. AAD sources remain inside the explanation; CALM retains its medical/emergency story guidance.
 
 Remove the product-tin/philosophy section, marketing form, restart, and all email/copy/edit/routine panels from the current UI. No email or marketing collection is exposed. Legacy backend/API compatibility remains unexposed. End results with “Η φροντίδα ξεκινά από εσένα.”, “5 ερωτήσεις. 60 δευτερόλεπτα.” and “ΕΝΑΡΞΗ ΕΡΕΥΝΑΣ”. `product_interest_click` now measures this research-invitation click, not product demand, buying intent or a buyer. There is no product-concept-view event in this flow.
 
@@ -99,3 +107,5 @@ Owner copy refinement, 20 November 2026: the generic no-diagnosis notice is remo
 At desktop widths (761px and above), the portrait background is transparent, removing the previous #111 grey contain gutters without cropping or grading the image; mobile is unchanged. The adult label is exactly “Είμαι 18 ετών και άνω”. Q04 inserts an explicit line break before “ποιο θα ήταν;” through an escaped title newline rendered as `<br>`; question meaning, options and scoring are unchanged.
 
 Playwright checks at 390px and 1440px passed for desktop-only background behavior, the exact label, Q04 line break and no horizontal overflow; syntax checks passed. New landing/Q04 screenshots cover both widths. The minimal-results reviewer returned SHIP with no material findings after inspecting the updated desktop landing and Q04 captures. Build and whitespace checks also passed. No global design or implementation contracts changed.
+
+Final reference-accordion verification: SHIP. Independent Chromium checks at 390px/1440px confirmed all four native closed rows and Enter/Space +/- interaction, compact footer privacy in all views, unchecked analytics, exact result-only italic medical note as footer last child, and no expanded overflow/errors or POSTs. Reference comparison was descriptive rather than pixel-based and runtime review sampled CALM with mocked API. Parent eight-width flow/build and offline tests passed; no deployment.
