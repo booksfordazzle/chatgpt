@@ -1,3 +1,5 @@
+> Latest mobile landing reference: full-bleed, square-cornered fingerprint image behind opening copy, with 24px copy gutters and title close beneath the header. Use the available viewport/portrait height instead of the earlier inset image with extended 820px black space. Preserve real browser chrome and the existing start flow.
+
 > Latest navigation correction: restore the pre-gradient Back/Next bar’s solid black background, original divider and original arrow/button colors. Keep the mobile question mesh gradient and viewport-safe control layout. This scoped restoration supersedes neutral navigation styling below.
 
 > Mobile quiz and research questions use a shared vertical soft mesh gradient in black, gray and white only, including neutral answer states, navigation and errors. Preserve the viewport-safe controls and text-only question layout.
