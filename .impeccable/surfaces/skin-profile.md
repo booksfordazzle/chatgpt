@@ -1,3 +1,5 @@
+> Price research now asks “Τι ποσό θα ήσουν διατεθειμένος να πληρώσεις για ένα βάλσαμο 30 ml που θα σου κρατήσει για 2 μήνες;”. Hide the former 15–19,99 € option; keep its legacy wire index reserved so existing Sheets mappings remain correct.
+
 > Restart correction: starting the quiz always resets to question 1 with empty choices, fresh research state and submission ID. Results offer “Ξεκίνα ξανά το τεστ”. A fresh unfragmented quiz entry starts at the introduction; refresh and real Back/Forward still restore the current history entry. Clone restored snapshots before editing so earlier history cannot be mutated.
 
 > Browser navigation: every quiz/research step and result/thank-you screen has a same-page history entry. Back/Forward restore validated snapshots, refresh restores the current entry including answers and research consent. In-page back arrows use browser history when available. Keep state in this tab only; never replay an outgoing survey request on restore.
