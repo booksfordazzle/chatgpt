@@ -1,3 +1,5 @@
+> Browser navigation: every quiz/research step and result/thank-you screen has a same-page history entry. Back/Forward restore validated snapshots, refresh restores the current entry including answers and research consent. In-page back arrows use browser history when available. Keep state in this tab only; never replay an outgoing survey request on restore.
+
 > Latest opening CTA: “ΞΕΚΙΝΑ” followed by the shared bold right-arrow SVG. Preserve the age confirmation and quiz start behavior.
 
 > Latest behavior: research CTA is “ΓΙΝΕ ΜΕΡΟΣ”. Completed quiz answers are retained in sessionStorage in the current browser tab, validated against the current question schema and reevaluated on reload. No quiz answers are sent to the server. Keep survey submission ID and confirmed completion state across reload to avoid accidental duplicate participation. Storage failure must not block the quiz.
