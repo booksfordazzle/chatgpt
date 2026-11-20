@@ -1,3 +1,5 @@
+> Latest soundtrack replacement: active primal-soundtrack.mp3 now uses primalsoundtrack.mp3.mp3 from the owner ZIP primalsoundtrack.mp3.zip. Prior audio bytes are replaced in the current build. Manual play/pause, background-tab continuity and looping remain unchanged.
+
 > Latest survey image: question5/5 (image15) now uses the owner-supplied Matte Black Jar on Stone.png, replacing the silver tin. Full/small WebP assets regenerated with source metadata; mobile focal position50%60%. Other cards and result product image preserved.
 
 > Latest owner reversal: restore IMAGE LEFT / TEXT AND ANSWERS RIGHT for all ten quiz and five survey questions above900px. Supersedes the text-left refinement below. Mobile stacking and result pages are preserved.
