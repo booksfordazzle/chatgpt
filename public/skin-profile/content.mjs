@@ -38,11 +38,11 @@ export function resultText(r){const p=profiles[r.primary];return ['PRIMAL CORE â
 
 // Existing owner imagery is illustrative; it is not a measurement of the result.
 export const profileVisuals={
- M:{src:'assets/code-material.webp',position:'65% center'},
- A:{src:'assets/code-face-720.webp',position:'55% center'},
- C:{src:'assets/code-material.webp',position:'50% center'},
- B:{src:'assets/audit-product-gallery-2-1.webp',position:'center'},
- E:{src:'assets/audit-product-gallery-1-1.webp',position:'center'}
+ M:{src:'assets/primal-code-restore.webp',position:'center'},
+ A:{src:'assets/primal-code-endure.webp',position:'center'},
+ C:{src:'assets/primal-code-calm.webp',position:'center'},
+ B:{src:'assets/primal-code-balance.webp',position:'center'},
+ E:{src:'assets/primal-code-essential.webp',position:'center'}
 };
 
 // Owner-supplied editorial education; these explanations do not diagnose causes.

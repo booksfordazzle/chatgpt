@@ -10,7 +10,7 @@ async function capture(page,options){await page.waitForTimeout(220);await page.e
   await page.route('**/api/waitlist',async route=>{posts.push({action:'marketing',...JSON.parse(route.request().postData())});return route.fulfill({json:{ok:true}});});
   await page.goto(base+'/skin-profile?utm_campaign=launch&utm_content=private%40example.com');await page.waitForTimeout(100);await page.evaluate(()=>document.fonts.ready);
   if([390,1440].includes(width))await capture(page,{path:'.impeccable/review/skin-profile/landing-'+width+'.png',fullPage:true});
-  await page.getByRole('button',{name:/Ανακάλυψε το προφίλ σου/}).click();assert(await page.locator('#profile-quiz').isHidden());await page.locator('#profile-adult').check();await page.getByRole('button',{name:/Ανακάλυψε το προφίλ σου/}).click();
+  await page.getByRole('button',{name:/Ανακάλυψε το δικό σου PRIMAL CODE/}).click();assert(await page.locator('#profile-quiz').isHidden());await page.locator('#profile-adult').check();await page.getByRole('button',{name:/Ανακάλυψε το δικό σου PRIMAL CODE/}).click();
   await page.locator('#question-next').click();assert(await page.locator('#question-error').textContent());
   const answers=[0,3,1,4,2,2,3,3,3,0];
   for(let q=0;q<10;q++){
