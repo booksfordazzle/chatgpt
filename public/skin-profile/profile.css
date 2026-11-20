@@ -250,3 +250,21 @@
  .profile-page .profile-landing .profile-description{margin-bottom:28px!important}
  .profile-page .profile-landing .profile-check{margin:24px 0 16px}
 }
+
+.profile-result-copy{display:contents}
+/* Same full-bleed portrait and upper-copy composition as the mobile opening. */
+@media(max-width:900px){
+ .profile-page .profile-results{padding:0 0 32px}
+ .profile-page .profile-result-opening{display:grid;grid-template-columns:minmax(0,1fr);gap:0;isolation:isolate}
+ .profile-page .profile-result-opening .profile-result-head{display:contents}
+ .profile-page .profile-result-opening .profile-result-material{grid-column:1;grid-row:1;position:relative;align-self:stretch;max-width:none;width:100%;height:auto;min-height:max(820px,calc(100vw * 1.776));aspect-ratio:auto;margin:0;border-radius:0;background:#000;z-index:0}
+ .profile-page .profile-result-material>picture{position:absolute;inset:0;height:100%}
+ .profile-page .profile-result-opening .profile-result-material img{position:absolute;inset:auto 0 0;width:100%;height:auto;border-radius:0}
+ .profile-page .profile-result-copy{display:block;grid-column:1;grid-row:1;align-self:start;position:relative;z-index:1;padding:10px 24px 40px;background:linear-gradient(#000 65%,transparent)}
+ .profile-page .profile-result-copy h1{margin-bottom:20px}
+ .profile-page .profile-result-copy .profile-result-subtitle{margin-bottom:28px}
+ .profile-page .profile-result-copy .profile-lead{max-width:48ch}
+ .profile-page .profile-result-head .profile-result-accordions{grid-column:1;grid-row:2;margin:28px 24px 0}
+ .profile-page .profile-result-head .profile-final-note{grid-column:1;grid-row:3;margin:0;padding:40px 24px}
+ .profile-page .profile-result-opening .profile-research-invitation{grid-column:1;grid-row:4;max-width:none;margin:0;border-radius:0}
+}
