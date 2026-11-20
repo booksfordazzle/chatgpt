@@ -1,5 +1,17 @@
 # PRIMAL CORE Skin Profile — draft implementation
 
+## Current required research and Sheets destination — 20 November 2026
+
+Research entry remains voluntary, but all five cards now require a selected answer before advancing and the backend requires all five valid choices. Final anonymous-send consent remains unchecked and mandatory. This supersedes optional per-card skipping; it does not make research a condition of receiving results.
+
+`research-v2` now stores one response row in Google Sheet `1mNlfIPPEO1eEm6L8RsmRuCZ0A5jVkX2MpnpPY2RhVAA`, tab **Skin Research**, through the existing token-authenticated Apps Script receiver. This replaces independent aggregate-only v2 storage, without dual-writing to Supabase. A row contains timestamp, random retry identifier, consent version and five Greek option labels. It contains no email, quiz answers/result or IP. Readback of the saved row is required before success; identical retries deduplicate, while conflicting retry contents are rejected. The random retry ID is not a person identifier. The five answers now coexist in a response row, so earlier assertions of v2 marginal-only counts/no response-level combinations are superseded. Legacy v1 research and event aggregates remain unchanged; no unique-person/lead qualification or buying inference is introduced.
+
+Activation is blocked: the connector received HTTP 403, so the target was not inspected or modified live. The executing Google account needs target Editor permission; deploy updated `Code.gs` plus new `SkinResearch.gs` in the existing receiver, then enable the server research flag only after access/deployment are ready. The former Supabase-v2 migration is no longer this survey's activation prerequisite. Follow [SKIN_RESEARCH_SHEETS_SETUP.md](SKIN_RESEARCH_SHEETS_SETUP.md) for the exact activation and controlled readback/retry check. No live changes, deployment or test submission occurred.
+
+Footer ordering now places “Ιδιωτικότητα” directly after Contact, social icons centered, credits on the right, and the result-only italic medical note on the next row. Other site footers remain unchanged.
+
+Verification: all 108 unit tests, the build and the eight-width full-flow browser checks pass. Local tests do not establish live Sheet access, receiver deployment or production storage readiness.
+
 ## Latest universal three-column result — 20 November 2026
 
 For every outcome above 1100px, use three columns: profile identity/introduction and four closed native details on the left, that outcome's portrait in the center, and the research invitation on the right. All three share exactly the same vertical midpoint. Center the composition within the available viewport and let it expand naturally when disclosures open. This supersedes the earlier portrait-left/profile-right arrangement. At 1100px and below, stack image, profile and research invitation in that order with readable widths.
@@ -55,11 +67,11 @@ Keep all five identities, supplied images and core stories. The current result h
 
 Remove the product-tin/philosophy section, marketing form, restart, and all email/copy/edit/routine panels from the current UI. No email or marketing collection is exposed. Legacy backend/API compatibility remains unexposed. End results with “Η φροντίδα ξεκινά από εσένα.”, “5 ερωτήσεις. 60 δευτερόλεπτα.” and “ΕΝΑΡΞΗ ΕΡΕΥΝΑΣ”. `product_interest_click` now measures this research-invitation click, not product demand, buying intent or a buyer. There is no product-concept-view event in this flow.
 
-Research opens a separate top-level view of five sequential single-select cards. Next/back preserve choices in memory; the first Back returns to results and no X/close control is exposed; visitors may advance without answering. The last card alone shows unchecked anonymous submission consent and submits the bounded v2 payload only on the final action. Unavailable capability disables sending. A completed submission cannot repost; recoverable errors reenable submission. No libraries, engine/server/data architecture or v2 aggregate contracts change. The migration and default-off release requirements below remain in force.
+Research opens a separate top-level view of five sequential single-select cards. Next/back preserve choices in memory; the first Back returns to results and no X/close control is exposed. The latest required-research contract above requires an answer on every card. The last card alone shows unchecked anonymous submission consent and submits the bounded v2 payload only on the final action. Unavailable capability disables sending. A completed submission cannot repost; recoverable errors reenable submission. No libraries, engine/server/data architecture or v2 aggregate contracts change. The migration and default-off release requirements below remain in force.
 
 Current verification: 102 tests, build and eight-width full-flow checks pass. Offline checks pass five profiles, sequential cards, final italic-note placement and zero HTTP requests. Retry QA passed: a 503 response reenables submission while preserving answers/consent; back navigation, partial skips and the confirmed-success retry also passed. The fresh finish review returned SHIP with no blocking findings after all eight full-page captures at 390px/1440px. Its delayed-capability edge was resolved in place: a targeted test confirms the final arrow enables without losing the selected answer or unchecked consent and without submitting. The build passed again; 102 unit tests, eight-width and offline checks remain passing. No production deployment, live email or production research submission was performed; field Core Web Vitals remain unmeasured.
 
-## Current series and research contract — 20 November 2026
+## Series naming and prior aggregate-v2 contract — 20 November 2026
 
 The current name is **THE PRIMAL SKIN PROFILE**, with **THE SKIN INTELLIGENCE SERIES** retained in the header throughout quiz screens; body series/DISCOVER/numeric quiz labels are removed. Start CTA: “Ξεκίνα το τεστ”. Retain all ten quiz questions temporarily, as explicitly confirmed by the owner; do not shorten to seven or add question hints. Fingerprint treatment and all five profile photos remain unchanged. Scoring and the result engine are unchanged.
 

@@ -14,6 +14,11 @@ function doPost(event) {
     var props = PropertiesService.getScriptProperties();
     var expected = props.getProperty('WAITLIST_SHARED_SECRET');
     if (!expected || input.token !== expected) return reply(false);
+    if (input.action === 'skin-research-v2') {
+      lock.waitLock(10000); locked = true;
+      var result = saveSkinResearch(input);
+      return reply(result.ok === true, result);
+    }
     if (input.action === 'check-welcome-smtp' || input.action === 'check-welcome-immediate') return reply(true);
     if (input.action === 'complete-welcome-immediate') {
       lock.waitLock(10000); locked = true;
