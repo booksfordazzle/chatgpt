@@ -1,6 +1,14 @@
 # Skin Profile — direction contract
 
-## Latest shared result layout and compact footer — 20 November 2026
+## Latest universal three-column result — 20 November 2026
+
+For every outcome above 1100px, use three columns: profile identity/introduction and four closed native details on the left, that outcome's portrait in the center, and the research invitation on the right. All three share exactly the same vertical midpoint. Center the composition within the available viewport and let it expand naturally when disclosures open. This supersedes the earlier portrait-left/profile-right arrangement. At 1100px and below, stack image, profile and research invitation in that order with readable widths.
+
+The invitation heading is now “Γίνε μέρος της δημιουργίας του PRIMAL CORE”. Keep the duration and contribution line; remove the repeated standalone “Γίνε μέρος της δημιουργίας του.” sentence. The shared template applies to all five outcomes while preserving each outcome's image/content and four initially closed disclosures.
+
+All ten targeted checks covering five outcomes at mobile and desktop passed, and the build passed. No production deployment, code/global-document changes or staging are part of this documentation update.
+
+## Prior two-column result and retained compact footer — 20 November 2026
 
 Use the same CALM result composition for all five outcomes through the shared `renderResult`: portrait left, title/subtitle/introduction and four closed native accordion rows right. Profile identity, image, primary reason and story content vary; layout and disclosure behavior do not.
 
@@ -8,7 +16,7 @@ The route footer is one compact desktop row with responsive wrapping. Social lin
 
 Eight-width browser checks, the build and diff checks passed. The preceding targeted offline checks at 390px/1440px also passed four initially closed rows, opening/keyboard toggles, footer privacy/short italic note, removed-copy absence and zero JavaScript errors, HTTP requests or overflow. No production deployment was performed. This is a scoped result/footer refinement; engine, APIs, research release flags and global design are unchanged.
 
-## Current reference disclosures and footer — 20 November 2026
+## Retained disclosure content and footer — 20 November 2026
 
 The latest owner reference supersedes the flat/open result block: group four native `details` rows in the right result header beneath title, subtitle and introduction, with the portrait on the left. All four start closed and have plus/minus row affordances. Exact summaries: “Τι μας έδειξαν οι απαντήσεις σου”, “Τι συμβαίνει στο δέρμα σου;”, “Τι χρειάζεται να αλλάξεις;”, “Τι μπορείς να περιμένεις;”. The first uses the primary profile's `reason`; the other three use story prose, retaining sources. There is no separate flat explanation section. The two previously removed invitation paragraphs remain absent.
 
