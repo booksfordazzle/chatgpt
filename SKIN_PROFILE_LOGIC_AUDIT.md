@@ -47,3 +47,7 @@ There are no invented numerical weights, probabilities, scores, measured hydrati
 - The full unit suite and production build pass. These are software checks; clinical validation and real-user calibration have not been performed.
 
 The original ten-question structure remains as requested. Claims such as “clinically validated”, “dermatologist approved”, “diagnoses your skin” or a treatment/product suitability guarantee must not be attached to this quiz without appropriate evidence and professional review.
+
+## Reproduction against the delivered Drive ZIP
+
+After the owner again reported only CALM, the exact Drive ZIP was fetched back through the connector and extracted into an isolated workspace folder. The fetched index.html SHA-256 matches the packaged local index.html. `tests/browser/skin-outcomes.cjs` now also accepts PREVIEW_FILE so this delivered offline file can be exercised rather than only the source route. All five outcomes passed through the ten-question UI at 390px and 1440px against that downloaded artifact. The always-CALM report has not been reproduced; the exact file/link and Q02/Q04/Q06 answers are requested. No routing thresholds have been changed based on an unconfirmed reproduction.
