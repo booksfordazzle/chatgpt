@@ -149,3 +149,13 @@
 @media(max-width:760px){.profile-result-opening .profile-research-invitation{min-height:700px}.profile-research-overlay{padding:28px 24px}.profile-result-opening .profile-research-invitation h2{font-size:28px}.profile-result-opening .profile-research-invitation p{font-size:14px}}
 /* Owner spacing: lower the survey CTA thirty pixels within the image overlay. */
 .profile-result-opening .profile-research-invitation .profile-button{margin-top:30px}
+/* Final owner reference: top-led profile between equal-height photographs. */
+@media(min-width:1101px){
+ .profile-result-opening{align-items:stretch}
+ .profile-result-opening .profile-result-material{height:max(700px,min(76svh,820px));align-self:start}
+ .profile-result-opening .profile-result-head{display:flex;flex-direction:column;align-self:stretch;min-height:max(700px,min(76svh,820px));padding-top:24px}
+ .profile-result-opening .profile-result-head .profile-result-accordions{margin-top:60px}
+ .profile-page .profile-result-head .profile-final-note{margin-top:auto;padding-top:40px}
+ .profile-result-opening .profile-research-invitation{align-self:start}
+}
+@media(min-width:1101px){.profile-page .profile-results{padding-top:70px}.profile-result-opening{min-height:0}.profile-result-opening .profile-result-material{max-height:none}}
