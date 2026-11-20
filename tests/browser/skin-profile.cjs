@@ -26,7 +26,7 @@ async function capture(page,path){await page.waitForTimeout(280);await page.eval
   assert.equal(await page.locator('#research-invitation-title').textContent(),'Γίνε μέρος της δημιουργίας του PRIMAL CORE');
   assert.equal(await page.getByText('Γίνε μέρος της δημιουργίας του.',{exact:true}).count(),0);
   const resultLayout=await page.locator('.profile-result-opening').evaluate(e=>Object.fromEntries(['head','material','invitation'].map(k=>{const n=e.querySelector(k==='invitation'?'.profile-research-invitation':'.profile-result-'+k),r=n.getBoundingClientRect();return[k,{x:r.x,y:r.y,bottom:r.bottom,center:r.y+r.height/2}]})));
-  if(width>1100){assert(resultLayout.head.x<resultLayout.material.x&&resultLayout.material.x<resultLayout.invitation.x);assert(Math.max(...Object.values(resultLayout).map(r=>r.center))-Math.min(...Object.values(resultLayout).map(r=>r.center))<2,'All result columns share the portrait midpoint');}
+  if(width>1100){assert(resultLayout.material.x<resultLayout.head.x&&resultLayout.head.x<resultLayout.invitation.x);assert(Math.max(...Object.values(resultLayout).map(r=>r.center))-Math.min(...Object.values(resultLayout).map(r=>r.center))<2,'All result columns share the portrait midpoint');}
   else{assert(resultLayout.material.bottom+24<=resultLayout.head.y,'Portrait precedes result with breathing space');assert(resultLayout.head.bottom<resultLayout.invitation.y);}
   if([390,1440].includes(width))await capture(page,'.impeccable/review/skin-profile/results-'+width+'.png');
   await page.locator('#product-interest').click();assert(await page.locator('#result-final-note').isHidden());assert.equal(await page.locator('#profile-research details').count(),0);

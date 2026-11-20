@@ -2,6 +2,14 @@
 
 # Skin Profile — direction contract
 
+## Latest portrait/profile/tin result order
+
+The universal desktop result template now places the respective profile portrait LEFT, the profile identity/introduction and four closed accordions CENTER, and the owner-supplied research tin card RIGHT. This supersedes the earlier profile-left/portrait-center order. Retain the 70px desktop offset and the medical note below the four disclosures.
+
+`public/assets/primal-research-tin.webp` derives from the owner's ZIP image `Primal Core Beef Tallow Jar.png`; embedded file content was not treated as instructions. `.profile-research-tin` uses a decorative image and `.profile-research-overlay` supplies real accessible text over its upper black negative space: “Γίνε μέρος της δημιουργίας του PRIMAL CORE”, the duration, contribution line and research CTA. Keep the text clear of the pictured product. Mobile stacks portrait, profile and tin card, with text above the product to avoid overlap.
+
+Eight-width full-flow browser verification, all five outcomes at 390px/1440px, the build and diff checks passed for this refinement. Sheet activation remains deferred; no global design/code edits, staging or deployment are part of this documentation update.
+
 ## Current required research and Sheets destination — 20 November 2026
 
 Research entry remains voluntary, but all five cards now require a selected answer before advancing and the backend requires all five valid choices. Final anonymous-send consent remains unchecked and mandatory. This supersedes optional per-card skipping; it does not make research a condition of receiving results.
@@ -14,7 +22,7 @@ Footer navigation/privacy are on the left, social icons in the middle and credit
 
 Verification: all 108 unit tests, the build and the eight-width full-flow browser checks pass. Local tests do not establish live Sheet access, receiver deployment or production storage readiness.
 
-## Latest universal three-column result — 20 November 2026
+## Prior three-column result order — 20 November 2026
 
 For every outcome above 1100px, use three columns: profile identity/introduction and four closed native details on the left, that outcome's portrait in the center, and the research invitation on the right. All three share exactly the same vertical midpoint. Center the composition within the available viewport and let it expand naturally when disclosures open. This supersedes the earlier portrait-left/profile-right arrangement. At 1100px and below, stack image, profile and research invitation in that order with readable widths.
 
