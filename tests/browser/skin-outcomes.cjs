@@ -11,6 +11,7 @@ const base=process.env.BASE_URL||'http://localhost:8097';
   const answers=[0,0,3,scenario.goal,0,0,2,0,0,0];
   for(let q=0;q<10;q++){await page.locator('#question-content input').nth(answers[q]).check();await page.locator('#question-next').click()}
   assert.equal(await page.locator('#result-title').textContent(),scenario.title);
+  const resultImage=page.locator('.profile-result-material img');await resultImage.scrollIntoViewIfNeeded();await page.waitForFunction(()=>document.querySelector('.profile-result-material img').complete);const currentImage=await resultImage.evaluate(e=>e.currentSrc);if(width<=900&&scenario.title!=='RESTORE')assert(currentImage.includes('/skin-results-mobile/'+scenario.title.toLowerCase()+'.webp'));else assert(currentImage.includes('/primal-code-'+scenario.title.toLowerCase()+'.webp'));
   const rows=page.locator('.profile-result-accordions details');assert.equal(await rows.count(),4);assert.equal(await page.locator('.profile-result-accordions details[open]').count(),0);
   await rows.first().locator('summary').click();const reason=await rows.first().textContent();assert(reason.includes('Ως βασική προτεραιότητα επέλεξες'));if(scenario.title==='CALM')assert(reason.includes('προκύπτει από τη δική σου επιλογή'));
   assert.equal(posts.length,0);assert.deepEqual(errors,[]);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.close();console.log('PASS',width,scenario.title,'via all ten real questions');
