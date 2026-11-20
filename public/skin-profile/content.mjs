@@ -40,7 +40,7 @@ export function resultText(r){const p=profiles[r.primary];return ['PRIMAL CORE â
 
 // Existing owner imagery is illustrative; it is not a measurement of the result.
 export const profileVisuals={
- M:{src:'assets/primal-code-restore.webp',position:'center'},
+ M:{src:'assets/primal-code-restore.webp',mobileSrc:'assets/skin-results-mobile/restore.webp',position:'center'},
  A:{src:'assets/primal-code-endure.webp',mobileSrc:'assets/skin-results-mobile/endure.webp',position:'center'},
  C:{src:'assets/primal-code-calm.webp',mobileSrc:'assets/skin-results-mobile/calm.webp',position:'center'},
  B:{src:'assets/primal-code-balance.webp',mobileSrc:'assets/skin-results-mobile/balance.webp',position:'center'},
