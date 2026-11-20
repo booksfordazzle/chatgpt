@@ -1,3 +1,5 @@
+> Latest navigation correction: restore the pre-gradient Back/Next bar’s solid black background, original divider and original arrow/button colors. Keep the mobile question mesh gradient and viewport-safe control layout. This scoped restoration supersedes neutral navigation styling below.
+
 > Mobile quiz and research questions use a shared vertical soft mesh gradient in black, gray and white only, including neutral answer states, navigation and errors. Preserve the viewport-safe controls and text-only question layout.
 
 > Mobile composition: result portraits show the full 941:1672 image without landscape cropping. Landing title, description, adult consent and start CTA overlay the fingerprint image’s extended black negative space; keep the fingerprint below the copy. Desktop composition is preserved.
