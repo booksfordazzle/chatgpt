@@ -1,3 +1,5 @@
+> Latest survey image: question5/5 (image15) now uses the owner-supplied Matte Black Jar on Stone.png, replacing the silver tin. Full/small WebP assets regenerated with source metadata; mobile focal position50%60%. Other cards and result product image preserved.
+
 > Latest owner reversal: restore IMAGE LEFT / TEXT AND ANSWERS RIGHT for all ten quiz and five survey questions above900px. Supersedes the text-left refinement below. Mobile stacking and result pages are preserved.
 
 > Final header adjustment for the text-left question layout: keep the series label centered in the header, clear of the left logo. This supersedes left-edge header alignment; that rule would overlap the logo after the column reversal. All eight full-flow viewport checks passed.

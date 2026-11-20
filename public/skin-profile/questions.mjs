@@ -102,5 +102,5 @@ export const questionVisuals={
  12:{src:'assets/skin-questions/12.webp',small:'assets/skin-questions/12-small.webp',width:941,height:1670,position:'50% 68%'},
  13:{src:'assets/skin-questions/13.webp',small:'assets/skin-questions/13-small.webp',width:941,height:1671,position:'50% 57%'},
  14:{src:'assets/skin-questions/14.webp',small:'assets/skin-questions/14-small.webp',width:941,height:1670,position:'50% 70%'},
- 15:{src:'assets/skin-questions/15.webp',small:'assets/skin-questions/15-small.webp',width:942,height:1670,position:'50% 68%'}
+ 15:{src:'assets/skin-questions/15.webp',small:'assets/skin-questions/15-small.webp',width:1086,height:1448,position:'50% 60%'}
 };
