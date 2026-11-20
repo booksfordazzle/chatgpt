@@ -1,3 +1,5 @@
+> Optional quiz storage: unchecked, explicit landing consent permits the ten answers/result to be saved in Skin Quiz. Keep quiz ID separate from survey ID, report storage failures honestly and allow retry without blocking the result. The privacy explanation describes tab-local progress and optional server storage. Requires updated owner Apps Script deployment; see SKIN_QUIZ_SHEETS_SETUP.md.
+
 > Price research now asks “Τι ποσό θα ήσουν διατεθειμένος να πληρώσεις για ένα βάλσαμο 30 ml που θα σου κρατήσει για 2 μήνες;”. Hide the former 15–19,99 € option; keep its legacy wire index reserved so existing Sheets mappings remain correct.
 
 > Restart correction: starting the quiz always resets to question 1 with empty choices, fresh research state and submission ID. Results offer “Ξεκίνα ξανά το τεστ”. A fresh unfragmented quiz entry starts at the introduction; refresh and real Back/Forward still restore the current history entry. Clone restored snapshots before editing so earlier history cannot be mutated.
