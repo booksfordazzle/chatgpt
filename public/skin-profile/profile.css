@@ -214,3 +214,5 @@
 @media(max-width:900px){
  #profile-quiz .profile-question-visual,#profile-research .profile-question-visual{display:none}
 }
+
+.profile-result-material>picture{display:block;width:100%;height:100%}

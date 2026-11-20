@@ -1,3 +1,5 @@
+> Mobile result imagery: use owner calm.zip replacements for CALM, ENDURE, BALANCE and ESSENTIAL up to 900px; desktop retains existing portraits. RESTORE retains its existing image pending clarification of the ZIP’s central image (fingerprint).
+
 > Latest owner instruction: hide supporting question photos on mobile (up to 900px) throughout quiz and research; preserve result photographs and desktop imagery. Keep navigation outside the content scroller.
 
 > Latest CTA placement: keep the single bold/glowing research button below the contribution sentence in the research invitation. Mobile order puts it after the four result disclosures. Supersedes the intro-adjacent CTA position.
