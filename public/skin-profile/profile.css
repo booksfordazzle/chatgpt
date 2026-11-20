@@ -237,5 +237,5 @@
  .profile-page.is-question-view .profile-answer:has(input:checked){background:#e0e0e0;color:#080808;box-shadow:0 4px 18px rgba(255,255,255,.18)}
  .profile-page.is-question-view .profile-error{color:#fff}
  .profile-page.is-question-view #profile-progress,.profile-page.is-question-view #profile-progress::-webkit-progress-bar{background:#505050}
- .profile-page.is-question-view #profile-quiz .profile-controls,.profile-page.is-question-view #profile-research .profile-controls{background:linear-gradient(180deg,#111,#080808);border-color:#505050}
+ .profile-page.is-question-view #profile-quiz .profile-controls,.profile-page.is-question-view #profile-research .profile-controls{--profile-bg:#080808;--profile-ink:#e5e0d6;--profile-muted:#b7b2a8;--profile-sand:#dbd6ca;--profile-line:#30302e;background:var(--profile-bg);border-color:var(--profile-line);color:var(--profile-ink)}
 }
