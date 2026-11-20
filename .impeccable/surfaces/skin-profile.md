@@ -1,3 +1,5 @@
+> Latest owner audio/alignment rule: soundtrack keeps playing across tab switches and loops until the user pauses; remove prior visibility/pagehide automatic pauses. In desktop quiz/research views, align the header series label with the question panel left edge, using the screenshot guide only (no visible guide). Landing/results header remains centered.
+
 > Latest final-page reference: desktop profile copy is top-led with24px inset; allow60px before the four closed disclosures, anchor the italic note at the bottom, and keep both photographs equal height. Supersedes vertical centering of the profile text. Mobile stack unchanged. Five-outcome checks at390px/1440px pass.
 
 > Latest owner asset replacement: use image_20261115_231224.jpg from image_20261115_231224.zip for the universal research-overlay panel. Supersedes the prior Primal Core Beef Tallow Jar source. Prior local ZIP/extracted PNG removed; replacement ZIP/source retained. Overlay text and responsive layout preserved.

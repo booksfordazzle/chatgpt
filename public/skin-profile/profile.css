@@ -177,3 +177,7 @@
 @media(min-width:1101px){.profile-page .profile-results{max-width:1440px;padding-inline:58px}.profile-result-opening{gap:24px}}
 /* Header reference: independent centered series, logo left and record right. */
 @media(min-width:761px){.profile-page .header-inner{position:relative}.profile-page .profile-experience-name{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;text-align:center;white-space:nowrap;max-width:none}.profile-page .profile-sound{margin-left:auto}}
+
+/* The reference guide aligns the series label with the desktop question column. */
+@media(min-width:901px){.profile-page:has(#profile-quiz:not([hidden])) .profile-experience-name,.profile-page:has(#profile-research:not([hidden])) .profile-experience-name{left:calc(50% - min(1320px,100vw)*.075 + 44px);transform:translateY(-50%);text-align:left}}
+@media(min-width:901px) and (max-width:1100px){.profile-page:has(#profile-quiz:not([hidden])) .profile-experience-name,.profile-page:has(#profile-research:not([hidden])) .profile-experience-name{left:calc(42.5vw + 41.6px)}}
