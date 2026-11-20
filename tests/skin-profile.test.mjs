@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {questions}from'../public/skin-profile/questions.mjs';
-import {evaluate,validResult}from'../public/skin-profile/engine.mjs';
+import {evaluate,validResult,validAnswer}from'../public/skin-profile/engine.mjs';
 import {resultText,personalizedSummary}from'../public/skin-profile/content.mjs';
 import {createSkinProfileHandler}from'../server/skin-profile.mjs';
 const base=()=>[0,0,3,0,0,0,2,0,0,0];
@@ -49,4 +49,25 @@ test('personalized explanation names only the discomfort signals actually report
 test('unknown sensations remain unknown and routine guidance follows the stated habits',()=>{
  const a=base();a[1]=4;a[2]=4;a[6]=2;a[7]=0;a[8]=0;let text=personalizedSummary(a).join(' ');assert(text.includes('Δεν έχω προσέξει'));assert(text.includes('Δεν είμαι σίγουρος/η'));assert(!text.includes('κοινό σαπούνι'));assert(!text.includes('Δοκίμασε μια συνεπή'));
  a[6]=1;a[7]=3;a[8]=3;text=personalizedSummary(a).join(' ');assert(text.includes('κοινό σαπούνι'));assert(text.includes('Δοκίμασε μια συνεπή'));assert(text.includes('δεν αφορά μόνο το καλοκαίρι'));
+});
+
+test('multiple selections accept only compatible sensations and cleansing habits',()=>{
+ for(const value of [[1,3],[2,3],[1],[0],[4]])assert(validAnswer(value,1));
+ for(const value of [[],Array(1),[0,3],[1,2],[4,1],[1,1],[1,2,3],[9],[-1]])assert(!validAnswer(value,1));
+ for(const value of [[0,1,2,3],[0,2],[4]])assert(validAnswer(value,6));
+ for(const value of [[],[4,0],[1,1],[5]])assert(!validAnswer(value,6));
+ for(const index of [0,2,3,4,5,7,8,9])assert(!validAnswer([0],index));
+});
+test('combined sensations preserve comfort precedence and explain every selected sensation',()=>{
+ const a=base();a[1]=[1,3];a[3]=4;a[6]=[0,2];const result=evaluate(a);assert.equal(result.primary,'C');assert(!result.habits.includes('cleanse'));const text=personalizedSummary(a).join(' ');assert(text.includes('Τραβάει · Κάψιμο ή τσούξιμο'));assert(text.includes('Ανέφερες κάψιμο ή τσούξιμο'));
+ a[1]=[1];a[6]=[0,3];assert.equal(evaluate(a).primary,'B');assert(evaluate(a).habits.includes('cleanse'));
+ a[1]=[0,3];assert.throws(()=>evaluate(a));
+});
+test('all compatible multi-select combinations preserve the declared priority rules',()=>{
+ const selections=index=>Array.from({length:(1<<questions[index].options.length)-1},(_,n)=>questions[index].options.map((_,i)=>i).filter(i=>(n+1)&(1<<i))).filter(value=>validAnswer(value,index));
+ const wash=selections(1),cleanse=selections(6);assert.equal(wash.length,7);assert.equal(cleanse.length,16);let checked=0;
+ for(const sensation of wash)for(const cleansing of cleanse)for(let goal=0;goal<6;goal++)for(let tolerance=0;tolerance<4;tolerance++){
+  const a=base();a[1]=sensation;a[6]=cleansing;a[3]=goal;a[5]=tolerance;
+  const r=evaluate(a);assert.equal(r.primary,sensation.includes(3)||tolerance===2?'C':['M','A','M','C','B','E'][goal]);assert.equal(r.habits.includes('cleanse'),cleansing.some(v=>v===1||v===3));checked++;
+ }assert.equal(checked,2688);
 });

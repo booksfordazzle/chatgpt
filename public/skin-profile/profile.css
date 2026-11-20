@@ -181,3 +181,31 @@
 /* The reference guide aligns the series label with the desktop question column. */
 @media(min-width:901px){.profile-page:has(#profile-quiz:not([hidden])) .profile-experience-name,.profile-page:has(#profile-research:not([hidden])) .profile-experience-name{left:calc(50% - min(1320px,100vw)*.075 + 44px);transform:translateY(-50%);text-align:left}}
 @media(min-width:901px) and (max-width:1100px){.profile-page:has(#profile-quiz:not([hidden])) .profile-experience-name,.profile-page:has(#profile-research:not([hidden])) .profile-experience-name{left:calc(42.5vw + 41.6px)}}
+.profile-choice-hint{font-size:13px;color:var(--profile-muted);margin:-8px 0 20px!important}
+.profile-page .profile-result-head .profile-research-cta{align-self:flex-start;margin:26px 0 0;min-height:54px;animation:primal-research-breathe 3.2s ease-in-out infinite;box-shadow:0 5px 22px rgba(219,214,202,.18)}
+@keyframes primal-research-breathe{0%,100%{box-shadow:0 5px 20px rgba(219,214,202,.16)}50%{box-shadow:0 7px 32px rgba(219,214,202,.4)}}
+@media(prefers-reduced-motion:reduce){.profile-page .profile-result-head .profile-research-cta{animation:none}}
+@media(max-width:900px){
+ #profile-quiz .profile-question-visual,#profile-research .profile-question-visual{aspect-ratio:16/9;height:auto;min-height:0;max-height:none;width:100%}
+ #profile-quiz .profile-question-visual img,#profile-research .profile-question-visual img{object-fit:cover;width:100%;height:100%}
+}
+/* Keep the result triptych aligned when the new inline CTA increases copy height. */
+@media(min-width:1101px){
+ .profile-result-opening .profile-result-material{position:relative;height:auto;min-height:max(700px,min(76svh,820px));align-self:stretch}
+ .profile-result-opening .profile-result-material img{position:absolute;inset:0;width:100%;height:100%}
+ .profile-result-opening .profile-research-invitation{height:auto;align-self:stretch}
+}
+
+/* iOS/Brave toolbar-safe shell: navigation is outside the scrolling question content. */
+@media(max-width:900px){
+ .profile-page.is-question-view{height:var(--profile-visible-height,100svh);max-height:var(--profile-visible-height,100svh);overflow:hidden;padding:0}
+ .profile-page.is-question-view>#main{height:calc(var(--profile-visible-height,100svh) - var(--profile-header-height,76px));min-height:0;margin:0;overflow:hidden}
+ .profile-page.is-question-view>.profile-site-footer{display:none}
+ .profile-page.is-question-view #profile-quiz,.profile-page.is-question-view #profile-research.profile-research-flow{height:100%;min-height:0;max-width:700px;padding:10px 22px 0}
+ .profile-page.is-question-view .profile-question-panel{height:100%;min-height:0;display:flex;flex-direction:column}
+ .profile-question-panel>#profile-progress,.profile-question-panel>.profile-study-heading,.profile-question-panel>.profile-study-progress{flex:none}
+ #question-form,#research-form{display:flex;flex-direction:column;flex:1;min-height:0;margin:0;overflow:hidden}
+ #question-content,.profile-study-content{flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;padding:4px 4px 20px;scroll-padding-block:12px}
+ #profile-quiz .profile-controls,#profile-research .profile-controls{position:static;flex:none;width:100%;margin:0;padding:12px 4px calc(18px + env(safe-area-inset-bottom,0px));background:var(--profile-bg);border-top:1px solid var(--profile-line);display:flex;justify-content:space-between;align-items:center;z-index:2}
+ #question-error{flex:none}
+}

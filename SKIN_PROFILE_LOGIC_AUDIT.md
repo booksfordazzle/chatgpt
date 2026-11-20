@@ -1,6 +1,28 @@
 # Skin Profile decision audit — 20 November 2026
 
+## Current mobile viewport/scroll architecture — review branch
+
+This supersedes the earlier fixed-control/page-scroll description. At 900px and below, bind the body to `visualViewport.height` through a root variable and hide outer overflow. Header and main fill the available height. Quiz/research forms are flex layouts: `#question-content` and `.profile-study-content` scroll internally, while arrow controls remain static, non-shrinking flex children outside the content scroller, with 18px safe-area spacing. Keep the audio header visible. Hide the footer only during active mobile questions; restore it on landing/results. `show` toggles `is-question-view`, and focus resets the inner scroll position.
+
+The owner's live Brave-on-iPhone cutoff report concerns the older live version. This fix is staged on `codex/skin-profile-mobile`, not live; a physical iPhone Brave test has not been performed. Available WebKit runtime checks passed with local dependencies and `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=1`; this is not native-device evidence. Chromium and WebKit checks passed all 15 cards at 320×568, 390×844, 430×932 and 768×1024, plus a simulated 600px visual viewport. All 117 unit tests pass. The final eight-width full flow passed at `/tmp/viewport-full-flow.log`. WebKit touch-context checks also passed rotation to 844×390 and simulated visual-viewport shrink to 600px.
+
+The supplied image ZIP contains all 15 numbered JPGs plus the unused duplicate `14.png`; all 15 are in place and no missing-asset dependency remains. No deployment, Sheets writes, backend changes, staging or other edits are part of this documentation update.
+
+
+## Supplied numbered images — current mobile draft
+
+The owner supplied `/workspace/attachments/6b5bf82b-594f-47ed-9455-844c600675df/images.zip`. All numbered `1.jpg`–`15.jpg` now replace the question/research imagery: 30 full/small WebP exports with native dimensions and 1200px maximum-width metadata updated. There is no Q1 fallback and missing frame images no longer block this draft. The duplicate portrait `14.png` is ignored in favor of landscape `14.jpg`. Mobile uses CSS focal positions to crop the 4:3 sources to 16:9; desktop retains photo left/text right. The new `15.jpg` silver tin supersedes the previous matte-jar question image, as communicated to the owner. The five result portraits and separate research/marketing tin are preserved.
+
+Current verification: 117 unit tests pass, including 2,688 valid multi-selection combinations. Full eight-width confirmation passed after correcting desktop CTA-related height growth by stretching both image containers. Fresh all-15 mobile image checks passed in Chromium and WebKit. This is still the un-deployed `codex/skin-profile-mobile` branch; no Sheets write, backend change, global edit or staging occurred. Legacy exhaustive single-answer coverage remains distinct from the new multi-select checks.
+
+
 This is a deterministic educational care-priority guide. It is not a validated diagnostic instrument, a measured skin-type classification, or a clinical risk score. The implementation checks below establish behavior and traceability, not clinical validity. General dermatology source links support the advice; they do not validate this questionnaire or its thresholds.
+
+## Current multi-select draft scope
+
+`codex/skin-profile-mobile` adds arrays only for Q02/Q07 while accepting legacy numeric answers. Q02 permits zero-based pairs [1,3]/[2,3], max two; comfortable 0 and unknown 4 are exclusive, and 1/2 cannot coexist. Q07 permits subsets of 0–3 with unknown 4 exclusive. Q04/Q06 remain single-select. Q02 containing 3 triggers the existing CALM precaution; cleanser habits use any selected soap/scrub, and explanations quote/join actual selections. These are educational rules, not diagnostic scoring.
+
+The 116-test and five-outcome UI checks pass for this review-only branch. The exhaustive 4,608,000 legacy single-answer combinations and 120-combination counts below do not establish exhaustive coverage or distribution for the expanded array state space. No clinical validity or fake probabilities are claimed. This branch is pending review and not live.
 
 ## The five reachable outcomes
 
@@ -54,4 +76,4 @@ After the owner again reported only CALM, the exact Drive ZIP was fetched back t
 
 ## Exhaustive follow-up check
 
-`scripts/audit-skin-routing.mjs` evaluated all 4,608,000 full ten-answer combinations: zero invalid results and zero CALM results outside the declared goal/precaution conditions. Counts are M921600, A460800, C2304000, B460800, E460800, under artificial equally enumerated options only; these are not user prevalence statistics or clinical evidence. `tests/browser/skin-revisions.cjs` exercised the fetched Drive index with both discomfort flags initially selected, then revised via the actual Back/Next controls: clearing both produced BALANCE, retaining only either flag produced CALM with the matching explanation, and clearing both/changing the goal produced ESSENTIAL. No stale discomfort answers reproduced. No runtime thresholds changed in this follow-up.
+`scripts/audit-skin-routing.mjs` evaluated all 4,608,000 legacy single-answer ten-question combinations: zero invalid results and zero CALM results outside the declared goal/precaution conditions. Counts are M921600, A460800, C2304000, B460800, E460800, under artificial equally enumerated options only; these are not user prevalence statistics or clinical evidence. `tests/browser/skin-revisions.cjs` exercised the fetched Drive index with both discomfort flags initially selected, then revised via the actual Back/Next controls: clearing both produced BALANCE, retaining only either flag produced CALM with the matching explanation, and clearing both/changing the goal produced ESSENTIAL. No stale discomfort answers reproduced. No runtime thresholds changed in this follow-up.

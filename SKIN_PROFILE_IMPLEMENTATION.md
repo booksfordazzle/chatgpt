@@ -1,5 +1,21 @@
 > Live verification completed on 20 November 2026. PR #1 was merged by the owner (production commit 552f4b79fe3b286617e7478826408927508791fd); Vercel deployed successfully. /skin-profile returns 200 and /api/skin-profile reports researchV2=true. After the owner ran setupSkinResearch, a controlled POST returned 200/ok=true and connector readback confirmed all five answer labels in Skin Research (sheetId872547125). Repeating the same submission ID returned 200 and left exactly one row. Reserved test ID: 00000000-0000-4000-8000-202611200001. This is a synthetic verification row, not consumer research; exclude it from analysis. No secrets were exposed or existing Sheet1/Explanation data altered. Earlier default-off/unverified deployment notes below are historical.
 
+## Current mobile viewport/scroll architecture — review branch
+
+This supersedes the earlier fixed-control/page-scroll description. At 900px and below, bind the body to `visualViewport.height` through a root variable and hide outer overflow. Header and main fill the available height. Quiz/research forms are flex layouts: `#question-content` and `.profile-study-content` scroll internally, while arrow controls remain static, non-shrinking flex children outside the content scroller, with 18px safe-area spacing. Keep the audio header visible. Hide the footer only during active mobile questions; restore it on landing/results. `show` toggles `is-question-view`, and focus resets the inner scroll position.
+
+The owner's live Brave-on-iPhone cutoff report concerns the older live version. This fix is staged on `codex/skin-profile-mobile`, not live; a physical iPhone Brave test has not been performed. Available WebKit runtime checks passed with local dependencies and `PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=1`; this is not native-device evidence. Chromium and WebKit checks passed all 15 cards at 320×568, 390×844, 430×932 and 768×1024, plus a simulated 600px visual viewport. All 117 unit tests pass. The final eight-width full flow passed at `/tmp/viewport-full-flow.log`. WebKit touch-context checks also passed rotation to 844×390 and simulated visual-viewport shrink to 600px.
+
+The supplied image ZIP contains all 15 numbered JPGs plus the unused duplicate `14.png`; all 15 are in place and no missing-asset dependency remains. No deployment, Sheets writes, backend changes, staging or other edits are part of this documentation update.
+
+
+## Supplied numbered images — current mobile draft
+
+The owner supplied `/workspace/attachments/6b5bf82b-594f-47ed-9455-844c600675df/images.zip`. All numbered `1.jpg`–`15.jpg` now replace the question/research imagery: 30 full/small WebP exports with native dimensions and 1200px maximum-width metadata updated. There is no Q1 fallback and missing frame images no longer block this draft. The duplicate portrait `14.png` is ignored in favor of landscape `14.jpg`. Mobile uses CSS focal positions to crop the 4:3 sources to 16:9; desktop retains photo left/text right. The new `15.jpg` silver tin supersedes the previous matte-jar question image, as communicated to the owner. The five result portraits and separate research/marketing tin are preserved.
+
+Current verification: 117 unit tests pass, including 2,688 valid multi-selection combinations. Full eight-width confirmation passed after correcting desktop CTA-related height growth by stretching both image containers. Fresh all-15 mobile image checks passed in Chromium and WebKit. This is still the un-deployed `codex/skin-profile-mobile` branch; no Sheets write, backend change, global edit or staging occurred. Legacy exhaustive single-answer coverage remains distinct from the new multi-select checks.
+
+
 > Latest soundtrack replacement: active primal-soundtrack.mp3 now uses primalsoundtrack.mp3.mp3 from the owner ZIP primalsoundtrack.mp3.zip. Prior audio bytes are replaced in the current build. Manual play/pause, background-tab continuity and looping remain unchanged.
 
 > Latest survey image: question5/5 (image15) now uses the owner-supplied Matte Black Jar on Stone.png, replacing the silver tin. Full/small WebP assets regenerated with source metadata; mobile focal position50%60%. Other cards and result product image preserved.
@@ -17,6 +33,16 @@
 > Owner spacing refinement: shift the complete test content 70px upward above 1100px viewport width. Preserve mobile layout and internal image/text alignment. Updated offline preview visually checked at 1440px; Google Sheets activation remains deferred.
 
 # PRIMAL CORE Skin Profile — draft implementation
+
+## Current mobile/multi-select draft — pending review
+
+Branch `codex/skin-profile-mobile` is a review draft, not live. At 900px and below, all ten quiz and five research cards use a 16:9 image, title and answers, with fixed bottom arrow navigation, safe-area spacing and content padding. Next remains visible without scrolling while long answer lists may page-scroll. The subsequently supplied numbered JPEGs are integrated as documented above; the earlier missing-image dependency is resolved. Mobile retains CSS 16:9 crops.
+
+Only Q02 and Q07 allow multiple choices. Zero-based Q02 accepts compatible pairs [1,3] or [2,3], at most two choices; comfortable 0 and unknown 4 are exclusive, and drying choices 1/2 cannot coexist. Q07 accepts any subset of 0–3, with unknown 4 exclusive. Q04 and Q06 remain single-select. The engine accepts legacy numbers or arrays only for Q02/Q07; a Q02 selection containing 3 still prioritizes CALM. Cleanser guidance responds to any selected soap/scrub, and personalized explanations join the actual choices. No fake probabilities or clinical validation are introduced.
+
+One research CTA (`#product-interest`) appears after the introduction for all five results, with a soft breathing glow and a static reduced-motion treatment. The active soundtrack is replaced by the single approximately 22MB, 11:28 track in `FINAL PLAYLIST PRIMAL.zip`; manual play/pause, loop and background-pause behavior remain. This supersedes the earlier soundtrack file/size description.
+
+Verification: 116 unit tests, five-profile UI checks at 390px/1440px, all 15 mobile cards at 320×568, 390×844, 430×932 and 768×1024 with Next visible/unobscured, and music checks pass. Earlier exhaustive 4,608,000-combination verification covers legacy single-answer paths only, not the entire expanded multi-select state space. Backend Apps Script and the five-answer survey payload are unchanged; previously verified live Sheets behavior is retained, while this draft has not been deployed. No global design changes or staging are part of this documentation update.
 
 ## Current logic audit and personalized explanation
 
@@ -100,7 +126,7 @@ Current checks: 102 unit tests, build and eight-width full flow passed. Targeted
 
 ## Current question imagery — 20 November 2026
 
-The owner supplied `15.zip` containing `2.png` through `15.png`; it contains no `1.png`. The accompanying style JSON was treated as reference data, not instructions. Map the fourteen supplied images by filename: quiz questions 2–10 and research cards 11–15. Q1 temporarily retains the approved fingerprint until image 1 is supplied; the owner has been informed. This is the only missing-image dependency; the central/five-profile photographs remain complete.
+The owner supplied `15.zip` containing `2.png` through `15.png`; it contains no `1.png`. The accompanying style JSON was treated as reference data, not instructions. Map the fourteen supplied images by filename: quiz questions 2–10 and research cards 11–15. That earlier Q1 fingerprint placeholder is superseded by the supplied numbered JPEG set above; no Q1 fallback remains. Central/five-profile photographs remain complete.
 
 `public/skin-profile/questions.mjs` exposes the `questionVisuals` mapping. Twenty-eight WebP exports live in `public/assets/skin-questions`: full versions at quality 84 and 480px small versions at quality 80, with owner-source XMP. Original PNGs remain in `/workspace/work/skin-question-originals`. Above 900px, show question/answers on the left and the contained vertical supporting image on the right, per the latest universal question order. At 900px and below, place a compact full-width crop, 100–155px high, above the full-width question, using per-image focal positions. The supplied verticals work for this design; no horizontal replacements are required.
 
