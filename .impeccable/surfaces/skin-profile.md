@@ -1,3 +1,5 @@
+> Latest owner reversal: restore IMAGE LEFT / TEXT AND ANSWERS RIGHT for all ten quiz and five survey questions above900px. Supersedes the text-left refinement below. Mobile stacking and result pages are preserved.
+
 > Final header adjustment for the text-left question layout: keep the series label centered in the header, clear of the left logo. This supersedes left-edge header alignment; that rule would overlap the logo after the column reversal. All eight full-flow viewport checks passed.
 
 > Latest owner audio/alignment rule: soundtrack keeps playing across tab switches and loops until the user pauses; remove prior visibility/pagehide automatic pauses. In desktop quiz/research views, align the header series label with the question panel left edge, using the screenshot guide only (no visible guide). Landing/results header remains centered.
