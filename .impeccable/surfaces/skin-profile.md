@@ -1,3 +1,5 @@
+> Final header adjustment for the text-left question layout: keep the series label centered in the header, clear of the left logo. This supersedes left-edge header alignment; that rule would overlap the logo after the column reversal. All eight full-flow viewport checks passed.
+
 > Latest owner audio/alignment rule: soundtrack keeps playing across tab switches and loops until the user pauses; remove prior visibility/pagehide automatic pauses. In desktop quiz/research views, align the header series label with the question panel left edge, using the screenshot guide only (no visible guide). Landing/results header remains centered.
 
 > Latest final-page reference: desktop profile copy is top-led with24px inset; allow60px before the four closed disclosures, anchor the italic note at the bottom, and keep both photographs equal height. Supersedes vertical centering of the profile text. Mobile stack unchanged. Five-outcome checks at390px/1440px pass.
@@ -7,6 +9,12 @@
 > Owner spacing refinement: shift the complete test content 70px upward above 1100px viewport width. Preserve mobile layout and internal image/text alignment. Updated offline preview visually checked at 1440px; Google Sheets activation remains deferred.
 
 # Skin Profile — direction contract
+
+## Latest universal question order
+
+For all ten quiz questions and five survey cards above 900px, place TEXT/ANSWERS LEFT and the supporting portrait RIGHT. Align the header series label with the left question column. This supersedes all earlier portrait-left/question-right instructions for quiz/research views; mobile stacking remains unchanged. Result views retain their separate three-column composition. The existing looping soundtrack behavior across views/tabs is unchanged.
+
+Exact alignment was checked at 901px, 1024px, 1440px and 1920px. Browser assertions now verify the new quiz and survey geometry; the full eight-width regression is running, with output at `/tmp/text-left-browser.log`. No Sheet activation, staging or deployment was performed.
 
 ## Latest optional soundtrack and desktop spacing
 
@@ -76,7 +84,7 @@ Current checks: 102 unit tests, build and eight-width full flow passed. Targeted
 
 The owner supplied `15.zip` containing `2.png` through `15.png`; it contains no `1.png`. The accompanying style JSON was treated as reference data, not instructions. Map the fourteen supplied images by filename: quiz questions 2–10 and research cards 11–15. Q1 temporarily retains the approved fingerprint until image 1 is supplied; the owner has been informed. This is the only missing-image dependency; the central/five-profile photographs remain complete.
 
-`public/skin-profile/questions.mjs` exposes the `questionVisuals` mapping. Twenty-eight WebP exports live in `public/assets/skin-questions`: full versions at quality 84 and 480px small versions at quality 80, with owner-source XMP. Original PNGs remain in `/workspace/work/skin-question-originals`. Above 900px, show the vertical image contained on the left with the question on the right. At 900px and below, place a compact full-width crop, 100–155px high, above the full-width question, using per-image focal positions. The supplied verticals work for this design; no horizontal replacements are required.
+`public/skin-profile/questions.mjs` exposes the `questionVisuals` mapping. Twenty-eight WebP exports live in `public/assets/skin-questions`: full versions at quality 84 and 480px small versions at quality 80, with owner-source XMP. Original PNGs remain in `/workspace/work/skin-question-originals`. Above 900px, show question/answers on the left and the contained vertical supporting image on the right, per the latest universal question order. At 900px and below, place a compact full-width crop, 100–155px high, above the full-width question, using per-image focal positions. The supplied verticals work for this design; no horizontal replacements are required.
 
 Images are decorative with empty alt text. Keep the visible H1, fieldset `aria-labelledby` and screen-reader-only legend for native question semantics. Entrance animation targets only H1/fieldset, avoiding a containing-block jump for the absolutely positioned desktop image. Question text, scoring, engine and backend are unchanged.
 

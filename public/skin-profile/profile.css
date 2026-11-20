@@ -181,3 +181,13 @@
 /* The reference guide aligns the series label with the desktop question column. */
 @media(min-width:901px){.profile-page:has(#profile-quiz:not([hidden])) .profile-experience-name,.profile-page:has(#profile-research:not([hidden])) .profile-experience-name{left:calc(50% - min(1320px,100vw)*.075 + 44px);transform:translateY(-50%);text-align:left}}
 @media(min-width:901px) and (max-width:1100px){.profile-page:has(#profile-quiz:not([hidden])) .profile-experience-name,.profile-page:has(#profile-research:not([hidden])) .profile-experience-name{left:calc(42.5vw + 41.6px)}}
+/* Universal question layout: all ten quiz and five survey cards read left, art right. */
+@media(min-width:901px){
+ #profile-quiz,#profile-research.profile-research-flow{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}
+ .profile-question-panel{grid-column:1}
+ .profile-question-visual{left:auto;right:48px}
+ .profile-page:has(#profile-quiz:not([hidden])) .profile-experience-name,.profile-page:has(#profile-research:not([hidden])) .profile-experience-name{left:calc(50% - min(660px,50vw) + 48px)}
+}
+@media(min-width:901px) and (max-width:1100px){.profile-question-visual{right:32px}.profile-page:has(#profile-quiz:not([hidden])) .profile-experience-name,.profile-page:has(#profile-research:not([hidden])) .profile-experience-name{left:32px}}
+/* Keep the header label centered and clear of the logo after the column reversal. */
+@media(min-width:901px){.profile-page:has(#profile-quiz:not([hidden])) .profile-experience-name,.profile-page:has(#profile-research:not([hidden])) .profile-experience-name{left:50%;transform:translate(-50%,-50%);text-align:center}}
