@@ -18,6 +18,10 @@ No new Vercel environment variables are needed: this uses the existing dedicated
 
 Columns A:N: Submission ID, Submitted at (UTC), Consent version, ten question titles, Result. Multiple selections are stored as readable labels separated by ` | `. Result is recomputed from validated answers by the receiver. No email or quiz/research linking ID is included; the quiz has a separate per-attempt random ID.
 
-Storage is optional and unchecked by default. Without consent, no quiz answers are posted. Failed storage does not block viewing the result; retry uses the same ID. The receiver checks the fixed spreadsheet and headers, reads back the write, rejects changed payloads for an existing ID, and acknowledges `sheetName: Skin Quiz` before the website reports success.
+Storage is optional and unchecked by default. Without consent, no quiz answers are posted. Failed storage does not block viewing the result; refresh retries an unconfirmed save with the same ID; there is no separate retry button. The receiver checks the fixed spreadsheet and headers, reads back the write, rejects changed payloads for an existing ID, and acknowledges `sheetName: Skin Quiz` before the website reports success.
 
 Live tab creation, native formatting and end-to-end live write/readback remain unverified until the owner steps above are complete. Existing automated tests use an in-memory Sheet and mocked API only.
+
+## Live diagnosis, 20 November 2026
+
+Skin Quiz exists (sheetId 991049622), but a controlled live request with ID 00000000-0000-4000-8000-202611200002 returned 503 and did not receive confirmation. Owner confirmed only setupSkinQuiz was run, not a new web-app deployment. The live write remains unverified until New version → Deploy. Updated receiver code also labels price value 0 as Κάτω από 20 €; existing historical rows are unchanged.
