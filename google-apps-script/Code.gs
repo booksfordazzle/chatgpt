@@ -3,7 +3,7 @@ function doPost(event) {
   var lock = LockService.getScriptLock();
   var locked = false;
   var baseHeaders = ['Email', 'Registered at (UTC)', 'Consent', 'Privacy version', 'Source'];
-  var extraHeaders = ['Consent received at (UTC)', 'Consent text version', 'Locale', 'UTM source', 'UTM medium', 'UTM campaign', 'UTM term', 'UTM content', 'Referrer origin', 'Landing path', 'Welcome email status', 'Welcome email sent at (UTC)', 'Device type', 'device_type', 'os', 'browser', 'landing_page', 'referrer_full', 'screen_width'];
+  var extraHeaders = ['Consent received at (UTC)', 'Consent text version', 'Locale', 'UTM source', 'UTM medium', 'UTM campaign', 'UTM term', 'UTM content', 'Referrer origin', 'Landing path', 'Welcome email status', 'Welcome email sent at (UTC)', 'Device type', 'device_type', 'os', 'browser', 'landing_page', 'referrer_full', 'screen_width', 'Skin profile marketing consent', 'Skin profile marketing consent at (UTC)', 'Skin profile marketing consent version'];
   function reply(ok, extra) { return ContentService.createTextOutput(JSON.stringify(Object.assign({ ok: ok }, extra || {}))).setMimeType(ContentService.MimeType.JSON); }
   function bounded(value, limit) { return typeof value === 'string' ? value.trim().replace(/[\x00-\x1f\x7f]/g, '').slice(0, limit) : ''; }
   function cell(value) { value = String(value); return /^[=+\-@]/.test(value) ? "'" + value : value; }
@@ -14,6 +14,11 @@ function doPost(event) {
     var props = PropertiesService.getScriptProperties();
     var expected = props.getProperty('WAITLIST_SHARED_SECRET');
     if (!expected || input.token !== expected) return reply(false);
+    if (input.action === 'skin-research-v2') {
+      lock.waitLock(10000); locked = true;
+      var result = saveSkinResearch(input);
+      return reply(result.ok === true, result);
+    }
     if (input.action === 'check-welcome-smtp' || input.action === 'check-welcome-immediate') return reply(true);
     if (input.action === 'complete-welcome-immediate') {
       lock.waitLock(10000); locked = true;
@@ -23,11 +28,13 @@ function doPost(event) {
       lock.waitLock(10000); locked = true;
       return reply(claimWelcomeSmtp(input, props));
     }
-    if (input.consent !== true || input.policyVersion !== '2026-11-15-sheets-v1' || input.consentTextVersion !== 'launch-updates-v1') return reply(false);
+    var skinMarketing = input.source === 'primal-core-skin-profile';
+    var requiredConsentVersion = skinMarketing ? 'skin-profile-education-launch-v1' : 'launch-updates-v1';
+    if (input.consent !== true || input.policyVersion !== '2026-11-15-sheets-v1' || input.consentTextVersion !== requiredConsentVersion) return reply(false);
     var email = typeof input.email === 'string' ? input.email.trim() : '';
     if (email.length > 254 || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email) || /[\r\n\x00]/.test(email)) return reply(false);
     var locale = input.locale === 'en-US' ? 'en-US' : 'el';
-    var source = ['primal-core-waitlist','primal-core-hero','primal-core-footer','primal_core_hero','primal_core_footer'].indexOf(input.source) >= 0 ? input.source : 'primal-core-waitlist';
+    var source = ['primal-core-waitlist','primal-core-skin-profile','primal-core-hero','primal-core-footer','primal_core_hero','primal_core_footer'].indexOf(input.source) >= 0 ? input.source : 'primal-core-waitlist';
     var utm = input.utm && typeof input.utm === 'object' && !Array.isArray(input.utm) ? input.utm : {};
     lock.waitLock(10000); locked = true;
     var book = SpreadsheetApp.openById(props.getProperty('SPREADSHEET_ID'));
@@ -59,7 +66,7 @@ function doPost(event) {
       var values = {
         'Email': "'" + email, 'Registered at (UTC)': now, 'Consent': 'true',
         'Privacy version': '2026-11-15-sheets-v1', 'Source': source,
-        'Consent received at (UTC)': now, 'Consent text version': 'launch-updates-v1', 'Locale': locale,
+        'Consent received at (UTC)': now, 'Consent text version': requiredConsentVersion, 'Locale': locale,
         'Referrer origin': bounded(input.referrerOrigin, 256), 'Landing path': bounded(input.landingPath, 256),
         'Welcome email status': welcomeEnabled ? (immediateWelcome ? 'pending-immediate-thanks-v1' : 'pending-thanks-v1') : 'disabled',
         'Device type': ['mobile', 'tablet', 'desktop'].indexOf(input.deviceType) >= 0 ? input.deviceType : 'unknown',
@@ -74,7 +81,16 @@ function doPost(event) {
       range.setNumberFormat('@');
       range.setValues([headers.map(function(name) { return cell(values[name] || ''); })]);
     }
+    if (skinMarketing) {
+      // A separate purpose receipt preserves the original signup/consent and never
+      // attaches a quiz profile, raw answers, research budget or interest score.
+      var activeConsent = existingIndex < 0 || sheet.getRange(savedRowNumber, headers.indexOf('Consent') + 1, 1, 1).getDisplayValues()[0][0] === 'true';
+      if (!activeConsent) return reply(false); // Do not silently reactivate a withdrawn address.
+      var receipt = {'Skin profile marketing consent': 'true', 'Skin profile marketing consent at (UTC)': new Date().toISOString(), 'Skin profile marketing consent version': requiredConsentVersion};
+      Object.keys(receipt).forEach(function(name) { sheet.getRange(savedRowNumber, headers.indexOf(name) + 1, 1, 1).setValues([[receipt[name]]]); });
+    }
     SpreadsheetApp.flush();
+    if (skinMarketing && sheet.getRange(savedRowNumber, headers.indexOf('Skin profile marketing consent version') + 1, 1, 1).getDisplayValues()[0][0] !== requiredConsentVersion) return reply(false);
     var savedEmail = sheet.getRange(savedRowNumber, 1, 1, 1).getDisplayValues()[0][0];
     if (String(savedEmail).replace(/^'/, '').toLowerCase() !== key) return reply(false);
     if (input.welcomeDelivery === 'immediate-v1') {

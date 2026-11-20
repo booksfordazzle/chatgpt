@@ -52,7 +52,7 @@ test('Sheets saves email, receipt/version/locale/source/attribution and case-ins
 test('Sheets upgrades old five-column headers without overwriting existing rows or consent dates', () => {
   const old = ["'old@example.com", '2026-01-01T00:00:00Z', 'true', '2026-11-14', 'old-source'];
   const r = receiver([legacyHeaders, old]); assert.equal(r.submit({}).ok, true);
-  assert.deepEqual(r.rows[1], old); assert.equal(r.rows[0].length, 24); assert.equal(r.rows[2].length, 24);
+  assert.deepEqual(r.rows[1], old); assert.equal(r.rows[0].length, 27); assert.equal(r.rows[2].length, 27);
 });
 test('unknown sheet layouts fail safely without overwriting data', () => {
   const initial = [['Customer','Email'],['User','existing@example.com']]; const r = receiver(initial);
@@ -107,9 +107,9 @@ test('six new columns append after existing columns and duplicates cannot overwr
  const data = { email: 'new@example.com', source: 'primal_core_hero', deviceType: 'tablet', device_type: 'tablet', os: 'iOS', browser: 'Safari', landing_page: '/?utm_source=instagram', referrer_full: 'https://www.instagram.com/profile?link=bio', screen_width: '1024', utm: { utm_source: 'instagram' } };
  assert.equal(r.submit(data).ok, true);
  assert.deepEqual(r.rows[0].slice(0,18), oldHeaders);
- assert.deepEqual(r.rows[0].slice(18), ['device_type','os','browser','landing_page','referrer_full','screen_width']);
+ assert.deepEqual(r.rows[0].slice(18,24), ['device_type','os','browser','landing_page','referrer_full','screen_width']);
  assert.deepEqual(r.rows[1], oldRow);
- assert.deepEqual(r.rows[2].slice(18), ['tablet','iOS','Safari','/?utm_source=instagram','https://www.instagram.com/profile?link=bio','1024']);
+ assert.deepEqual(r.rows[2].slice(18,24), ['tablet','iOS','Safari','/?utm_source=instagram','https://www.instagram.com/profile?link=bio','1024']);
  assert.equal(r.rows[2][4], 'primal_core_hero');
  const before = [...r.rows[2]];
  assert.equal(r.submit({ ...data, email: 'NEW@example.com', os: 'Android', source: 'primal_core_footer' }).ok, true);
@@ -221,4 +221,14 @@ test('immediate SMTP failures retain the saved record and are never blindly retr
  const {sendImmediateWelcome}=await import('../server/welcome-email.mjs');const r=receiver();r.setupMail();const job=r.submit({welcomeDelivery:'immediate-v1'}).welcomeJob;let attempts=0;
  await sendImmediateWelcome(job,{env:{GOOGLE_APPS_SCRIPT_URL:'https://script.google.com/macros/s/test/exec',WAITLIST_SHARED_SECRET:'test-secret',SMTP_HOST:'smtp-gr.securemail.pro',SMTP_PORT:'465',SMTP_USER:'hello@primalcore.gr',SMTP_PASSWORD:'mock-password'},fetchImpl:async(_url,opts)=>Response.json(r.submit(JSON.parse(opts.body))),createTransport:()=>({sendMail:async()=>{attempts++;throw Error('provider-private')},close(){}}),report:()=>{}});
  assert.equal(attempts,1);assert.equal(r.rows[1][15],'review-thanks-v1');assert.equal(r.rows[1][2],'true');r.sendMail();assert.equal(attempts,1);assert.equal(r.messages.length,0);
+});
+
+test('Skin Profile purpose consent is versioned separately and preserves existing signup receipts',()=>{
+ const r=receiver();r.setup();assert.equal(r.submit({source:'primal-core-waitlist'}).ok,true);const headers=r.rows[0],original=r.rows[1][headers.indexOf('Consent text version')];
+ assert.equal(r.submit({source:'primal-core-skin-profile'}).ok,false);
+ assert.equal(r.submit({source:'primal-core-skin-profile',consentTextVersion:'skin-profile-education-launch-v1'}).ok,true);
+ assert.equal(r.rows[1][headers.indexOf('Consent text version')],original);
+ assert.equal(r.rows[1][headers.indexOf('Skin profile marketing consent')],'true');assert.equal(r.rows[1][headers.indexOf('Skin profile marketing consent version')],'skin-profile-education-launch-v1');
+ assert.match(r.rows[1][headers.indexOf('Skin profile marketing consent at (UTC)')],/^\d{4}-/);
+ r.rows[1][headers.indexOf('Consent')]='false';assert.equal(r.submit({source:'primal-core-skin-profile',consentTextVersion:'skin-profile-education-launch-v1'}).ok,false);
 });

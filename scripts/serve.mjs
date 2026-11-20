@@ -1,12 +1,16 @@
 import http from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
+import {createSkinProfileHandler} from '../server/skin-profile.mjs';
+const skinProfileHandler=createSkinProfileHandler();
 import { handler } from '../netlify/functions/waitlist.mjs';
 const root = path.resolve('public');
-const mime = { '.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.webp':'image/webp','.jpg':'image/jpeg','.png':'image/png','.svg':'image/svg+xml','.mp4':'video/mp4','.webm':'video/webm','.woff2':'font/woff2','.txt':'text/plain' };
+const mime = { '.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.webp':'image/webp','.jpg':'image/jpeg','.png':'image/png','.svg':'image/svg+xml','.mp4':'video/mp4','.webm':'video/webm','.woff2':'font/woff2','.txt':'text/plain' };
 http.createServer(async(req,res)=>{
  try {
   const pathname = decodeURIComponent(new URL(req.url,'http://localhost').pathname);
+  if(pathname === '/api/skin-profile')return await skinProfileHandler(req,res);
+  if(pathname === '/skin-profile'){const body=await readFile(path.join(root,'skin-profile.html'));res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(body);return;}
   if(pathname === '/api/waitlist') {
    let body=''; for await (const chunk of req) { body+=chunk; if(Buffer.byteLength(body)>16384){res.writeHead(413);res.end();return;} }
    const result=await handler({httpMethod:req.method,headers:req.headers,body}); res.writeHead(result.statusCode,result.headers);res.end(result.body);return;
