@@ -34,7 +34,7 @@ export const identities={
 };
 export const habits={cleanse:'Επανεξέτασε το κοινό σαπούνι, το αφρόλουτρο ή το συχνό scrub στο πρόσωπο. Ένα ήπιο καθαριστικό μπορεί να ταιριάζει καλύτερα.',moisturize:'Δοκίμασε μια συνεπή συνήθεια ενυδάτωσης, ανάλογα με τις ανάγκες σου και τις οδηγίες του προϊόντος.',sun:'Η προστασία από τον ήλιο δεν αφορά μόνο το καλοκαίρι. Εξέτασε καθημερινά την έκθεση και χρησιμοποίησε κατάλληλη προστασία.',keep:'Η υπάρχουσα ρουτίνα σου σε καλύπτει. Δεν χρειάζεται να αντικαταστήσεις ανεκτά προϊόντα ή να προσθέσεις βήματα χωρίς λόγο.'};
 export const disclaimer='Τα αποτελέσματα αυτά δεν αποτελούν ιατρική διάγνωση. Συμβουλεύσου έναν δερματολόγο αν έχεις κάτι που σε ανησυχεί.';
-export function resultText(r){const p=profiles[r.primary];return ['PRIMAL CORE — THE PRIMAL SKIN PROFILE',identities[r.primary].title,identities[r.primary].subtitle,identities[r.primary].intro,p.reason,'ΓΕΝΙΚΗ ΕΝΗΜΕΡΩΣΗ — ΟΧΙ ΔΙΑΓΝΩΣΗ ΑΙΤΙΑΣ',...resultStories[r.primary].explanation,resultStories[r.primary].actionTitle,...resultStories[r.primary].actions,'Τι μπορείς να περιμένεις;',...resultStories[r.primary].expectations,resultStories[r.primary].priority,r.secondary?'Δεύτερη προτεραιότητα: '+profiles[r.secondary].name:'','ΠΡΩΙ',...p.morning.map(t=>'• '+t),'ΒΡΑΔΥ',...p.evening.map(t=>'• '+t),'ΣΥΣΤΑΤΙΚΑ',...p.ingredients.map(([n,t])=>n+': '+t),...r.habits.map(h=>habits[h]),disclaimer,'Πηγές: American Academy of Dermatology — https://www.aad.org/public/everyday-care/skin-care-basics/dry/dermatologists-tips-relieve-dry-skin','https://www.aad.org/public/everyday-care/sun-protection/sunscreen/how-to-select-sunscreen','https://primalcore.gr/skin-profile'].filter(Boolean).join('\n\n');}
+export function resultText(r){const p=profiles[r.primary];return ['PRIMAL CORE — THE PRIMAL SKIN PROFILE',identities[r.primary].title,identities[r.primary].subtitle,identities[r.primary].intro,p.reason,'ΓΕΝΙΚΗ ΕΝΗΜΕΡΩΣΗ — ΟΧΙ ΔΙΑΓΝΩΣΗ ΑΙΤΙΑΣ',...resultStories[r.primary].explanation,resultStories[r.primary].actionTitle,...resultStories[r.primary].actions,'Τι μπορείς να περιμένεις;',...resultStories[r.primary].expectations,'ΠΡΩΙ',...p.morning.map(t=>'• '+t),'ΒΡΑΔΥ',...p.evening.map(t=>'• '+t),'ΣΥΣΤΑΤΙΚΑ',...p.ingredients.map(([n,t])=>n+': '+t),...r.habits.map(h=>habits[h]),disclaimer,'Πηγές: American Academy of Dermatology — https://www.aad.org/public/everyday-care/skin-care-basics/dry/dermatologists-tips-relieve-dry-skin','https://www.aad.org/public/everyday-care/sun-protection/sunscreen/how-to-select-sunscreen','https://primalcore.gr/skin-profile'].filter(Boolean).join('\n\n');}
 
 // Existing owner imagery is illustrative; it is not a measurement of the result.
 export const profileVisuals={
@@ -61,8 +61,7 @@ export const resultStories={
     ],
     "expectations": [
       "Με την κατάλληλη φροντίδα, το δέρμα σου μπορεί να αποκτήσει πιο απαλή υφή, να δείχνει λιγότερο θαμπό και να παρουσιάζει μικρότερη αίσθηση ξηρότητας."
-    ],
-    "priority": "Να αισθάνεσαι άνετα στο δέρμα σου. Κάθε μέρα."
+    ]
   },
   "A": {
     "explanation": [
@@ -80,8 +79,7 @@ export const resultStories={
     "expectations": [
       "Πιο ενυδατωμένη επιδερμίδα, πιο απαλή υφή και ενδεχομένως λιγότερο έντονη όψη των λεπτών γραμμών που συνδέονται με την αφυδάτωση.",
       "Καμία ενυδατική δεν σταματά τον χρόνο. Η ενυδάτωση δεν ισοδυναμεί με αντικατάσταση του κολλαγόνου που αλλάζει με την ηλικία."
-    ],
-    "priority": "Να μεγαλώνεις καλά. Όχι να προσποιείσαι ότι δεν μεγαλώνεις."
+    ]
   },
   "C": {
     "explanation": [
@@ -98,8 +96,7 @@ export const resultStories={
     ],
     "expectations": [
       "Μια πιο ήπια καθημερινή φροντίδα μπορεί να περιορίσει την έκθεση σε παράγοντες που σε ενοχλούν και να βελτιώσει την αίσθηση άνεσης. Δεν υποκαθιστά την αξιολόγηση επίμονων συμπτωμάτων."
-    ],
-    "priority": "Μια καθημερινή φροντίδα που το δέρμα σου ανέχεται."
+    ]
   },
   "B": {
     "explanation": [
@@ -115,8 +112,7 @@ export const resultStories={
     "expectations": [
       "Με κατάλληλες επιλογές μπορείς να διατηρείς την επιδερμίδα σου ενυδατωμένη, χωρίς να την επιβαρύνεις με προϊόντα που αφήνουν περιττή γυαλάδα ή βαριά αίσθηση.",
       "Στόχος δεν είναι να σταματήσει το δέρμα σου να παράγει σμήγμα. Είναι να το φροντίζεις σύμφωνα με τις ανάγκες του."
-    ],
-    "priority": "Ενυδάτωση χωρίς περιττό βάρος."
+    ]
   },
   "E": {
     "explanation": [
@@ -133,7 +129,6 @@ export const resultStories={
     ],
     "expectations": [
       "Μια καθημερινή συνήθεια που μπορείς να διατηρήσεις στον χρόνο. Χωρίς περιττές αγορές, χωρίς πολύπλοκες οδηγίες, χωρίς να χρειάζεται να γίνεις ειδικός στα καλλυντικά."
-    ],
-    "priority": "Κράτησε ό,τι έχει αξία. Αφαίρεσε ό,τι περισσεύει."
+    ]
   }
 };

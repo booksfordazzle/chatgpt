@@ -1,34 +1,38 @@
 const assert=require('node:assert/strict');
 const{chromium}=require(process.env.PLAYWRIGHT_MODULE||'/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
 const base=process.env.BASE_URL||'http://localhost:8097';
-const fs=require('node:fs');
-async function capture(page,options){await page.waitForTimeout(220);await page.evaluate(async()=>{for(const i of document.images)i.loading='eager';await document.fonts.ready;await Promise.all([...document.images].map(i=>i.decode()));scrollTo(0,0);});await page.screenshot(options);}
+async function capture(page,path){await page.waitForTimeout(280);await page.evaluate(async()=>{for(const i of document.images)i.loading='eager';await document.fonts.ready;await Promise.all([...document.images].map(i=>i.decode()));scrollTo(0,0);});await page.screenshot({path,fullPage:true});}
 (async()=>{const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
  for(const width of[320,375,390,430,768,1024,1440,1920]){
-  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:width===320?'reduce':'no-preference'});const page=await context.newPage();const posts=[],errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.route('**/api/skin-profile',async route=>{const request=route.request();if(request.method()==='GET')return route.fulfill({json:{email:true,research:true,researchV2:true,analytics:true}});posts.push(JSON.parse(request.postData()));return route.fulfill({json:{ok:true,status:'accepted'}});});
-  await page.route('**/api/waitlist',async route=>{posts.push({action:'marketing',...JSON.parse(route.request().postData())});return route.fulfill({json:{ok:true}});});
-  await page.goto(base+'/skin-profile?utm_campaign=launch&utm_content=private%40example.com');await page.waitForTimeout(100);await page.evaluate(()=>document.fonts.ready);
-  if([390,1440].includes(width))await capture(page,{path:'.impeccable/review/skin-profile/landing-'+width+'.png',fullPage:true});
-  await page.getByRole('button',{name:/Ξεκίνα το τεστ/}).click();assert(await page.locator('#profile-quiz').isHidden());await page.locator('#profile-adult').check();await page.getByRole('button',{name:/Ξεκίνα το τεστ/}).click();
+  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:width===320?'reduce':'no-preference'});const page=await context.newPage(),posts=[],errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.route('**/api/skin-profile',async route=>{const request=route.request();if(request.method()==='GET')return route.fulfill({json:{researchV2:true,analytics:true}});posts.push(JSON.parse(request.postData()));return route.fulfill({json:{ok:true}});});
+  await page.goto(base+'/skin-profile');await page.evaluate(()=>document.fonts.ready);
+  assert.equal(await page.locator('.profile-home,.profile-series').count(),0);assert(await page.locator('.profile-experience-name').isVisible());
+  if([390,1440].includes(width))await capture(page,'.impeccable/review/skin-profile/landing-'+width+'.png');
+  await page.locator('#profile-start button').click();assert(await page.locator('#profile-quiz').isHidden());await page.locator('#profile-adult').check();await page.locator('#profile-start button').click();
   await page.locator('#question-next').click();assert(await page.locator('#question-error').textContent());
   const answers=[0,3,1,4,2,2,3,3,3,0];
   for(let q=0;q<10;q++){
+   assert(await page.locator('.profile-experience-name').isVisible());assert.equal((await page.locator('#question-next').innerText()).trim(),'');assert.equal((await page.locator('#question-back').innerText()).trim(),'');
    await page.locator('#question-content input').nth(answers[q]).check();
-   if(q===1){await page.locator('#question-back').click();assert(await page.locator('#question-content input').nth(0).isChecked());await page.locator('#question-next').click();assert(await page.locator('#question-content input').nth(3).isChecked());}
-   if(q===4&&[390,1440].includes(width)){await page.evaluate(()=>scrollTo(0,0));await capture(page,{path:'.impeccable/review/skin-profile/question-'+width+'.png',fullPage:true});}
+   if(q===1){assert.equal(await page.locator('#question-title br').count(),1);await page.locator('#question-back').click();assert(await page.locator('#question-content input').nth(0).isChecked());await page.locator('#question-next').click();assert(await page.locator('#question-content input').nth(3).isChecked());}
+   if(q===3&&[390,1440].includes(width))await capture(page,'.impeccable/review/skin-profile/question-'+width+'.png');
    await page.locator('#question-next').click();
   }
-  assert.equal(await page.locator('#result-title').textContent(),'CALM');assert(await page.locator('.profile-secondary').textContent().then(t=>t.includes('Ισορροπία')));assert(await page.locator('#profile-landing').isHidden());
-  assert.equal(posts.length,0,'No posts without explicit actions/consent');
-  if([390,1440].includes(width)){await page.evaluate(()=>scrollTo(0,0));await capture(page,{path:'.impeccable/review/skin-profile/results-'+width+'.png',fullPage:true});}
-  assert.equal(await page.locator('#copy-result,#edit-answers,#result-email,.profile-protocols,#open-marketing').count(),0);
-  await page.locator('#product-interest').click();await page.locator('#skip-research').click();assert.equal(posts.filter(x=>x.action==='research-v2').length,0);await page.locator('#product-interest').click();await page.locator('input[name="research-0"]').nth(2).check();await page.locator('#research-form input[name="consent"]').check();await page.locator('#research-form button[type="submit"]').click();await page.waitForFunction(()=>document.querySelector('#research-status').textContent.includes('καταγράφηκε'));const research=posts.find(x=>x.action==='research-v2');assert.deepEqual(Object.keys(research).sort(),['action','concept','consent','price','problem','routine','unmet']);
-  await page.locator('#marketing-panel summary').click();await page.locator('#marketing-email').fill('owned@example.com');await page.locator('#marketing-form button').click();assert.equal(posts.filter(x=>x.action==='marketing').length,0);await page.locator('#marketing-form input[name="consent"]').check();await page.locator('#marketing-form button').click();await page.waitForFunction(()=>document.querySelector('#marketing-status').textContent.includes('Εγγράφηκες'));const marketing=posts.find(x=>x.action==='marketing');assert.equal(marketing.utm_campaign,'launch');assert.equal(marketing.utm_content,undefined);assert.equal(marketing.result,undefined);
-  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);assert.equal(await page.evaluate(()=>localStorage.length),0);assert.equal(await page.evaluate(()=>sessionStorage.length),0);
-  await page.locator('.profile-data-disclosure>summary').click();await page.locator('#profile-analytics').check();await page.waitForTimeout(100);assert(posts.filter(x=>x.action==='event').every(x=>Object.keys(x).length===3&&!('result'in x)));
-  await page.locator('#restart-profile').click();assert(await page.locator('#profile-landing').isVisible());console.log('PASS',width,'adult gate, back/next, comfort override, optional actions, no quiz storage/network, overflow, marketing separation');await context.close();
+  assert.equal(await page.locator('#result-title').textContent(),'CALM');assert.equal(posts.length,0);assert.equal(await page.locator('.profile-secondary,.profile-priority,#marketing-panel,#restart-profile,#product-concept').count(),0);
+  assert.equal(await page.locator('.profile-story details').count(),3);assert(await page.locator('#result-final-note').isVisible());assert.equal(await page.locator('#result-final-note em').count(),1);assert.equal(await page.locator('#profile-results').getByText('Γενική ενημέρωση για αυτή την κατεύθυνση φροντίδας.',{exact:false}).count(),0);
+  if([390,1440].includes(width))await capture(page,'.impeccable/review/skin-profile/results-'+width+'.png');
+  await page.locator('#product-interest').click();assert(await page.locator('#result-final-note').isHidden());assert.equal(await page.locator('#profile-research details').count(),0);
+  await page.locator('input[name="research-answer"]').nth(2).check();await page.locator('#research-next').click();await page.locator('#research-back').click();assert(await page.locator('input[name="research-answer"]').nth(2).isChecked());await page.locator('#research-next').click();await page.locator('#research-close').click();assert(await page.locator('#profile-results').isVisible());assert.equal(posts.length,0);
+  await page.locator('#product-interest').click();assert.equal(await page.locator('#research-step').textContent(),'02 / 05');
+  if([390,1440].includes(width))await capture(page,'.impeccable/review/skin-profile/research-'+width+'.png');
+  for(let r=1;r<5;r++){await page.locator('input[name="research-answer"]').last().check();if(r<4)await page.locator('#research-next').click();}
+  await page.locator('#research-next').click();assert.equal(posts.length,0,'No research without consent');await page.locator('input[name="consent"]').check();await page.locator('#research-next').click();await page.waitForFunction(()=>document.querySelector('#research-return'));
+  const research=posts.find(x=>x.action==='research-v2');assert.deepEqual(Object.keys(research).sort(),['action','concept','consent','price','problem','routine','unmet']);assert.equal(research.problem,2);assert.equal(research.price,6);assert.equal(posts.length,1);
+  await page.locator('#research-return').click();await page.locator('#product-interest').click();assert(await page.locator('#research-return').isVisible());assert.equal(posts.length,1,'Completed research cannot be submitted again');await page.locator('#research-return').click();
+  await page.locator('.profile-data-disclosure>summary').click();await page.locator('#profile-analytics').check();await page.waitForTimeout(80);assert(posts.filter(x=>x.action==='event').every(x=>Object.keys(x).length===3));
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.equal(await page.evaluate(()=>localStorage.length+sessionStorage.length),0);assert.deepEqual(errors,[]);
+  console.log('PASS',width,'ten questions, arrows, header, five research cards/back/close/consent, no duplicate submit, bottom-only notes, no storage/overflow/errors');await context.close();
  }
- const context=await browser.newContext({javaScriptEnabled:false});const page=await context.newPage();await page.goto(base+'/skin-profile');assert(await page.locator('noscript').textContent().then(t=>t.includes('διαδραστική')));await context.close();
- await browser.close();
+ const context=await browser.newContext({javaScriptEnabled:false});const page=await context.newPage();await page.goto(base+'/skin-profile');assert((await page.locator('noscript').textContent()).includes('διαδραστική'));await context.close();await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});
