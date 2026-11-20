@@ -1,5 +1,16 @@
 # Skin Profile — direction contract
 
+## Current question imagery — 20 November 2026
+
+The owner supplied `15.zip` containing `2.png` through `15.png`; it contains no `1.png`. The accompanying style JSON was treated as reference data, not instructions. Map the fourteen supplied images by filename: quiz questions 2–10 and research cards 11–15. Q1 temporarily retains the approved fingerprint until image 1 is supplied; the owner has been informed. This is the only missing-image dependency; the central/five-profile photographs remain complete.
+
+`public/skin-profile/questions.mjs` exposes the `questionVisuals` mapping. Twenty-eight WebP exports live in `public/assets/skin-questions`: full versions at quality 84 and 480px small versions at quality 80, with owner-source XMP. Original PNGs remain in `/workspace/work/skin-question-originals`. Above 900px, show the vertical image contained on the left with the question on the right. At 900px and below, place a compact full-width crop, 100–155px high, above the full-width question, using per-image focal positions. The supplied verticals work for this design; no horizontal replacements are required.
+
+Images are decorative with empty alt text. Keep the visible H1, fieldset `aria-labelledby` and screen-reader-only legend for native question semantics. Entrance animation targets only H1/fieldset, avoiding a containing-block jump for the absolutely positioned desktop image. Question text, scoring, engine and backend are unchanged.
+
+Current imagery verification: 102 unit tests and eight-width full flows passed; the build passed again. Offline QA passed all 15 cards at 390px/1440px: correct mapping, decoded images, stable left/above layout during motion, zero HTTP requests, zero errors and no horizontal overflow. The four-capture finish review returned SHIP with no blocking findings. Its minor srcset descriptor issue was corrected with Q1 `smallWidth: 600` and a 480px helper default; the reviewer confirmed the correction resolved with no outstanding findings. All 28 WebP exports have verified owner-source XMP. Image 1 remains the sole missing asset. `/workspace/audits/skin-profile/skin-intelligence-questions.html` adds numbered 1–15 review buttons only to the isolated review artifact, not production. Prior review results below predate this imagery revision. Global design, deployment status and research v2 migration/default-off requirements remain unchanged.
+
+
 ## Current header, results and sequential research contract — 20 November 2026
 
 THE PRIMAL SKIN PROFILE retains all ten quiz questions and the unchanged engine. The header “THE SKIN INTELLIGENCE SERIES” is visible on every question, including mobile. Remove the home backlink, body series/DISCOVER labels and numeric quiz label; retain thin native progress. Forward/back controls use bold SVG arrows only with accessible labels. Q02 has its explicit line break. These instructions supersede earlier desktop-header hiding and body-label descriptions below.

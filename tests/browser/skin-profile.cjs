@@ -13,6 +13,8 @@ async function capture(page,path){await page.waitForTimeout(280);await page.eval
   await page.locator('#question-next').click();assert(await page.locator('#question-error').textContent());
   const answers=[0,3,1,4,2,2,3,3,3,0];
   for(let q=0;q<10;q++){
+   if(width>900){const image=await page.locator('#profile-quiz .profile-question-visual').boundingBox(),title=await page.locator('#question-title').boundingBox();assert(image.x+image.width<title.x,'Portrait stays left during question entrance');}
+   assert.equal(await page.locator('#profile-quiz .profile-question-visual').getAttribute('data-image-number'),String(q+1));await page.locator('#profile-quiz .profile-question-visual img').evaluate(i=>i.decode());
    assert(await page.locator('.profile-experience-name').isVisible());assert.equal((await page.locator('#question-next').innerText()).trim(),'');assert.equal((await page.locator('#question-back').innerText()).trim(),'');
    await page.locator('#question-content input').nth(answers[q]).check();
    if(q===1){assert.equal(await page.locator('#question-title br').count(),1);await page.locator('#question-back').click();assert(await page.locator('#question-content input').nth(0).isChecked());await page.locator('#question-next').click();assert(await page.locator('#question-content input').nth(3).isChecked());}
@@ -23,10 +25,11 @@ async function capture(page,path){await page.waitForTimeout(280);await page.eval
   assert.equal(await page.locator('.profile-story details').count(),3);assert(await page.locator('#result-final-note').isVisible());assert.equal(await page.locator('#result-final-note em').count(),1);assert.equal(await page.locator('#profile-results').getByText('Γενική ενημέρωση για αυτή την κατεύθυνση φροντίδας.',{exact:false}).count(),0);
   if([390,1440].includes(width))await capture(page,'.impeccable/review/skin-profile/results-'+width+'.png');
   await page.locator('#product-interest').click();assert(await page.locator('#result-final-note').isHidden());assert.equal(await page.locator('#profile-research details').count(),0);
+  assert.equal(await page.locator('#profile-research .profile-question-visual').getAttribute('data-image-number'),'11');await page.locator('#profile-research .profile-question-visual img').evaluate(i=>i.decode());
   await page.locator('input[name="research-answer"]').nth(2).check();await page.locator('#research-next').click();await page.locator('#research-back').click();assert(await page.locator('input[name="research-answer"]').nth(2).isChecked());await page.locator('#research-next').click();await page.locator('#research-close').click();assert(await page.locator('#profile-results').isVisible());assert.equal(posts.length,0);
   await page.locator('#product-interest').click();assert.equal(await page.locator('#research-step').textContent(),'02 / 05');
   if([390,1440].includes(width))await capture(page,'.impeccable/review/skin-profile/research-'+width+'.png');
-  for(let r=1;r<5;r++){await page.locator('input[name="research-answer"]').last().check();if(r<4)await page.locator('#research-next').click();}
+  for(let r=1;r<5;r++){assert.equal(await page.locator('#profile-research .profile-question-visual').getAttribute('data-image-number'),String(11+r));await page.locator('#profile-research .profile-question-visual img').evaluate(i=>i.decode());await page.locator('input[name="research-answer"]').last().check();if(r<4)await page.locator('#research-next').click();}
   await page.locator('#research-next').click();assert.equal(posts.length,0,'No research without consent');await page.locator('input[name="consent"]').check();await page.locator('#research-next').click();await page.waitForFunction(()=>document.querySelector('#research-return'));
   const research=posts.find(x=>x.action==='research-v2');assert.deepEqual(Object.keys(research).sort(),['action','concept','consent','price','problem','routine','unmet']);assert.equal(research.problem,2);assert.equal(research.price,6);assert.equal(posts.length,1);
   await page.locator('#research-return').click();await page.locator('#product-interest').click();assert(await page.locator('#research-return').isVisible());assert.equal(posts.length,1,'Completed research cannot be submitted again');await page.locator('#research-return').click();
