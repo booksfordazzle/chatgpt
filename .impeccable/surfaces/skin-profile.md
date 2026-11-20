@@ -1,12 +1,20 @@
 # Skin Profile — direction contract
 
+## Latest shared result layout and compact footer — 20 November 2026
+
+Use the same CALM result composition for all five outcomes through the shared `renderResult`: portrait left, title/subtitle/introduction and four closed native accordion rows right. Profile identity, image, primary reason and story content vary; layout and disclosure behavior do not.
+
+The route footer is one compact desktop row with responsive wrapping. Social links show SVG icons only, with no visible `@` handles; retain their accessible labels and destinations. Rename the compact native privacy disclosure to “Ιδιωτικότητα”. Remove the bare “Απόρρητο” navigation link only on this quiz route; the policy link remains inside the disclosure and every other site footer remains unchanged. Keep the result-only short italic medical note and universal disclosure availability specified above.
+
+Eight-width browser checks, the build and diff checks passed. The preceding targeted offline checks at 390px/1440px also passed four initially closed rows, opening/keyboard toggles, footer privacy/short italic note, removed-copy absence and zero JavaScript errors, HTTP requests or overflow. No production deployment was performed. This is a scoped result/footer refinement; engine, APIs, research release flags and global design are unchanged.
+
 ## Current reference disclosures and footer — 20 November 2026
 
 The latest owner reference supersedes the flat/open result block: group four native `details` rows in the right result header beneath title, subtitle and introduction, with the portrait on the left. All four start closed and have plus/minus row affordances. Exact summaries: “Τι μας έδειξαν οι απαντήσεις σου”, “Τι συμβαίνει στο δέρμα σου;”, “Τι χρειάζεται να αλλάξεις;”, “Τι μπορείς να περιμένεις;”. The first uses the primary profile's `reason`; the other three use story prose, retaining sources. There is no separate flat explanation section. The two previously removed invitation paragraphs remain absent.
 
-Remove the old full-width main privacy bar. Existing privacy information and unchecked optional statistics consent now live inside the universal footer in a compact native disclosure with an underlined text summary, without a plus icon or bordered bar. It is available in every view, superseding the intro-only rule. Keep footer navigation and social links unchanged. The exact medical note is italic “Τα αποτελέσματα αυτά δεν αποτελούν ιατρική διάγνωση.”, the footer's last child and visible only for results.
+Remove the old full-width main privacy bar. Existing privacy information and unchecked optional statistics consent now live inside the universal footer in a compact native disclosure with an underlined text summary, without a plus icon or bordered bar. It is available in every view, superseding the intro-only rule. Keep footer social destinations; the latest compact-footer refinement above supersedes visible-handle and bare-policy-link presentation. The exact medical note is italic “Τα αποτελέσματα αυτά δεν αποτελούν ιατρική διάγνωση.”, the footer's last child and visible only for results.
 
-Eight-width flow and the build passed. Offline disclosure-opening, keyboard and footer checks at 390px/1440px and the fresh reference-accordion finish review are in progress. Clean exports and per-profile examples were regenerated. Earlier flat-layout checks and reviews are historical evidence, not validation of this new disclosure arrangement. Engine/API, v2 migration/default-off prerequisites, sources and the privacy data model remain unchanged; no global design/code edits or deployment are part of this documentation update.
+Eight-width flow and the build passed. Offline disclosure-opening, keyboard and footer checks at 390px/1440px passed; the fresh reference-accordion finish review was still pending at that checkpoint. Clean exports and per-profile examples were regenerated. Earlier flat-layout checks and reviews are historical evidence, not validation of this new disclosure arrangement. Engine/API, v2 migration/default-off prerequisites, sources and the privacy data model remain unchanged; no global design/code edits or deployment are part of this documentation update.
 
 ## Prior centered-question and flat-result revision — 20 November 2026
 
