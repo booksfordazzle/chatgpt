@@ -1,3 +1,5 @@
+> Latest owner asset replacement: use image_20261115_231224.jpg from image_20261115_231224.zip for the universal research-overlay panel. Supersedes the prior Primal Core Beef Tallow Jar source. Prior local ZIP/extracted PNG removed; replacement ZIP/source retained. Overlay text and responsive layout preserved.
+
 > Owner spacing refinement: shift the complete test content 70px upward above 1100px viewport width. Preserve mobile layout and internal image/text alignment. Updated offline preview visually checked at 1440px; Google Sheets activation remains deferred.
 
 # PRIMAL CORE Skin Profile — draft implementation
