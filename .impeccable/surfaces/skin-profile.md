@@ -1,3 +1,5 @@
+> Latest behavior: research CTA is “ΓΙΝΕ ΜΕΡΟΣ”. Completed quiz answers are retained in sessionStorage in the current browser tab, validated against the current question schema and reevaluated on reload. No quiz answers are sent to the server. Keep survey submission ID and confirmed completion state across reload to avoid accidental duplicate participation. Storage failure must not block the quiz.
+
 > Latest research CTA copy: “Γίνε μέρος”. Preserve its location, bold weight, glow, breathing and survey action; accessible name starts with the same visible phrase.
 
 > Mobile results follow the opening reference: full-bleed portrait with the result title, subtitle and introduction over its black upper space. The four disclosures remain grouped directly after the image, followed by the medical note and research invitation. Shared across all five outcomes; desktop remains unchanged.
