@@ -6,6 +6,14 @@
 
 # PRIMAL CORE Skin Profile — draft implementation
 
+## Latest optional soundtrack and desktop spacing
+
+The persistent route header includes a record button with a vinyl SVG and the cropped transparent owner-bull derivative `assets/skin-record-bull.webp`. Audio is the original 5.18MB `assets/primal-soundtrack.mp3`. Playback never autostarts: use `preload="none"`, manual toggle, loop and volume 0.35. Expose pressed state, an accessible label and status; disable the control while play is pending and recover after playback failure. Rotate the record only while playing, with no rotation for reduced motion. Pause on hidden tab/pagehide and do not resume automatically. The choice is memory-only, without stored preference.
+
+Self-contained previews embed the MP3 (approximately 11.4MB total), make no external requests and do not contact Sheets. Meaningful playback checks are in `tests/browser/skin-soundtrack.cjs`; the eight-width full-flow regression is running at this checkpoint.
+
+The final desktop result composition uses a 1440px maximum width, 58px padding and 24px column gaps to match the owner screenshot. Preserve the universal portrait-left/profile-center/tin-right order, current top/header arrangement and note below the disclosures. No global design changes, staging or deployment are part of this documentation update.
+
 ## Latest portrait/profile/tin result order
 
 The universal desktop result template now places the respective profile portrait LEFT, the profile identity/introduction and four closed accordions CENTER, and the owner-supplied research tin card RIGHT. This supersedes the earlier profile-left/portrait-center order. Retain the 70px desktop offset and the medical note below the four disclosures.

@@ -58,3 +58,14 @@ function renderResearch(){
  };
  focus($('#research-title'));reveal($('#research-form'));
 }
+
+// Optional soundtrack: only a deliberate click starts playback; never auto-resume.
+const soundtrack=$('#profile-soundtrack'),soundToggle=$('#profile-sound-toggle'),soundStatus=$('#profile-sound-status');
+soundtrack.volume=.35;
+function syncSound(){const playing=!soundtrack.paused&&!soundtrack.ended;soundToggle.setAttribute('aria-pressed',String(playing));soundToggle.setAttribute('aria-label',playing?'Παύση PRIMAL soundtrack':'Αναπαραγωγή PRIMAL soundtrack');soundToggle.title=playing?'Παύση μουσικής':'Άκου το PRIMAL soundtrack';soundToggle.classList.toggle('is-playing',playing);}
+soundToggle.addEventListener('click',async()=>{if(!soundtrack.paused){soundtrack.pause();syncSound();return;}soundToggle.disabled=true;try{await soundtrack.play();soundStatus.textContent='Το PRIMAL soundtrack παίζει.';}catch{soundStatus.textContent='Δεν ξεκίνησε η μουσική. Πάτησε ξανά για δοκιμή.';}finally{soundToggle.disabled=false;syncSound();}});
+soundtrack.addEventListener('play',syncSound);
+soundtrack.addEventListener('pause',()=>{syncSound();soundStatus.textContent='Η μουσική είναι σε παύση.';});
+soundtrack.addEventListener('error',()=>{soundtrack.pause();syncSound();soundStatus.textContent='Η μουσική δεν είναι διαθέσιμη αυτή τη στιγμή.';});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)soundtrack.pause();});
+window.addEventListener('pagehide',()=>soundtrack.pause());
