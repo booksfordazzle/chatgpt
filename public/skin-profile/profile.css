@@ -182,8 +182,8 @@
 @media(min-width:901px){.profile-page:has(#profile-quiz:not([hidden])) .profile-experience-name,.profile-page:has(#profile-research:not([hidden])) .profile-experience-name{left:calc(50% - min(1320px,100vw)*.075 + 44px);transform:translateY(-50%);text-align:left}}
 @media(min-width:901px) and (max-width:1100px){.profile-page:has(#profile-quiz:not([hidden])) .profile-experience-name,.profile-page:has(#profile-research:not([hidden])) .profile-experience-name{left:calc(42.5vw + 41.6px)}}
 .profile-choice-hint{font-size:13px;color:var(--profile-muted);margin:-8px 0 20px!important}
-.profile-page .profile-result-head .profile-research-cta{align-self:flex-start;margin:26px 0 0;min-height:54px;animation:primal-research-breathe 3.2s ease-in-out infinite;box-shadow:0 5px 22px rgba(219,214,202,.18)}
-@keyframes primal-research-breathe{0%,100%{box-shadow:0 5px 20px rgba(219,214,202,.16)}50%{box-shadow:0 7px 32px rgba(219,214,202,.4)}}
+.profile-page .profile-result-head .profile-research-cta{align-self:flex-start;margin:26px 0 0;min-height:54px;font-weight:700;animation:primal-research-breathe 3.2s ease-in-out infinite;box-shadow:0 6px 24px rgba(219,214,202,.28)}
+@keyframes primal-research-breathe{0%,100%{box-shadow:0 6px 24px rgba(219,214,202,.28)}50%{box-shadow:0 8px 36px rgba(219,214,202,.5)}}
 @media(prefers-reduced-motion:reduce){.profile-page .profile-result-head .profile-research-cta{animation:none}}
 @media(max-width:900px){
  #profile-quiz .profile-question-visual,#profile-research .profile-question-visual{aspect-ratio:16/9;height:auto;min-height:0;max-height:none;width:100%}
