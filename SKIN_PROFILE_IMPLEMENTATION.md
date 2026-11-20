@@ -1,5 +1,19 @@
 # PRIMAL CORE Skin Profile — draft implementation
 
+## Current series and research contract — 20 November 2026
+
+The current name is **THE PRIMAL SKIN PROFILE**, presented as **THE SKIN INTELLIGENCE SERIES / 01 DISCOVER**. Start CTA: “Ξεκίνα το τεστ”. Retain all ten quiz questions temporarily, as explicitly confirmed by the owner; do not shorten to seven or add question hints. Fingerprint treatment and all five profile photos remain unchanged. Scoring and the result engine are unchanged.
+
+The optional research v2 asks five single-select questions defined exactly in `public/skin-profile/questions.mjs`: `problem`, `routine`, `unmet`, `concept`, and hypothetical `price` for a 50ml concept. Their allowed option counts are 8/7/9/7/7. All are optional/skippable, submission consent starts unchecked, and “other” options do not collect free text. These are research choices, not raw quiz answers or a clinical profile.
+
+The UI enables v2 only when capabilities return `researchV2: true`. Server action `research-v2` writes independent daily counters `research_v2:{field}:{index}`. Keep legacy actions and metrics compatible and separate: the new hypothetical 50ml price question is not the legacy usual-spending measure. No emails, raw quiz answers, results, response-level joins or unique-lead qualification are collected. Counts cannot reconstruct individual combinations or establish buyers. This is not randomized price testing or a live offer.
+
+Release dependency: `SKIN_PROFILE_RESEARCH_V2_ENABLED` defaults off. Apply `supabase/migrations/202611200001_skin_profile_research_v2.sql` before enabling it. The service-only migration permits the five bounded counter families; browser clients receive no database credentials. Existing database configuration, privacy review and reviewed release remain necessary. Do not enable v2 merely because local tests passed.
+
+Current evidence: 102 unit tests and the build passed, all migrations passed in isolated PostgreSQL, eight-width browser QA passed, and offline checks passed the ten-question flow, five profiles and all five research questions. Review artifacts: `/workspace/audits/skin-profile/skin-intelligence-preview.html` and `skin-intelligence-results.html`; the results gallery has seven review-only selectors (home, five profiles, research), absent from production. The series finish review returned SHIP with v2 collection OFF until its migration is applied. Research screenshots at 390px/1440px are element crops, not full-viewport captures; retain this review limitation. Field Core Web Vitals and live emails are not verified. No global design or source-homepage change is part of this revision. No production deployment was performed.
+
+Historical sections below record earlier revisions; the current contract above takes precedence for naming, quiz length, research v2 and release evidence.
+
 Status: implemented and locally verified on `codex/skin-profile`. Greek first release. Production has not been changed. The supplied implementation brief explicitly says: “Report all assumptions, unresolved infrastructure dependencies and privacy or scientific content issues before production deployment” and “Do not deploy unreviewed content automatically.”
 
 ## Review the experience
@@ -10,7 +24,7 @@ The INKEY PDFs are reference evidence only. We borrowed one-question pacing and 
 
 ## Code boundaries
 
-- `public/skin-profile/questions.mjs`: 10 questions and three optional research questions.
+- `public/skin-profile/questions.mjs`: 10 quiz questions and five optional v2 research questions; legacy research compatibility is retained.
 - `engine.mjs`: deterministic mapping, override, secondary priority and habits; age is not used to infer a diagnosis or change medical advice.
 - `content.mjs`: all five educational priorities and copy/email export.
 - `app.mjs`: presentation, navigation, memory-only answers, consent and optional-action orchestration.
@@ -24,7 +38,7 @@ Results precede both email forms. Result delivery and marketing are separate for
 
 The ten answers are tab-memory only. No cookies, localStorage, sessionStorage, profile URLs, authentication or AI API. Reload/close deliberately loses answers. Optional result delivery posts only email, primary/secondary priority codes and named habit flags after the visitor checks an explicit one-time delivery request. The server generates a fixed plain-text message; it does not accept arbitrary HTML, store the profile, log message data or write an email receipt to a CRM. SMTP/mailboxes necessarily process and retain the email according to their service settings, disclosed in the page.
 
-Marketing opt-in is separate, unchecked and uses existing waitlist consent logging/withdrawal. Optional research posts only choice indices for interest, spend and main information need, after explicit anonymous submission consent. No email, quiz result, IP field, UTM or visitor/session ID is accepted by this endpoint. Only daily per-option counts are stored; there are no response-level joins. The UI asks for the single main information need in question C.
+Marketing opt-in is separate, unchecked and uses existing waitlist consent logging/withdrawal. Current optional research v2 posts only bounded choice indices for problem, routine, unmet need, concept and hypothetical 50ml price, after explicit anonymous submission consent; legacy interest/spend/information-need research remains a separate compatible namespace. No email, quiz result, IP field, UTM or visitor/session ID is accepted by this endpoint. Only daily per-option counts are stored; there are no response-level joins. The current five-question UI follows the v2 capability gate and optional skip controls.
 
 Analytics are optional, unchecked, memory-scoped and default off at the server. An allowlist accepts event names only. No answers, profile, step numbers, age, email or free text is accepted; aggregate counts are events, not unique people. UTM values are preserved only in tab memory for an explicit marketing signup, with length/character limits and email-like values discarded. No quiz data is placed in outgoing URLs.
 
@@ -67,7 +81,7 @@ The existing active waitlist uses Apps Script/Sheets; the repository's older Sup
 
 Remaining external dependencies: production SMTP check, optional Supabase project/credentials/migration, hosting abuse protection, owner copy/privacy review and explicit release approval. No live-inbox or distributed-load guarantees are claimed.
 
-## Value First conversion and reporting (owner steering)
+## Historical: Value First conversion and reporting (owner steering)
 
 The implemented sequence is full educational results → optional guide delivery → product concept → optional research invitation → optional research/independent updates. Neither completion nor results require an email. Guide delivery is not marketing consent. Its form and marketing subscription remain independent and both use explicit actions; newsletter consent starts unchecked. The guide disclosure is “Η φροντίδα σου δεν τελειώνει εδώ.”, CTA “Στείλε μου τον οδηγό”, and the product concept is “Η περιποίηση έγινε περίπλοκη. Εμείς επιλέγουμε μια άλλη κατεύθυνση.” with “Η δική σου άποψη έχει θέση εδώ”, development/illustrative-concept labels and no purchase obligation. Marketing has its own disclosure, “Κάτι απλό παίρνει μορφή.”.
 
@@ -91,7 +105,7 @@ Q04 defines the visitor's stated priority, not verified purchase intent. Q10 sat
 
 The five underlying educational priorities remain M (moisture/comfort), A (hydration/appearance of lines), C (comfort first), B (balance/simplicity), E (essentials). The current displayed and exported editorial identities are M → RESTORE, A → ENDURE, C → CALM, B → BALANCE, E → ESSENTIAL. Potential commercial relevance of M/A/E, unknown final tolerance in C, and potentially lower affinity of B for a rich balm are hypotheses, not validated suitability or lead scores. They are not displayed as sales classifications and do not trigger automatic product recommendations. The additional business-intelligence table does not silently authorize storing quiz answers with emails; the current draft keeps the previously documented memory-only/anonymous-count boundaries. A future question-level research mode needs an explicit data/consent decision before collection.
 
-## Cinematic PRIMAL CODE revision — 19 November 2026
+## Historical: cinematic PRIMAL CODE revision — 19 November 2026
 Route-only black/mineral-ivory redesign with Google Sans everywhere, asymmetric desktop face imagery, mobile-first interaction, chapter labels, divider-based answers, 6px controls and 12px photographs. Question transitions take 320ms without blocking interaction; photo entrances take 700–850ms. Reduced motion disables these animations. Native disclosures preserve full ungated guidance, independent optional email/research/marketing forms and all caveats. Engine, API, consent and storage architecture are unchanged. Shared site design and the homepage discovery section were not modified.
 
 Optimized WebP assets: code-face-720.webp / code-face-1200.webp from owner tallow-face.jpg; code-material.webp from owner philosophy/evolution-balm.png. Original proportions preserved; grayscale/brightness are CSS. XMP records source provenance. Configurable profile visuals use these and existing product-gallery derivatives. Those 19 November landing/profile substitutions are superseded by the six owner-supplied images below; no final-formula claims are introduced.
@@ -99,7 +113,7 @@ Optimized WebP assets: code-face-720.webp / code-face-1200.webp from owner tallo
 Final evidence: 101 tests and build pass; full mocked browser flow passes eight widths (320 through1920px). Additional local and offline checks pass all five profiles, image decoding, Google Sans, full routines, copying/fallback, unavailable-email state and reduced motion, with no JS errors. Offline makes no HTTP requests. Independent six-capture review: SHIP for local owner review, no blockers; optional stylesheet consolidation remains a maintenance note. No production deploy or live email/research/waitlist submission was performed. Field Core Web Vitals are unmeasured. The documentation handoff failed and this record was completed directly from the final source/evidence. The existing global DESIGN.md and sidecar remain unchanged.
 
 
-## Result-story copy revision — 20 November 2026
+## Historical: result-story copy revision — 20 November 2026
 
 The five profiles retain their deterministic mappings and now introduce owner-directed stories: RESTORE “Όταν το δέρμα σου διψάει.”; ENDURE “Ο χρόνος αφήνει τα σημάδια του.”; CALM “Όταν η φροντίδα γίνεται ερεθισμός.”; BALANCE “Λιπαρό δεν σημαίνει ενυδατωμένο.”; ESSENTIAL “Η αξία του απαραίτητου.” Each has a revised introductory paragraph. Native disclosures present explanation (“Τι συμβαίνει στο δέρμα σου;”), profile-specific actions and realistic expectations (“Τι μπορείς να περιμένεις;”), followed by a visible profile-priority sentence. Morning/evening guidance and medical caveats remain available. `resultText` includes the subtitle, introduction, explanation, actions, expectations and priority in copying and the fixed result-email export.
 
@@ -112,7 +126,7 @@ Image status resolved: the owner supplied `balance.zip`; all six supplied images
 Current revision evidence: 101 tests and the build pass; browser QA passes all eight widths, and local/offline flows pass all five profiles. New story disclosures and the marketing CTA pass interaction checks, including native tab order and unchecked consent. The separate result-story review found no ship-blocking findings after inspecting CALM captures at 390px/1440px and source; all five profiles were not independently rendered by that reviewer, and that review predates the newly integrated owner images. The new offline artifact is `/workspace/audits/skin-profile/primal-code-results-preview.html`. No production publication or live email/research/waitlist delivery is established by these checks. Shared `DESIGN.md`, global tokens and `.impeccable/design.json` remain unchanged.
 
 
-## Supplied owner images and landing refinement — 20 November 2026
+## Historical: supplied owner images and landing refinement — 20 November 2026
 
 All six images from `/workspace/attachments/d60b578c-e9bd-4c17-8ce9-93d0501f1353/balance.zip` are integrated: `public/assets/primal-code-{central,restore,endure,calm,balance,essential}.webp`, with an additional 600px responsive central export. Filename mapping preserves the intended landing/profile identities. Original PNGs are retained in `/workspace/work/primal-code-owner-images` (941×1672; central 941×1671). Full-size WebP exports use quality 88 and the central 600px export quality 86, with owner provenance in XMP. No new content, crop or grading was introduced. Profile-image delivery is complete; no image upload remains pending.
 
