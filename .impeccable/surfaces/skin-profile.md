@@ -1,3 +1,5 @@
+> Research refinement: remove visible 01/05-style counters; keep the accessible progress bar. First displayed price is Κάτω από 20 €, with matching receiver label at the existing wire index 0.
+
 > Latest owner correction: remove the quiz-storage retry and restart-test buttons from results. Keep the result, optional storage status, survey CTA and browser navigation functional. Fresh quiz entry still resets; refresh may retry an unconfirmed save with the same ID.
 
 > Optional quiz storage: unchecked, explicit landing consent permits the ten answers/result to be saved in Skin Quiz. Keep quiz ID separate from survey ID, report storage failures honestly and allow retry without blocking the result. The privacy explanation describes tab-local progress and optional server storage. Requires updated owner Apps Script deployment; see SKIN_QUIZ_SHEETS_SETUP.md.
