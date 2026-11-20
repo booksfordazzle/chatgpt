@@ -14,7 +14,17 @@
 
 # Skin Profile — direction contract
 
-## Latest universal question order
+## Current logic audit and personalized explanation
+
+The owner intro H1 is “THE PRIMAL” / “SKIN PROFILE”, with its explicit line break. The first closed result disclosure now uses `personalizedSummary(answers)`, explaining the actual selected signals and habits from in-memory answers rather than showing only the generic primary reason. Selecting CALM as a goal does not imply reported burning or irritation. Do not invent unreported symptoms, measured skin characteristics or clinical validation.
+
+The engine is unchanged: Q04 chooses the base care priority; reported after-wash burning/stinging or frequent new-product irritation prioritizes CALM as an editorial comfort precaution. All five outcomes remain reachable. Internal secondary priorities do not create displayed diagnoses. Read [SKIN_PROFILE_LOGIC_AUDIT.md](../../SKIN_PROFILE_LOGIC_AUDIT.md) for the exact question roles, routes and limits. The 120 equally weighted test combinations describe routing structure, not real-user prevalence, accuracy or outcome distribution.
+
+Current source keeps desktop question images on the LEFT and interaction on the RIGHT, superseding the earlier text-left note. The result layout remains stable. Verification: 114 unit tests, the build and all five outcomes through the real ten-question UI at 390px/1440px pass. The prior eight-width flow is the earlier layout baseline, not a newly repeated audit check. Sheet activation remains deferred. No code, global design, staging or deployment changes are part of this documentation update.
+
+The requested route visualization with the five actual outcome images and hero is `/workspace/audits/skin-profile/primal-outcome-tree.html`. It illustrates all outcome routes; it is not a probabilistic prediction or diagnostic model.
+
+## Prior text-left question-order instruction (superseded by current source)
 
 For all ten quiz questions and five survey cards above 900px, place TEXT/ANSWERS LEFT and the supporting portrait RIGHT. Align the header series label with the left question column. This supersedes all earlier portrait-left/question-right instructions for quiz/research views; mobile stacking remains unchanged. Result views retain their separate three-column composition. The existing looping soundtrack behavior across views/tabs is unchanged.
 

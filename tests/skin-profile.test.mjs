@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {questions}from'../public/skin-profile/questions.mjs';
 import {evaluate,validResult}from'../public/skin-profile/engine.mjs';
-import {resultText}from'../public/skin-profile/content.mjs';
+import {resultText,personalizedSummary}from'../public/skin-profile/content.mjs';
 import {createSkinProfileHandler}from'../server/skin-profile.mjs';
 const base=()=>[0,0,3,0,0,0,2,0,0,0];
 test('all question options are accepted; unknown and incomplete answers are rejected',()=>{for(let q=0;q<10;q++)for(let option=0;option<questions[q].options.length;option++){const a=base();a[q]=option;assert(validResult(evaluate(a)));}for(const a of[[],Array(10),null,base().map(()=>99),base().map(()=>-1),base().map(()=>0.5)])assert.throws(()=>evaluate(a));});
@@ -24,4 +24,29 @@ test('V2 research requires five complete answers and confirms Google Sheets stor
  for(const d of[{...body,price:7},{...body,unmet:9},{...body,problem:-1},{...body,concept:1.5},{...body,routine:undefined},{...body,email:'private@example.com'},{...body,result:evaluate(base())},{...body,consent:false},{...body,problem:null,routine:null,unmet:null,concept:null,price:null}]){const rejected=await run(d);assert.equal(rejected.statusCode,400);assert.equal(rejected.calls.length,0);}
  const partial=await run({...body,problem:null,routine:null,unmet:null,concept:null});assert.equal(partial.statusCode,400);assert.equal(partial.calls.length,0);
  assert.equal((await run(body,{env:{...env,SKIN_PROFILE_RESEARCH_V2_ENABLED:'false'}})).statusCode,503);
+});
+
+test('all 120 combinations of goal and strong discomfort signals route transparently to all five outcomes',()=>{
+ const seen=new Set();let count=0;
+ for(let wash=0;wash<5;wash++)for(let goal=0;goal<6;goal++)for(let tolerance=0;tolerance<4;tolerance++){
+  const a=base();a[1]=wash;a[3]=goal;a[5]=tolerance;
+  const expected=wash===3||tolerance===2?'C':['M','A','M','C','B','E'][goal];
+  assert.equal(evaluate(a).primary,expected);seen.add(expected);count++;
+ }
+ assert.equal(count,120);assert.deepEqual([...seen].sort(),['A','B','C','E','M']);
+});
+test('occasional discomfort and age never force CALM; primary priority is stable across unrelated routine answers',()=>{
+ for(let age=0;age<6;age++)for(let cleansing=0;cleansing<5;cleansing++)for(let moisture=0;moisture<4;moisture++)for(let sun=0;sun<4;sun++)for(let satisfaction=0;satisfaction<4;satisfaction++){
+  const a=base();a[0]=age;a[5]=1;a[6]=cleansing;a[7]=moisture;a[8]=sun;a[9]=satisfaction;assert.equal(evaluate(a).primary,'M');
+ }
+});
+test('personalized explanation names only the discomfort signals actually reported',()=>{
+ const a=base();a[3]=3;let text=personalizedSummary(a).join(' ');assert(text.includes('προκύπτει από τη δική σου επιλογή'));assert(!text.includes('Ανέφερες κάψιμο'));
+ a[3]=0;a[1]=3;text=personalizedSummary(a).join(' ');assert(text.includes('Ανέφερες κάψιμο ή τσούξιμο μετά το πλύσιμο'));assert(!text.includes('και συχνό κάψιμο'));
+ a[1]=0;a[5]=2;text=personalizedSummary(a).join(' ');assert(text.includes('Ανέφερες συχνό κάψιμο ή ερεθισμό με νέα προϊόντα'));assert(!text.includes('Ανέφερες κάψιμο ή τσούξιμο μετά το πλύσιμο'));
+ a[5]=1;assert(personalizedSummary(a).join(' ').includes('Η περιστασιακή ενόχληση μόνη της δεν αλλάζει'));
+});
+test('unknown sensations remain unknown and routine guidance follows the stated habits',()=>{
+ const a=base();a[1]=4;a[2]=4;a[6]=2;a[7]=0;a[8]=0;let text=personalizedSummary(a).join(' ');assert(text.includes('Δεν έχω προσέξει'));assert(text.includes('Δεν είμαι σίγουρος/η'));assert(!text.includes('κοινό σαπούνι'));assert(!text.includes('Δοκίμασε μια συνεπή'));
+ a[6]=1;a[7]=3;a[8]=3;text=personalizedSummary(a).join(' ');assert(text.includes('κοινό σαπούνι'));assert(text.includes('Δοκίμασε μια συνεπή'));assert(text.includes('δεν αφορά μόνο το καλοκαίρι'));
 });
