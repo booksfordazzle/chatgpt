@@ -147,3 +147,5 @@
 }
 @media(max-width:1100px){.profile-result-opening .profile-research-invitation{padding:0;min-height:760px}.profile-research-overlay{padding:36px}.profile-result-opening .profile-research-invitation h2{font-size:32px}}
 @media(max-width:760px){.profile-result-opening .profile-research-invitation{min-height:700px}.profile-research-overlay{padding:28px 24px}.profile-result-opening .profile-research-invitation h2{font-size:28px}.profile-result-opening .profile-research-invitation p{font-size:14px}}
+/* Owner spacing: lower the survey CTA thirty pixels within the image overlay. */
+.profile-result-opening .profile-research-invitation .profile-button{margin-top:30px}
