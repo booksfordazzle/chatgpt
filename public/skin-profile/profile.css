@@ -118,3 +118,8 @@
 .profile-footer-privacy[open]>aside,.profile-footer-privacy[open]>.profile-data{position:relative;z-index:1;width:min(650px,calc(100vw - 80px));padding:12px 0;background:var(--profile-bg)}
 @media(max-width:1100px){.profile-page .profile-site-footer{grid-template-columns:1fr auto}.profile-page .profile-site-footer .profile-socials{justify-self:end}.profile-page .profile-site-footer .footer-meta{grid-column:1/-1;justify-self:start}.profile-site-footer .profile-final-note{justify-self:start}}
 @media(max-width:760px){.profile-page .profile-site-footer{grid-template-columns:1fr}.profile-page .profile-site-footer .profile-socials{justify-self:center}.profile-page .profile-site-footer .footer-meta{justify-self:center}.profile-footer-privacy[open]>aside,.profile-footer-privacy[open]>.profile-data{width:calc(100vw - 40px)}}
+
+/* Result-only educational note belongs below the four disclosures. */
+.profile-page .profile-result-head .profile-final-note{padding:0;margin:36px 0 0;max-width:none;font-size:12px;line-height:1.7;text-align:left;color:var(--profile-muted)}
+.profile-result-head .profile-final-note p{margin:0;max-width:none}
+@media(max-width:760px){.profile-page .profile-result-head .profile-final-note{margin-top:30px;font-size:11px}}

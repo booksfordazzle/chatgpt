@@ -27,3 +27,12 @@ test('Shared receiver authenticates research before dispatch and releases its wr
  const send=token=>context.doPost({postData:{contents:JSON.stringify({action:'skin-research-v2',token,...data})}});
  assert.equal(send('wrong').ok,false);assert.equal(writes,0);assert.equal(send('secret').ok,true);assert.equal(writes,1);assert.equal(locked,false);
 });
+test('Dedicated survey settings take priority without changing waitlist credentials',async()=>{
+ let call;await saveResearchToSheets(data,{env:{...env,SKIN_PROFILE_RESEARCH_SCRIPT_URL:'https://script.google.com/macros/s/survey/exec',SKIN_PROFILE_RESEARCH_SECRET:'survey-secret'},fetchImpl:async(url,init)=>{call={url,body:JSON.parse(init.body)};return Response.json({ok:true,spreadsheetId:RESEARCH_SPREADSHEET_ID,submissionId});}});assert.equal(call.url,'https://script.google.com/macros/s/survey/exec');assert.equal(call.body.token,'survey-secret');
+});
+test('Standalone setup preserves its secret and its public receiver authenticates before saving',()=>{
+ const props={},calls=[];let locked=false;
+ const ctx={PropertiesService:{getScriptProperties:()=>({getProperty:k=>props[k],setProperty:(k,v)=>props[k]=v})},Utilities:{getUuid:()=> 'generated-id'},SpreadsheetApp:{openById:id=>{assert.equal(id,RESEARCH_SPREADSHEET_ID);return{getName:()=> 'Validation Results PRIMAL CORE'};}},LockService:{getScriptLock:()=>({waitLock(){locked=true;},releaseLock(){locked=false;}})},ContentService:{MimeType:{JSON:'json'},createTextOutput:text=>({setMimeType:()=>JSON.parse(text)})}};
+ vm.createContext(ctx);vm.runInContext(readFileSync(new URL('../google-apps-script/SkinResearchStandalone.gs',import.meta.url),'utf8'),ctx);ctx.setupSkinResearch();const secret=props.SKIN_PROFILE_RESEARCH_SECRET;ctx.setupSkinResearch();assert.equal(props.SKIN_PROFILE_RESEARCH_SECRET,secret);ctx.saveSkinResearch=input=>{assert(locked);calls.push(input);return{ok:true};};
+ const send=token=>ctx.doPost({postData:{contents:JSON.stringify({...data,token,action:'skin-research-v2'})}});assert.equal(send('bad').ok,false);assert.equal(calls.length,0);assert.equal(send(secret).ok,true);assert.equal(calls.length,1);assert.equal(locked,false);
+});
