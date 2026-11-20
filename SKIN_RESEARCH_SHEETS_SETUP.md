@@ -18,3 +18,9 @@ For subsequent script changes use **Deploy → Manage deployments → Edit → N
 The website returns success only after a receiver response confirms the exact spreadsheet and submission ID and after the receiver reads back the saved row. Failure keeps the form answers and retry ID. A receiver timeout after a write is safe to retry. The client ID is random per completed quiz; it does not identify a person or deduplicate separate visits.
 
 Google Drive metadata access was verified after the owner granted access. No production configuration, receiver deployment or live test submission was performed during local implementation.
+
+## Owner-provided standalone deployment URL
+
+https://script.google.com/macros/s/AKfycbyupzOZIwT7Y4EOOhYat6zdAk0iX1I8x_OhCVhSTI9RHGorVttTL3yv_qugZJYUCbC9pA/exec
+
+Received from the owner on 20 November 2026 and recorded in `.env.example`. This is the receiver URL, not a secret. Server runtime settings are not configured in this workspace, and no hosting credential is available here. The dedicated secret must be entered directly in the hosting provider’s sensitive settings. No authenticated submission or end-to-end Sheet write has yet been verified.
