@@ -10,6 +10,17 @@ const ui={landing:$('#profile-landing'),quiz:$('#profile-quiz'),results:$('#prof
 let answers=Array(questions.length).fill(null),step=0,result,consented=false,started=false;
 let researchAnswers=Array(researchQuestions.length).fill(null),researchStep=0,researchConsent=false,researchSending=false,researchDone=false;
 let available={research:false,analytics:false};
+// Tab-scoped result recovery only; no answers leave the browser.
+const resultSessionKey='primal-skin-result-v1';
+const resultSchema=JSON.stringify(questions);
+function saveResultSession(){try{sessionStorage.setItem(resultSessionKey,JSON.stringify({schema:resultSchema,answers,submissionId:researchSubmissionId,researchDone}));}catch{}}
+function restoreResultSession(){try{const saved=JSON.parse(sessionStorage.getItem(resultSessionKey));if(!saved)return;
+ if(saved.schema!==resultSchema||!Array.isArray(saved.answers)||saved.answers.length!==questions.length||!Array.from(saved.answers,(a,i)=>validAnswer(a,i)).every(Boolean))throw Error('invalid saved result');
+ answers=saved.answers;step=questions.length-1;started=true;result=evaluate(answers);
+ if(typeof saved.submissionId==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(saved.submissionId))researchSubmissionId=saved.submissionId;
+ researchDone=saved.researchDone===true;renderResult();
+ }catch{try{sessionStorage.removeItem(resultSessionKey);}catch{}}}
+
 // No answers, profile, email or persistent visitor identifiers accompany events.
 function event(name){if(consented&&available.analytics)void fetch('/api/skin-profile',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'event',name,consent:true})}).catch(()=>{});}
 async function request(body){const r=await fetch('/api/skin-profile',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});let data={};try{data=await r.json();}catch{}if(!r.ok||data.ok!==true)throw Error(data.code==='rate_limited'?'Περίμενε λίγο πριν δοκιμάσεις ξανά.':'Δεν επιβεβαιώθηκε η αποστολή. Οι επιλογές σου διατηρούνται· δοκίμασε αργότερα.');return data;}
@@ -41,9 +52,9 @@ $('#question-content').addEventListener('change',e=>{if(e.target.name!=='answer'
 $('#question-form').addEventListener('submit',e=>{e.preventDefault();if(!validAnswer(answers[step],step)){$('#question-error').textContent='Επίλεξε μία απάντηση για να συνεχίσεις.';$('#question-content input').focus();return;}event('quiz_step_complete');if(step<questions.length-1){step++;question();}else{result=evaluate(answers);researchSubmissionId=crypto.randomUUID();researchAnswers=Array(researchQuestions.length).fill(null);researchStep=0;researchConsent=false;researchDone=false;event('quiz_complete');renderResult();}});
 $('#question-back').addEventListener('click',()=>{if(step>0){step--;question();}else{show('landing');focus($('#profile-title'));}});
 function renderResult(){
- show('results');const identity=identities[result.primary],visual=profileVisuals[result.primary],story=resultStories[result.primary];
+ saveResultSession();show('results');const identity=identities[result.primary],visual=profileVisuals[result.primary],story=resultStories[result.primary];
  ui.results.innerHTML=`<div class="profile-result-opening"><figure class="profile-result-material"><picture>${visual.mobileSrc?`<source media="(max-width:900px)" srcset="${escape(visual.mobileSrc)}">`:''}<img src="${escape(visual.src)}" style="object-position:${escape(visual.position)}" width="941" height="1672" alt="" loading="lazy"></picture></figure><header class="profile-result-head"><div class="profile-result-copy"><h1 id="result-title" tabindex="-1">${escape(identity.title)}</h1><p class="profile-result-subtitle">${escape(identity.subtitle)}</p><p class="profile-lead">${escape(identity.intro)}</p></div><div class="profile-result-accordions" aria-label="Οι εξηγήσεις του προφίλ σου"><details><summary>Τι μας έδειξαν οι απαντήσεις σου</summary>${paragraphs(personalizedSummary(answers))}</details><details><summary>Τι συμβαίνει στο δέρμα σου;</summary>${paragraphs(story.explanation)}<p class="profile-source-links">Πηγές: <a href="https://www.aad.org/public/everyday-care/skin-care-basics/dry/dermatologists-tips-relieve-dry-skin">AAD — Ξηρή επιδερμίδα</a> · <a href="https://www.aad.org/public/everyday-care/sun-protection/sunscreen/how-to-select-sunscreen">AAD — Αντηλιακή προστασία</a>.</p></details><details><summary>Τι χρειάζεται να αλλάξεις;</summary>${paragraphs(story.actions)}</details><details><summary>Τι μπορείς να περιμένεις;</summary>${paragraphs(story.expectations)}</details></div><aside id="result-final-note" class="profile-final-note" aria-label="Σημείωση για τα αποτελέσματα"></aside></header>
- <section class="profile-research-invitation" aria-labelledby="research-invitation-title"><img class="profile-research-tin" src="assets/primal-research-tin.webp" width="1408" height="1760" alt="" loading="lazy"><div class="profile-research-overlay"><h2 id="research-invitation-title">Γίνε μέρος της δημιουργίας του PRIMAL CORE</h2><p class="profile-study-duration">5 ερωτήσεις. 60 δευτερόλεπτα.</p><p>Οι απαντήσεις σου θα συμβάλουν στη διαμόρφωση του PRIMAL CORE.</p><button class="profile-button profile-research-cta" id="product-interest" aria-label="Γίνε μέρος της έρευνας για το PRIMAL CORE">Γίνε μέρος ${arrow()}</button></div></section></div>`;
+ <section class="profile-research-invitation" aria-labelledby="research-invitation-title"><img class="profile-research-tin" src="assets/primal-research-tin.webp" width="1408" height="1760" alt="" loading="lazy"><div class="profile-research-overlay"><h2 id="research-invitation-title">Γίνε μέρος της δημιουργίας του PRIMAL CORE</h2><p class="profile-study-duration">5 ερωτήσεις. 60 δευτερόλεπτα.</p><p>Οι απαντήσεις σου θα συμβάλουν στη διαμόρφωση του PRIMAL CORE.</p><button class="profile-button profile-research-cta" id="product-interest" aria-label="ΓΙΝΕ ΜΕΡΟΣ της έρευνας για το PRIMAL CORE">ΓΙΝΕ ΜΕΡΟΣ ${arrow()}</button></div></section></div>`;
  $('#result-final-note').innerHTML='<p><em>Τα αποτελέσματα αυτά δεν αποτελούν ιατρική διάγνωση.</em></p>';
  $('#product-interest').onclick=()=>{event('product_interest_click');renderResearch();};focus($('#result-title'));event('result_view');
  // The invitation has no finalized product concept or purchase claim.
@@ -59,7 +70,7 @@ function renderResearch(){
  $('#research-back').onclick=()=>{if(researchSending)return;if(researchStep>0){researchStep--;renderResearch();}else backToResult();};
  $('#research-form').onsubmit=async e=>{e.preventDefault();if(researchSending||researchDone)return;if(researchAnswers[researchStep]===null){$('#research-status').textContent='Επίλεξε μία απάντηση για να συνεχίσεις.';$('#research-form input[name="research-answer"]').focus();return;}if(!last){researchStep++;renderResearch();return;}if(researchAnswers.every(a=>a===null)){$('#research-status').textContent='Επίλεξε τουλάχιστον μία απάντηση ή κλείσε την έρευνα.';return;}if(!researchConsent){$('#research-status').textContent='Επιβεβαίωσε ότι θέλεις να στείλεις ανώνυμα τις απαντήσεις σου.';$('#research-form input[name="consent"]').focus();return;}if(!available.research)return;
  researchSending=true;$('#research-next').disabled=true;$('#research-back').disabled=true;$('#research-form').querySelectorAll('input').forEach(n=>n.disabled=true);$('#research-status').textContent='Οι απαντήσεις σου αποστέλλονται…';
- try{await request({action:'research-v2',submissionId:researchSubmissionId,...Object.fromEntries(researchQuestions.map((q,i)=>[q.id,researchAnswers[i]])),consent:true});researchDone=true;event('research_complete');renderResearchThanks();}
+ try{await request({action:'research-v2',submissionId:researchSubmissionId,...Object.fromEntries(researchQuestions.map((q,i)=>[q.id,researchAnswers[i]])),consent:true});researchDone=true;saveResultSession();event('research_complete');renderResearchThanks();}
  catch(error){$('#research-status').textContent=error.message;$('#research-next').disabled=false;$('#research-back').disabled=false;$('#research-form').querySelectorAll('input').forEach(n=>n.disabled=false);}
  finally{researchSending=false;}
  };
@@ -74,3 +85,5 @@ soundToggle.addEventListener('click',async()=>{if(!soundtrack.paused){soundtrack
 soundtrack.addEventListener('play',syncSound);
 soundtrack.addEventListener('pause',()=>{syncSound();soundStatus.textContent='Η μουσική είναι σε παύση.';});
 soundtrack.addEventListener('error',()=>{soundtrack.pause();syncSound();soundStatus.textContent='Η μουσική δεν είναι διαθέσιμη αυτή τη στιγμή.';});
+
+restoreResultSession();
