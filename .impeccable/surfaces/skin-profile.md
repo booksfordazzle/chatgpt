@@ -1,3 +1,5 @@
+> Owner spacing refinement: shift the complete test content 70px upward above 1100px viewport width. Preserve mobile layout and internal image/text alignment. Updated offline preview visually checked at 1440px; Google Sheets activation remains deferred.
+
 # Skin Profile — direction contract
 
 ## Current required research and Sheets destination — 20 November 2026

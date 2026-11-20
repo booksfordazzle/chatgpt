@@ -123,3 +123,5 @@
 .profile-page .profile-result-head .profile-final-note{padding:0;margin:36px 0 0;max-width:none;font-size:12px;line-height:1.7;text-align:left;color:var(--profile-muted)}
 .profile-result-head .profile-final-note p{margin:0;max-width:none}
 @media(max-width:760px){.profile-page .profile-result-head .profile-final-note{margin-top:30px;font-size:11px}}
+/* Owner-requested desktop offset for the complete test composition. */
+@media(min-width:1101px){.profile-page>#main{position:relative;top:-70px;margin-bottom:-70px}}
