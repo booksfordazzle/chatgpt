@@ -1,3 +1,5 @@
+> Latest research CTA copy: “Γίνε μέρος”. Preserve its location, bold weight, glow, breathing and survey action; accessible name starts with the same visible phrase.
+
 > Mobile results follow the opening reference: full-bleed portrait with the result title, subtitle and introduction over its black upper space. The four disclosures remain grouped directly after the image, followed by the medical note and research invitation. Shared across all five outcomes; desktop remains unchanged.
 
 > Latest mobile landing reference: full-bleed, square-cornered fingerprint image behind opening copy, with 24px copy gutters and title close beneath the header. Use the available viewport/portrait height instead of the earlier inset image with extended 820px black space. Preserve real browser chrome and the existing start flow.
