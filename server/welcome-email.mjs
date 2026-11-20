@@ -30,8 +30,8 @@ export function welcomeMessage(email,locale) {
   const english=locale==='en-US';
   return {from:{name:'PRIMAL CORE',address:SENDER},replyTo:SENDER,to:email,envelope:{from:SENDER,to:[email]},
     html:welcomeHtml(locale),attachments:welcomeAttachments(locale),
-    subject:english?'PRIMAL CORE — Welcome':'PRIMAL CORE — Καλώς ήρθες',
-    text:english?'Welcome. You’ll receive a message when PRIMAL CORE is ready to launch.\n\nPRIMAL CORE\nhttps://primalcore.gr/en\n\nTo stop receiving updates, reply to this email.':'Καλώς ήρθες. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.\n\nPRIMAL CORE\nhttps://primalcore.gr/\n\nΑν δεν θέλεις να λαμβάνεις ενημερώσεις, απάντησε σε αυτό το email.'};
+    subject:english?'PRIMAL CORE — Thank you':'PRIMAL CORE — Σε ευχαριστούμε',
+    text:english?'Thank you. You’ll receive a message when PRIMAL CORE is ready to launch.\n\nJoin the waitlist\nhttps://primalcore.gr/en#waitlist\n\nTo stop receiving updates, reply to this email.':'Σε ευχαριστούμε. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.\n\nΜπες στη λίστα αναμονής\nhttps://primalcore.gr/#waitlist\n\nΑν δεν θέλεις να λαμβάνεις ενημερώσεις, απάντησε σε αυτό το email.'};
 }
 async function claimJob(job,env,fetchImpl,action='claim-welcome-smtp') {
   const endpoint=new URL(env.GOOGLE_APPS_SCRIPT_URL);

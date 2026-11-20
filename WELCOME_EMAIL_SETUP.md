@@ -1,3 +1,5 @@
+> Latest owner layout: centered bull, live-text “Σε ευχαριστούμε” / “Thank you”, launch message, “Μπες στη λίστα αναμονής” / “Join the waitlist” CTA pointing to the localized #waitlist, then product image and secondary footer. Subject and plain text match. Raster welcome-heading attachments are no longer sent. No delivery, consent or deduplication behavior changes.
+
 # PRIMAL CORE welcome email — direct Papaki SMTP
 
 This replaces the Gmail/MailApp/alias approach. Source pushed to Vercel is only half of activation: the owner must configure SMTP secrets there and update the existing Apps Script project. No new paid provider or domain mailbox is needed; the existing Papaki mailbox's sending limits apply. Do not promise unlimited/free delivery beyond that plan.

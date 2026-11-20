@@ -9,7 +9,7 @@ test('bilingual welcome keeps accessible text, genuine destinations and inline a
   assert(!html.includes('controlled@example.com'));assert(!/<script|<iframe|<form|{{|BECYCLE|DISCOVER NOW/.test(html));
   assert(html.includes('https://primalcore.gr/'));assert(html.includes('mailto:hello@primalcore.gr'));
   assert(html.includes(locale==='el'?'Πολιτική απορρήτου':'Privacy policy'));
-  assert(html.includes(locale==='el'?'Καλώς ήρθες':'Welcome'));
+  assert(html.includes(locale==='el'?'Σε ευχαριστούμε':'Thank you'));assert(html.includes(locale==='el'?'Μπες στη λίστα αναμονής':'Join the waitlist'));assert(html.includes('#waitlist'));assert(html.indexOf('cid:primal-core-bull')<html.indexOf('<h1'));assert(html.indexOf('class="email-cta" href=')<html.indexOf('src="cid:primal-core-product"'));
   assert(message.text.includes(locale==='el'?'έτοιμο προς διάθεση':'ready to launch'));
   assert.equal(message.from.address,'hello@primalcore.gr');assert.equal(message.replyTo,'hello@primalcore.gr');
   for(const image of welcomeAttachments(locale)){assert(Buffer.isBuffer(image.content));assert(image.content.length>0);assert(html.includes('cid:'+image.cid));assert.equal(image.contentDisposition,'inline');}
