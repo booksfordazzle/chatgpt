@@ -10,6 +10,9 @@ export const questions = [
  ['Πότε προστατεύεις το δέρμα σου από τον ήλιο;', ['Καθημερινά','Όταν έχει έντονο ήλιο','Το καλοκαίρι','Σπάνια ή ποτέ']],
  ['Η περιποίησή σου ανταποκρίνεται στις ανάγκες σου;', ['Με καλύπτει','Δεν είμαι ικανοποιημένος/η','Χρησιμοποιώ περισσότερα προϊόντα από όσα θέλω','Δεν ξέρω από πού να ξεκινήσω']]
 ].map(([title,options,hint=''],i)=>({id:`q${String(i+1).padStart(2,'0')}`,title,options,hint}));
+// Multiple answers are allowed only for coexisting sensations and cleansing habits.
+Object.assign(questions[1],{multiple:true,exclusive:[0,4],incompatible:[[1,2]],maxChoices:2});
+Object.assign(questions[6],{multiple:true,exclusive:[4],maxChoices:4});
 // V2 research has a separate metric namespace; never merge with the prior spend survey.
 export const researchQuestions=[
   {
@@ -85,22 +88,22 @@ export const researchQuestions=[
 // Editorial labels only; question IDs and assessment inputs remain unchanged.
 export const chapters=['Ο χρόνος','Η αίσθηση','Η υφή','Η προτεραιότητα','Τα ίχνη του χρόνου','Η αντίδραση','Ο καθαρισμός','Η φροντίδα','Ο ήλιος','Η ουσία'];
 
-// Owner image numbers match the ten quiz and five research questions.
-// 1.png was not included: retain the approved fingerprint until supplied.
+// Owner images.zip: numbered landscape sources for all ten quiz and five survey cards.
+// 14.jpg is the landscape variant; the duplicate portrait 14.png is not used.
 export const questionVisuals={
- 1:{src:'assets/primal-code-central.webp',small:'assets/primal-code-central-600.webp',smallWidth:600,width:941,height:1671,position:'50% 65%',placeholder:true},
- 2:{src:'assets/skin-questions/02.webp',small:'assets/skin-questions/02-small.webp',width:941,height:1672,position:'50% 44%'},
- 3:{src:'assets/skin-questions/03.webp',small:'assets/skin-questions/03-small.webp',width:941,height:1672,position:'50% 45%'},
- 4:{src:'assets/skin-questions/04.webp',small:'assets/skin-questions/04-small.webp',width:941,height:1672,position:'50% 45%'},
- 5:{src:'assets/skin-questions/05.webp',small:'assets/skin-questions/05-small.webp',width:941,height:1672,position:'50% 45%'},
- 6:{src:'assets/skin-questions/06.webp',small:'assets/skin-questions/06-small.webp',width:941,height:1672,position:'50% 58%'},
- 7:{src:'assets/skin-questions/07.webp',small:'assets/skin-questions/07-small.webp',width:941,height:1672,position:'50% 62%'},
- 8:{src:'assets/skin-questions/08.webp',small:'assets/skin-questions/08-small.webp',width:941,height:1672,position:'50% 56%'},
- 9:{src:'assets/skin-questions/09.webp',small:'assets/skin-questions/09-small.webp',width:941,height:1671,position:'50% 42%'},
- 10:{src:'assets/skin-questions/10.webp',small:'assets/skin-questions/10-small.webp',width:941,height:1671,position:'50% 46%'},
- 11:{src:'assets/skin-questions/11.webp',small:'assets/skin-questions/11-small.webp',width:941,height:1670,position:'50% 43%'},
- 12:{src:'assets/skin-questions/12.webp',small:'assets/skin-questions/12-small.webp',width:941,height:1670,position:'50% 68%'},
- 13:{src:'assets/skin-questions/13.webp',small:'assets/skin-questions/13-small.webp',width:941,height:1671,position:'50% 57%'},
- 14:{src:'assets/skin-questions/14.webp',small:'assets/skin-questions/14-small.webp',width:941,height:1670,position:'50% 70%'},
- 15:{src:'assets/skin-questions/15.webp',small:'assets/skin-questions/15-small.webp',width:1086,height:1448,position:'50% 60%'}
+ 1:{src:'assets/skin-questions/01.webp',small:'assets/skin-questions/01-small.webp',width:941,height:705,position:'50% 50%'},
+ 2:{src:'assets/skin-questions/02.webp',small:'assets/skin-questions/02-small.webp',width:941,height:705,position:'50% 60%'},
+ 3:{src:'assets/skin-questions/03.webp',small:'assets/skin-questions/03-small.webp',width:941,height:705,position:'50% 50%'},
+ 4:{src:'assets/skin-questions/04.webp',small:'assets/skin-questions/04-small.webp',width:1200,height:896,position:'50% 45%'},
+ 5:{src:'assets/skin-questions/05.webp',small:'assets/skin-questions/05-small.webp',width:1200,height:896,position:'50% 45%'},
+ 6:{src:'assets/skin-questions/06.webp',small:'assets/skin-questions/06-small.webp',width:1200,height:896,position:'50% 50%'},
+ 7:{src:'assets/skin-questions/07.webp',small:'assets/skin-questions/07-small.webp',width:1200,height:896,position:'50% 60%'},
+ 8:{src:'assets/skin-questions/08.webp',small:'assets/skin-questions/08-small.webp',width:1200,height:896,position:'50% 45%'},
+ 9:{src:'assets/skin-questions/09.webp',small:'assets/skin-questions/09-small.webp',width:1200,height:896,position:'50% 45%'},
+ 10:{src:'assets/skin-questions/10.webp',small:'assets/skin-questions/10-small.webp',width:941,height:705,position:'50% 50%'},
+ 11:{src:'assets/skin-questions/11.webp',small:'assets/skin-questions/11-small.webp',width:941,height:705,position:'50% 45%'},
+ 12:{src:'assets/skin-questions/12.webp',small:'assets/skin-questions/12-small.webp',width:941,height:705,position:'50% 60%'},
+ 13:{src:'assets/skin-questions/13.webp',small:'assets/skin-questions/13-small.webp',width:1200,height:905,position:'50% 60%'},
+ 14:{src:'assets/skin-questions/14.webp',small:'assets/skin-questions/14-small.webp',width:941,height:705,position:'50% 75%'},
+ 15:{src:'assets/skin-questions/15.webp',small:'assets/skin-questions/15-small.webp',width:1200,height:905,position:'50% 70%'}
 };
