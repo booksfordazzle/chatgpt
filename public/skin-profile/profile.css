@@ -216,3 +216,15 @@
 }
 
 .profile-result-material>picture{display:block;width:100%;height:100%}
+
+/* Mobile result portraits retain their complete original vertical composition. */
+@media(max-width:900px){
+ .profile-page .profile-result-opening .profile-result-material{width:100%;max-width:460px;height:auto;min-height:0;max-height:none;aspect-ratio:941/1672;margin:0 auto 32px;align-self:center}
+ .profile-page .profile-result-material>picture{height:auto}
+ .profile-page .profile-result-opening .profile-result-material img{display:block;position:static;width:100%;height:auto;min-height:0;max-height:none;aspect-ratio:941/1672;object-fit:contain}
+ /* The fingerprint stays below the copy, extending its existing black negative space. */
+ .profile-page .profile-landing{position:relative;isolation:isolate;display:block;max-width:560px;min-height:max(820px,calc((100vw - 44px)*1.776));margin-inline:auto;padding:28px 22px 40px;text-align:left}
+ .profile-page .profile-landing .profile-intro{position:relative;z-index:1;max-width:none;margin:0;padding:0}
+ .profile-page .profile-landing .profile-portrait{position:absolute;z-index:0;inset:0 22px;align-self:stretch;margin:0;min-height:0;max-height:none;width:auto;height:auto;aspect-ratio:auto;border-radius:12px;background:#080808;overflow:hidden}
+ .profile-page .profile-landing .profile-portrait img{position:absolute;inset:auto 0 0;display:block;width:100%;height:auto;max-height:none;object-fit:contain;border-radius:0}
+}

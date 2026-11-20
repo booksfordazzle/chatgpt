@@ -1,3 +1,5 @@
+> Mobile composition: result portraits show the full 941:1672 image without landscape cropping. Landing title, description, adult consent and start CTA overlay the fingerprint image’s extended black negative space; keep the fingerprint below the copy. Desktop composition is preserved.
+
 > Mobile result imagery: use owner calm.zip replacements for CALM, ENDURE, BALANCE and ESSENTIAL up to 900px; desktop retains existing portraits. RESTORE uses the subsequently supplied restore.zip image. All five mobile profiles now have explicit owner-supplied replacements.
 
 > Latest owner instruction: hide supporting question photos on mobile (up to 900px) throughout quiz and research; preserve result photographs and desktop imagery. Keep navigation outside the content scroller.
