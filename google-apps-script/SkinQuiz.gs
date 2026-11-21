@@ -9,11 +9,20 @@ function saveSkinQuiz(input){
  if(qs.some(function(q,i){var a=answers[i],v=Array.isArray(a)?a:[a];return (Array.isArray(a)&&!q.multiple)||!v.length||v.length>(q.maxChoices||1)||new Set(v).size!==v.length||v.some(function(n){return !Number.isInteger(n)||n<0||n>=q.options.length;})||(v.length>1&&(q.exclusive||[]).some(function(n){return v.indexOf(n)>=0;}))||(q.incompatible||[]).some(function(g){return g.filter(function(n){return v.indexOf(n)>=0;}).length>1;});}))return {ok:false};
  var primary=(Array.isArray(answers[1])?answers[1]:[answers[1]]).indexOf(3)>=0||answers[5]===2?'CALM':['RESTORE','ENDURE','RESTORE','CALM','BALANCE','ESSENTIAL'][answers[3]];
  var labels=qs.map(function(q,i){return (Array.isArray(answers[i])?answers[i]:[answers[i]]).map(function(n){return q.options[n];}).join(' | ');});
- var book=SpreadsheetApp.openById(target),sheet=book.getSheetByName('Skin Quiz')||book.insertSheet('Skin Quiz'),headers=skinQuizHeaders();
- if(sheet.getLastRow()===0){sheet.appendRow(headers);sheet.setFrozenRows(1);}else if(JSON.stringify(sheet.getRange(1,1,1,sheet.getLastColumn()).getDisplayValues()[0])!==JSON.stringify(headers))return {ok:false};
- var existing=sheet.getLastRow()>1?sheet.getRange(2,1,sheet.getLastRow()-1,1).getDisplayValues():[],index=existing.findIndex(function(r){return r[0]===input.submissionId;}),row=index<0?sheet.getLastRow()+1:index+2;
- var content=['skin-quiz-v1'].concat(labels,[primary]);
- if(index<0){var values=[input.submissionId,new Date().toISOString()].concat(content);sheet.getRange(row,1,1,values.length).setNumberFormat('@');sheet.getRange(row,1,1,values.length).setValues([values]);SpreadsheetApp.flush();}
- var saved=sheet.getRange(row,1,1,headers.length).getDisplayValues()[0];if(saved[0]!==input.submissionId||JSON.stringify(saved.slice(2))!==JSON.stringify(content))return {ok:false};
+ var book=SpreadsheetApp.openById(target),sheet=book.getSheetByName('Skin Quiz')||book.insertSheet('Skin Quiz'),expected=skinQuizHeaders(),headers;
+ if(sheet.getLastRow()===0){sheet.appendRow(expected);sheet.setFrozenRows(1);headers=expected.slice();}
+ else {
+  headers=sheet.getRange(1,1,1,sheet.getLastColumn()).getDisplayValues()[0];
+  if(headers.some(function(h,i){return h&&headers.indexOf(h)!==i;}))return {ok:false};
+  if(qs.some(function(q){return headers.indexOf(q.title)<0;}))return {ok:false};
+  var missing=expected.filter(function(h){return headers.indexOf(h)<0;});
+  if(missing.length){sheet.getRange(1,headers.length+1,1,missing.length).setValues([missing]);headers=headers.concat(missing);}
+ }
+ var idColumn=headers.indexOf('Submission ID'),existing=sheet.getLastRow()>1?sheet.getRange(2,idColumn+1,sheet.getLastRow()-1,1).getDisplayValues():[],index=existing.findIndex(function(r){return r[0]===input.submissionId;}),row=index<0?sheet.getLastRow()+1:index+2;
+ var valuesByHeader={'Submission ID':input.submissionId,'Consent version':'skin-quiz-v1','Result':primary};
+ qs.forEach(function(q,i){valuesByHeader[q.title]=labels[i];});
+ if(index<0){valuesByHeader['Submitted at (UTC)']=new Date().toISOString();var values=headers.map(function(h){return valuesByHeader[h]||'';});sheet.getRange(row,1,1,values.length).setNumberFormat('@');sheet.getRange(row,1,1,values.length).setValues([values]);SpreadsheetApp.flush();}
+ var saved=sheet.getRange(row,1,1,headers.length).getDisplayValues()[0];
+ if(Object.keys(valuesByHeader).some(function(h){return saved[headers.indexOf(h)]!==valuesByHeader[h];}))return {ok:false};
  return {ok:true,spreadsheetId:target,submissionId:input.submissionId,sheetName:'Skin Quiz'};
 }

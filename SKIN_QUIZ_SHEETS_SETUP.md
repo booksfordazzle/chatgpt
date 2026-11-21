@@ -1,3 +1,5 @@
+> Column-order recovery: the live Skin Quiz now places the ten questions in A:J, Result in K, blank L, Consent version in M, Submitted at (UTC) in N, blank O and Submission ID in P. Updated SkinQuiz.gs resolves all fields by header names, preserves this order and old data, and reads back/deduplicates using the moved ID column. Replace the dedicated quiz/research Code.gs with this branch’s complete SkinResearchStandalone.gs and publish a new version of that existing deployment. Do not change the waitlist receiver or Vercel variables.
+
 # Skin Quiz — activation
 
 Target: existing Validation Results PRIMAL CORE workbook, separate tab **Skin Quiz**.
