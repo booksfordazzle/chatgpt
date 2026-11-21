@@ -6,7 +6,7 @@ const context = vm.createContext({ URL, URLSearchParams, Promise });
 vm.runInContext(readFileSync(new URL('../public/attribution.js', import.meta.url), 'utf8'), context);
 const api = context.PrimalAttribution;
 const memoryStorage = () => { const data = new Map(); return { getItem: key => data.get(key) || null, setItem: (key, value) => data.set(key, value), data }; };
-const create = (storage, path = '/', search = '', referrer = '', navigator = { userAgent: 'Windows Chrome/120.0 Safari/537.36' }) => api.create({ storage, location: { pathname: path, search }, document: { referrer }, navigator, window: { innerWidth: 390, innerHeight: 844 } });
+const create = (storage, path = '/', search = '', referrer = '', navigator = { userAgent: 'Windows Chrome/120.0 Safari/537.36' }) => api.create({ hasConsent:()=>true,storage, location: { pathname: path, search }, document: { referrer }, navigator, window: { innerWidth: 390, innerHeight: 844 } });
 
 test('UTMs and the full entry URLs survive navigation without being emptied or replaced by internal referrers', async () => {
  const storage = memoryStorage();
@@ -60,9 +60,13 @@ test('device/OS/browser categories distinguish tablets, iOS Chrome, Safari, Fire
 
 test('viewport reflects the current screen and only requested fields are retained', async () => {
  const window = { innerWidth: 1440, innerHeight: 900 };
- const capture = api.create({ storage: memoryStorage(), location: { pathname: '/', search: '' }, document: { referrer: '' }, navigator: { userAgent: 'test' }, window });
+ const capture = api.create({hasConsent:()=>true, storage: memoryStorage(), location: { pathname: '/', search: '' }, document: { referrer: '' }, navigator: { userAgent: 'test' }, window });
  await capture.ready; assert.equal(capture.snapshot().viewport, '1440x900');
  window.innerWidth = 1024; window.innerHeight = 768;
  const payload = capture.snapshot(); assert.equal(payload.screen_width, '1024'); assert.equal(payload.viewport, '1024x768');
  assert.equal(payload.referrer_full, ''); assert.equal(payload.os, 'Other'); assert.equal(payload.browser, 'Other');
+});
+
+test('attribution reads and writes no optional storage without consent and stops after withdrawal',()=>{
+ let granted=false;let reads=0,writes=0;const capture=api.create({hasConsent:()=>granted,storage:{getItem(){reads++;return null},setItem(){writes++}},location:{pathname:'/',search:'?utm_source=test'},document:{referrer:'https://example.com/'},navigator:{userAgent:'test'},window:{innerWidth:390,innerHeight:844}});assert.equal(capture.snapshot().utm_source,'');assert.equal(reads,0);assert.equal(writes,0);granted=true;assert.equal(capture.snapshot().utm_source,'test');assert(writes>0);granted=false;assert.equal(capture.snapshot().utm_source,'');
 });

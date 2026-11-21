@@ -7,7 +7,7 @@ const base=process.env.BASE_URL||'http://localhost:8097';
   const page=await browser.newPage({viewport:{width,height:1000},reducedMotion:'reduce'});const errors=[],posts=[];page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/api/skin-profile',route=>{if(route.request().method()==='POST')posts.push(route.request().postData());return route.fulfill({json:{researchV2:false,analytics:false}})});
   await page.goto(process.env.PREVIEW_FILE||base+'/skin-profile');assert.equal(await page.locator('.profile-description br').count(),1);assert.equal(await page.locator('.profile-landing-question').count(),0);
-  await page.locator('#profile-adult').check();await page.locator('#profile-start button').click();
+  if(await page.locator('#analytics-reject').isVisible())await page.locator('#analytics-reject').click();await page.locator('#profile-adult').check();await page.locator('#profile-start button').click();
   const answers=[0,0,3,scenario.goal,0,0,2,0,0,0];
   for(let q=0;q<10;q++){await page.locator('#question-content input').nth(answers[q]).check();await page.locator('#question-next').click()}
   assert.equal(await page.locator('#result-title').textContent(),scenario.title);

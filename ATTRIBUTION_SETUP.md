@@ -1,3 +1,5 @@
+> Latest privacy instruction: optional attribution collection/storage/transmission is now gated by the shared analytics choice, denied by default. Earlier unconditional session capture instructions below are historical. See ANALYTICS_SETUP.md for GA4, Search Console and aggregate dashboard setup.
+
 # Session attribution and device capture
 
 ## Status and deployment

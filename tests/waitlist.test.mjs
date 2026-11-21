@@ -156,3 +156,5 @@ test('Skin Profile marketing has its own explicit purpose/version and contains n
  const r=await handler(event({source:'primal-core-skin-profile',profile:'C',answers:[1,2,3],spend:3}));
  assert.equal(r.statusCode,200);assert.equal(sent.source,'primal-core-skin-profile');assert.equal(sent.consentTextVersion,'skin-profile-education-launch-v1');assert.equal(sent.profile,undefined);assert.equal(sent.answers,undefined);assert.equal(sent.spend,undefined);
 });
+
+test('analytics registration flag distinguishes confirmed new and duplicate signups without email payloads',async()=>{for(const [state,expected]of [['immediate','new'],['queued','new'],['disabled','new'],['duplicate','existing'],['unknown','confirmed']]){const h=createHandler({env,fetchImpl:async()=>Response.json({ok:true,welcomeDelivery:state})});const r=await h(event());assert.deepEqual(JSON.parse(r.body),{ok:true,registration:expected});}});

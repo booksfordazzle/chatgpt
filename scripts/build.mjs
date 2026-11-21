@@ -4,6 +4,11 @@ import { discoveryPages, llmsFiles, structuredData } from './geo.mjs';
 import { SITE_URL, SOCIAL_IMAGE, canonicalPath } from '../site.config.mjs';
 const out = process.env.OUTPUT_DIR || 'dist';
 await rm(out, { recursive: true, force: true }); await mkdir(out, { recursive: true }); await cp('public', out, { recursive: true });
+const measurementId=process.env.GA4_MEASUREMENT_ID||'';
+if(measurementId&&!/^G-[A-Z0-9]{5,20}$/.test(measurementId))throw Error('Invalid GA4_MEASUREMENT_ID');
+const verification=process.env.GOOGLE_SITE_VERIFICATION||'';
+if(verification&&!/^[A-Za-z0-9_-]{10,200}$/.test(verification))throw Error('Invalid GOOGLE_SITE_VERIFICATION');
+await writeFile(path.join(out,'analytics-config.js'),'window.PrimalAnalyticsConfig = '+JSON.stringify({measurementId})+';\n');
 const escape = value => value.replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;');
 const pages = [];
 const pageImages = new Map();
@@ -16,6 +21,8 @@ async function visit(dir) {
   const errorPage = relative === '404.html' || relative === 'en/404.html';
   const url = SITE_URL + canonicalPath(relative);
   let html = (await readFile(file,'utf8')).replaceAll('__SITE_URL__', SITE_URL);
+  if(!html.includes('analytics-config.js')){const prefix='../'.repeat(relative.split('/').length-1);html=html.replace('<head>',`<head><script defer src="${prefix}analytics-config.js"></script><script defer src="${prefix}analytics.js"></script><link rel="stylesheet" href="${prefix}analytics.css">`);}
+  if(verification)html=html.replace('</head>',`<meta name="google-site-verification" content="${verification}"></head>`);
   // The error document can be served at any requested depth. Its assets must
   // resolve from the site root, rather than from that nonexistent directory.
   if(errorPage)html=html.replace(/\b(href|src)="([^"]+)"/gi,(attribute,name,value)=>{

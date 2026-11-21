@@ -136,7 +136,7 @@ test('welcome setup is repeatable and queues only future confirmed signups, pres
   r.submit({email:'new@example.com',locale:'el'}); r.sendMail(); r.sendMail();
   assert.deepEqual(r.rows[1],before); assert.equal(r.messages.length,1);
   assert.equal(r.messages[0].to,'new@example.com');
-  assert(r.messages[0].text.startsWith('Καλώς ήρθες. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.'));
+  assert(r.messages[0].text.startsWith('Σε ευχαριστούμε. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.'));
   assert.equal(r.messages[0].replyTo,'hello@primalcore.gr');assert.equal(r.messages[0].from.address,'hello@primalcore.gr');
   assert.equal(r.rows[2][15],'sent-thanks-v1'); assert(r.rows[2][16]);
   r.submit({email:'NEW@example.com'});r.sendMail();assert.equal(r.messages.length,1);
@@ -149,7 +149,7 @@ test('SMTP pre-send failures defer pending messages without losing signups and c
 });
 test('English welcome localizes the message and ambiguous failures never auto-resend', () => {
   const r=receiver();r.setupMail();r.submit({locale:'en-US'});r.sendMail();
-  assert(r.messages[0].text.startsWith('Welcome.'));
+  assert(r.messages[0].text.startsWith('Thank you.'));
   const failed=receiver([],{mailFails:true});failed.setupMail();assert.equal(failed.submit({}).ok,true);
   failed.sendMail();assert.equal(failed.rows[1][15],'review-thanks-v1');failed.sendMail();assert.equal(failed.messages.length,0);
 });
@@ -202,9 +202,9 @@ test('both forms schedule an immediate job after real receiver save; client resp
  const handler=createHandler({env:{GOOGLE_APPS_SCRIPT_URL:'https://script.google.com/macros/s/test/exec',WAITLIST_SHARED_SECRET:'test-secret'},fetchImpl:async(_url,options)=>Response.json(r.submit(JSON.parse(options.body))),onRegistered:job=>{jobs.push(job);return new Promise(()=>{})}});
  for(const [i,source]of ['primal-core-hero','primal-core-footer'].entries()){
   const result=await handler({httpMethod:'POST',headers:{accept:'application/json','content-type':'application/json'},body:JSON.stringify({email:`immediate-${i}@example.com`,consent:true,source})});
-  assert.equal(result.statusCode,200);assert.deepEqual(JSON.parse(result.body),{ok:true});assert.equal(jobs.length,i+1);assert.equal(r.rows[i+1][4],source);
+  assert.equal(result.statusCode,200);assert.deepEqual(JSON.parse(result.body),{ok:true,registration:'new'});assert.equal(jobs.length,i+1);assert.equal(r.rows[i+1][4],source);
  }
- const duplicate=await handler({httpMethod:'POST',headers:{accept:'application/json','content-type':'application/json'},body:JSON.stringify({email:'immediate-0@example.com',consent:true,source:'primal-core-footer'})});assert.equal(duplicate.statusCode,200);assert.equal(jobs.length,2);
+ const duplicate=await handler({httpMethod:'POST',headers:{accept:'application/json','content-type':'application/json'},body:JSON.stringify({email:'immediate-0@example.com',consent:true,source:'primal-core-footer'})});assert.equal(duplicate.statusCode,200);assert.equal(JSON.parse(duplicate.body).registration,'existing');assert.equal(jobs.length,2);
 });
 test('Vercel immediate sender integrates with real Sheet claim and receipt, with no replay or cron duplicate',async()=>{
  const {sendImmediateWelcome}=await import('../server/welcome-email.mjs');const r=receiver();r.setupMail();const job=r.submit({welcomeDelivery:'immediate-v1'}).welcomeJob;const messages=[];

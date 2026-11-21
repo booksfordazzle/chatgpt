@@ -45,6 +45,8 @@ function populateAttributionFields(form) {
   return fields;
 }
 
+window.addEventListener('primal:analytics-consent',()=>{attribution.snapshot();document.querySelectorAll('.waitlist-form').forEach(populateAttributionFields);});
+
 document.querySelectorAll('.waitlist-form').forEach(form => {
 form.addEventListener('submit', async event => {
   event.preventDefault();
@@ -66,6 +68,7 @@ form.addEventListener('submit', async event => {
   let redirecting = false;
   try {
     await attribution.ready;
+    if(!window.PrimalAnalytics?.allowed()){try{sessionStorage.removeItem('primal-core-attribution-v1');}catch{}}
     const fields = populateAttributionFields(form);
     const payload = { ...fields, email: email.value.trim(), consent: form.elements.consent.checked, lang: document.documentElement.lang, website: form.elements.website.value, source: form.elements.source.value };
     if (window.PRIMAL_DEV === true) console.log('[waitlist payload]', payload);
@@ -81,6 +84,8 @@ form.addEventListener('submit', async event => {
       return;
     }
     if (!response.ok || result.ok !== true) throw new Error('Not confirmed');
+    window.PrimalAnalytics?.track('generate_lead',{form_id:'waitlist'});
+    if(result.registration==='new')window.PrimalAnalytics?.track('early_access_signup');
     location.assign(english ? '/en/thanks.html' : '/thanks.html');
     redirecting = true;
   } catch {
@@ -589,6 +594,7 @@ document.querySelectorAll('[data-contact-form]').forEach(form => {
       status.textContent = english ? 'Please reload the page and try again.' : 'Ανανέωσε τη σελίδα και δοκίμασε ξανά.';
       return;
     }
+    if(window.PrimalAnalytics?.allowed()){try{sessionStorage.setItem('primal-contact-lead-pending',String(Date.now()));}catch{}}
     status.dataset.state = 'pending';
     status.textContent = english ? 'Continuing to spam verification…' : 'Συνέχεια στον έλεγχο ανεπιθύμητων μηνυμάτων…';
   });
