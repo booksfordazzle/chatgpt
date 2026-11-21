@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { welcomeMessage } from '../server/welcome-email.mjs';
 import { readFileSync } from 'node:fs';
-const source = readFileSync(new URL('../google-apps-script/Code.gs', import.meta.url), 'utf8');
+const source = readFileSync(process.env.RECEIVER_SOURCE || new URL('../google-apps-script/Code.gs', import.meta.url), 'utf8');
 const legacyHeaders = ['Email','Registered at (UTC)','Consent','Privacy version','Source'];
 function receiver(initialRows = [], options = {}) {
   const rows = initialRows.map(row => [...row]); let locked = false, flushed = 0;
@@ -136,7 +136,7 @@ test('welcome setup is repeatable and queues only future confirmed signups, pres
   r.submit({email:'new@example.com',locale:'el'}); r.sendMail(); r.sendMail();
   assert.deepEqual(r.rows[1],before); assert.equal(r.messages.length,1);
   assert.equal(r.messages[0].to,'new@example.com');
-  assert(r.messages[0].text.startsWith('Καλώς ήρθες. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.'));
+  assert(r.messages[0].text.startsWith('Σε ευχαριστούμε. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.'));
   assert.equal(r.messages[0].replyTo,'hello@primalcore.gr');assert.equal(r.messages[0].from.address,'hello@primalcore.gr');
   assert.equal(r.rows[2][15],'sent-thanks-v1'); assert(r.rows[2][16]);
   r.submit({email:'NEW@example.com'});r.sendMail();assert.equal(r.messages.length,1);
@@ -149,7 +149,7 @@ test('SMTP pre-send failures defer pending messages without losing signups and c
 });
 test('English welcome localizes the message and ambiguous failures never auto-resend', () => {
   const r=receiver();r.setupMail();r.submit({locale:'en-US'});r.sendMail();
-  assert(r.messages[0].text.startsWith('Welcome.'));
+  assert(r.messages[0].text.startsWith('Thank you.'));
   const failed=receiver([],{mailFails:true});failed.setupMail();assert.equal(failed.submit({}).ok,true);
   failed.sendMail();assert.equal(failed.rows[1][15],'review-thanks-v1');failed.sendMail();assert.equal(failed.messages.length,0);
 });
