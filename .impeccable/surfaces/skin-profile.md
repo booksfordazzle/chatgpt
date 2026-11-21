@@ -1,3 +1,5 @@
+> Build 01: result delivery form below result explanations/note, with email field, unchecked delivery consent and “Στείλε μου το αποτέλεσμά μου”. Send only after deliberate submission; use direct SMTP result endpoint, preserve input on failure and report success only after server acknowledgement. No email in tab storage, analytics or research/waitlist payloads. Configured SMTP enables this by default unless SKIN_PROFILE_EMAIL_ENABLED is explicitly false.
+
 > Mobile survey submission: final consent and response/error status sit outside the scrolling answer region, directly above the always-visible back/submit controls. Do not hide the consent requirement or validation error below the last price choices.
 
 > Research refinement: remove visible 01/05-style counters; keep the accessible progress bar. First displayed price is Κάτω από 20 €, with matching receiver label at the existing wire index 0.

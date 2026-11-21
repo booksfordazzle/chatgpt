@@ -71,3 +71,5 @@ test('all compatible multi-select combinations preserve the declared priority ru
   const r=evaluate(a);assert.equal(r.primary,sensation.includes(3)||tolerance===2?'C':['M','A','M','C','B','E'][goal]);assert.equal(r.habits.includes('cleanse'),cleansing.some(v=>v===1||v===3));checked++;
  }assert.equal(checked,2688);
 });
+
+test('configured SMTP enables requested result delivery by default and explicit false disables it',async()=>{const configured={...env};delete configured.SKIN_PROFILE_EMAIL_ENABLED;assert.equal((await run(undefined,{env:configured,method:'GET'})).data.email,true);assert.equal((await run(undefined,{env:{...configured,SKIN_PROFILE_EMAIL_ENABLED:'false'},method:'GET'})).data.email,false);});
