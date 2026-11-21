@@ -36,3 +36,7 @@ test('Standalone setup preserves its secret and its public receiver authenticate
  vm.createContext(ctx);vm.runInContext(readFileSync(new URL('../google-apps-script/SkinResearchStandalone.gs',import.meta.url),'utf8'),ctx);ctx.setupSkinResearch();const secret=props.SKIN_PROFILE_RESEARCH_SECRET;ctx.setupSkinResearch();assert.equal(props.SKIN_PROFILE_RESEARCH_SECRET,secret);ctx.saveSkinResearch=input=>{assert(locked);calls.push(input);return{ok:true};};
  const send=token=>ctx.doPost({postData:{contents:JSON.stringify({...data,token,action:'skin-research-v2'})}});assert.equal(send('bad').ok,false);assert.equal(calls.length,0);assert.equal(send(secret).ok,true);assert.equal(calls.length,1);assert.equal(locked,false);
 });
+
+test('research stores in owner reordered columns with gaps and deduplicates by moved ID',()=>{
+ const base=receiver();assert(base.save(data).ok);const h=base.rows[0];const headers=[...h.slice(3),...Array(12).fill(''),h[2],'',h[0],'',h[1]];const old=headers.map(n=>n==='Submission ID'?'old-id':n?'old value':'preserve gap');const r=receiver([headers,old]);assert(r.save(data).ok);assert(r.save(data).ok);assert.equal(r.rows.length,3);assert.deepEqual(r.rows[0],headers);assert.deepEqual(r.rows[1],old);assert.equal(r.rows[2][0],'Ξηρότητα και αφυδάτωση');assert.equal(r.rows[2][19],submissionId);assert.equal(r.rows[2][17],'skin-research-v2');assert.match(r.rows[2][21],/^\d{4}-/);
+});
