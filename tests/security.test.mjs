@@ -58,7 +58,7 @@ test('hosting policies protect transport, frame embedding and script execution c
  for (const name of ['Strict-Transport-Security', 'Cross-Origin-Opener-Policy', 'Cross-Origin-Resource-Policy', 'Content-Security-Policy']) {
   assert(headers[name]); assert(netlify.includes(`${name} = "${headers[name]}"`));
  }
- assert.match(headers['Content-Security-Policy'], /script-src 'self';/);
+ assert.match(headers['Content-Security-Policy'], /script-src 'self' https:\/\/www\.googletagmanager\.com;/);
  assert.match(headers['Content-Security-Policy'], /frame-ancestors 'none'/);
  assert.match(headers['Content-Security-Policy'], /upgrade-insecure-requests/);
  assert.doesNotMatch(headers['Content-Security-Policy'], /unsafe-inline|unsafe-eval/);

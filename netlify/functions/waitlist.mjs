@@ -26,8 +26,8 @@ export function createHandler({ env = process.env, fetchImpl = fetch, onRegister
     const headers = { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', 'X-Content-Type-Options': 'nosniff' };
     const json = /application\/json/i.test(event.headers?.accept || '');
     let languagePrefix = '';
-    const reply = (statusCode, ok, error, diagnostic) => json || event.httpMethod !== 'POST'
-      ? { statusCode, headers, body: JSON.stringify({ ok, ...(error ? { error } : {}), ...(diagnostic ? { diagnostic } : {}) }) }
+    const reply = (statusCode, ok, error, diagnostic, extra = {}) => json || event.httpMethod !== 'POST'
+      ? { statusCode, headers, body: JSON.stringify({ ok, ...(error ? { error } : {}), ...(diagnostic ? { diagnostic } : {}), ...extra }) }
       : { statusCode: 303, headers: { ...headers, Location: languagePrefix + (ok ? '/thanks.html' : '/signup-unavailable.html') }, body: '' };
     if (event.httpMethod !== 'POST') return { ...reply(405, false, 'method_not_allowed'), headers: { ...headers, Allow: 'POST' } };
     if (rejectsBrowserOrigin(event.headers)) return reply(403, false, 'origin_rejected');
@@ -125,7 +125,7 @@ export function createHandler({ env = process.env, fetchImpl = fetch, onRegister
           catch { try { report({code:'welcome_schedule_failed'}); } catch {} }
         } else { try { report({code:'welcome_job_invalid'}); } catch {} }
       }
-      return reply(200, true);
+      return reply(200, true, undefined, undefined, result.welcomeDelivery ? {registration:result.welcomeDelivery==='duplicate'?'existing':['immediate','queued','disabled'].includes(result.welcomeDelivery)?'new':'confirmed'} : {});
     } catch (error) {
       return storageFailure(error?.name === 'TimeoutError' || error?.name === 'AbortError' ? 'google_timeout' : 'google_network_error');
     }

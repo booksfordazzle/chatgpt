@@ -32,7 +32,9 @@ globalThis.PrimalAttribution = (() => {
     if (/Safari\//i.test(ua)) return 'Safari';
     return 'Other';
   }
-  function create({ location, document, navigator, window, storage }) {
+  function create({ location, document, navigator, window, storage, hasConsent = () => Boolean(globalThis.PrimalAnalytics?.allowed()) }) {
+    const empty=()=>Object.fromEntries([...campaignKeys,'landing_page','referrer_full','referrer_origin','landing_path','device_type','os','browser','screen_width','viewport'].map(k=>[k,'']));
+    if(!hasConsent())return {snapshot:()=>hasConsent()?create({location,document,navigator,window,storage,hasConsent}).snapshot():empty(),ready:Promise.resolve(empty())};
     let stored = {};
     try {
       const raw = storage?.getItem(storageKey);
@@ -51,6 +53,7 @@ globalThis.PrimalAttribution = (() => {
       ? clean(stored.referrer_full, 2048) : clean(document.referrer || '', 2048);
     let brave = false;
     function snapshot() {
+      if(!hasConsent())return empty();
       const width = Number.isFinite(window.innerWidth) && window.innerWidth > 0 ? Math.round(window.innerWidth) : '';
       const height = Number.isFinite(window.innerHeight) && window.innerHeight > 0 ? Math.round(window.innerHeight) : '';
       let referrerOrigin = '';

@@ -1,3 +1,5 @@
+> Analytics foundation: shared, equal-choice Google Analytics consent with persistent withdrawal controls. Consent is independent of adult confirmation, result email delivery, optional quiz-answer research storage and marketing signup. No Google tag loads before acceptance; funnel events exclude answers/profiles/addresses and only count confirmed form actions. Event contract and owner activation steps are in ANALYTICS_SETUP.md.
+
 > Build 01: result delivery form below result explanations/note, with email field, unchecked delivery consent and “Στείλε μου το αποτέλεσμά μου”. Send only after deliberate submission; use direct SMTP result endpoint, preserve input on failure and report success only after server acknowledgement. No email in tab storage, analytics or research/waitlist payloads. Configured SMTP enables this by default unless SKIN_PROFILE_EMAIL_ENABLED is explicitly false.
 
 > Mobile survey submission: final consent and response/error status sit outside the scrolling answer region, directly above the always-visible back/submit controls. Do not hide the consent requirement or validation error below the last price choices.

@@ -9,7 +9,7 @@ async function capture(page,path){await page.waitForTimeout(280);await page.eval
   await page.goto(base+'/skin-profile');await page.evaluate(()=>document.fonts.ready);
   assert.equal(await page.locator('.profile-home,.profile-series').count(),0);assert(await page.locator('.profile-experience-name').isVisible());
   if([390,1440].includes(width))await capture(page,'.impeccable/review/skin-profile/landing-'+width+'.png');
-  await page.locator('#profile-start button').click();assert(await page.locator('#profile-quiz').isHidden());await page.locator('#profile-adult').check();await page.locator('#profile-start button').click();
+  await page.locator('#profile-start button').click();assert(await page.locator('#profile-quiz').isHidden());if(await page.locator('#analytics-reject').isVisible())await page.locator('#analytics-reject').click();await page.locator('#profile-adult').check();await page.locator('#profile-start button').click();
   await page.locator('#question-next').click();assert(await page.locator('#question-error').textContent());
   const answers=[0,3,1,4,2,2,3,3,3,0];
   for(let q=0;q<10;q++){
