@@ -268,3 +268,10 @@
  .profile-page .profile-result-head .profile-final-note{grid-column:1;grid-row:3;margin:0;padding:40px 24px}
  .profile-page .profile-result-opening .profile-research-invitation{grid-column:1;grid-row:4;max-width:none;margin:0;border-radius:0}
 }
+
+/* Keep final survey consent and errors visible above the mobile navigation. */
+@media(max-width:900px){
+ #research-form>.profile-check{flex:none;margin:8px 4px;font-size:12px;line-height:1.45;min-height:40px;align-items:center}
+ #research-form>#research-status{flex:none;max-height:90px;overflow-y:auto;margin:0 4px 8px;font-size:13px;line-height:1.4}
+ #research-form>#research-status:empty{display:none}
+}

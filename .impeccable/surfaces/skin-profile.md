@@ -1,3 +1,5 @@
+> Mobile survey submission: final consent and response/error status sit outside the scrolling answer region, directly above the always-visible back/submit controls. Do not hide the consent requirement or validation error below the last price choices.
+
 > Research refinement: remove visible 01/05-style counters; keep the accessible progress bar. First displayed price is Κάτω από 20 €, with matching receiver label at the existing wire index 0.
 
 > Latest owner correction: remove the quiz-storage retry and restart-test buttons from results. Keep the result, optional storage status, survey CTA and browser navigation functional. Fresh quiz entry still resets; refresh may retry an unconfirmed save with the same ID.
