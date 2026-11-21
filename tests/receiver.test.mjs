@@ -136,7 +136,7 @@ test('welcome setup is repeatable and queues only future confirmed signups, pres
   r.submit({email:'new@example.com',locale:'el'}); r.sendMail(); r.sendMail();
   assert.deepEqual(r.rows[1],before); assert.equal(r.messages.length,1);
   assert.equal(r.messages[0].to,'new@example.com');
-  assert(r.messages[0].text.startsWith('Καλώς ήρθες. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.'));
+  assert(r.messages[0].text.startsWith('Σε ευχαριστούμε. Θα λάβεις μήνυμα όταν το PRIMAL CORE είναι έτοιμο προς διάθεση.'));
   assert.equal(r.messages[0].replyTo,'hello@primalcore.gr');assert.equal(r.messages[0].from.address,'hello@primalcore.gr');
   assert.equal(r.rows[2][15],'sent-thanks-v1'); assert(r.rows[2][16]);
   r.submit({email:'NEW@example.com'});r.sendMail();assert.equal(r.messages.length,1);
@@ -149,7 +149,7 @@ test('SMTP pre-send failures defer pending messages without losing signups and c
 });
 test('English welcome localizes the message and ambiguous failures never auto-resend', () => {
   const r=receiver();r.setupMail();r.submit({locale:'en-US'});r.sendMail();
-  assert(r.messages[0].text.startsWith('Welcome.'));
+  assert(r.messages[0].text.startsWith('Thank you.'));
   const failed=receiver([],{mailFails:true});failed.setupMail();assert.equal(failed.submit({}).ok,true);
   failed.sendMail();assert.equal(failed.rows[1][15],'review-thanks-v1');failed.sendMail();assert.equal(failed.messages.length,0);
 });
@@ -231,4 +231,13 @@ test('Skin Profile purpose consent is versioned separately and preserves existin
  assert.equal(r.rows[1][headers.indexOf('Skin profile marketing consent')],'true');assert.equal(r.rows[1][headers.indexOf('Skin profile marketing consent version')],'skin-profile-education-launch-v1');
  assert.match(r.rows[1][headers.indexOf('Skin profile marketing consent at (UTC)')],/^\d{4}-/);
  r.rows[1][headers.indexOf('Consent')]='false';assert.equal(r.submit({source:'primal-core-skin-profile',consentTextVersion:'skin-profile-education-launch-v1'}).ok,false);
+});
+
+test('owner reordered headers and blank column preserve old cells and store by header name',()=>{
+ const headers=['Email','Referrer origin','device_type','os','Registered at (UTC)','','Consent','Privacy version','Source'];
+ const old=["'old@example.com",'https://example.com','mobile','Android','2026-01-01T00:00:00Z','keep this cell','true','old-policy','old-source'];
+ const r=receiver([headers,old]);assert.equal(r.submit({email:'new@example.com',referrerOrigin:'https://new.example',os:'iOS'}).ok,true);assert.deepEqual(r.rows[1],old);assert.deepEqual(r.rows[0].slice(0,5),headers.slice(0,5));assert.equal(r.rows[0][5],'Legacy column 6');assert.equal(r.rows[2][1],'https://new.example');assert.equal(r.rows[2][3],'iOS');assert.match(r.rows[2][4],/^\d{4}-/);assert.equal(r.rows[2][6],'true');assert.equal(r.submit({email:'NEW@example.com'}).ok,true);assert.equal(r.rows.length,3);
+});
+test('reordered registration timestamp supports immediate welcome claim and completion',()=>{
+ const r=receiver([['Email','Referrer origin','device_type','os','Registered at (UTC)','','Consent','Privacy version','Source']]);r.setupMail();const saved=r.submit({email:'new@example.com',welcomeDelivery:'immediate-v1'});assert.equal(saved.ok,true);const job=saved.welcomeJob;assert.equal(r.submit({action:'claim-welcome-smtp',...job}).ok,true);assert.equal(r.submit({action:'complete-welcome-immediate',...job,deliveryResult:'accepted'}).ok,true);const headers=r.rows[0];assert.equal(r.rows[1][headers.indexOf('Welcome email status')],'sent-thanks-v1');
 });
