@@ -46,10 +46,17 @@ function doPost(event) {
       sheet.setFrozenRows(1);
     } else {
       headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getDisplayValues()[0];
-      // Upgrade the previous five-column layout additively. Unknown layouts fail safely.
-      if (!baseHeaders.every(function(name, i) { return headers[i] === name; })) return reply(false);
-      if (headers.some(function(name, i) { return !name || headers.indexOf(name) !== i; })) return reply(false);
-      var missing = extraHeaders.filter(function(name) { return headers.indexOf(name) < 0; });
+      // Accept the owner's reordered Waitlist; never reorder existing columns/data.
+      if (headers[0] !== 'Email' || headers.indexOf('Registered at (UTC)') < 0) return reply(false);
+      if (headers.some(function(name, i) { return name && headers.indexOf(name) !== i; })) return reply(false);
+      headers.forEach(function(name, i) {
+        if (name) return;
+        var reserved = 'Legacy column ' + (i + 1);
+        while (headers.indexOf(reserved) >= 0) reserved += '_';
+        headers[i] = reserved;
+        sheet.getRange(1, i + 1, 1, 1).setValues([[reserved]]);
+      });
+      var missing = baseHeaders.concat(extraHeaders).filter(function(name) { return headers.indexOf(name) < 0; });
       if (missing.length) {
         sheet.getRange(1, headers.length + 1, 1, missing.length).setValues([missing]);
         headers = headers.concat(missing);
@@ -157,14 +164,14 @@ function sendPendingWelcomeEmails() {
       statusColumn = headers.indexOf('Welcome email status');
       sentColumn = headers.indexOf('Welcome email sent at (UTC)');
       var consentColumn = headers.indexOf('Consent'), localeColumn = headers.indexOf('Locale');
-      if (headers[0] !== 'Email' || statusColumn < 0 || sentColumn < 0 || consentColumn < 0 || localeColumn < 0) return;
+      if (headers[0] !== 'Email' || headers.indexOf('Registered at (UTC)') < 0 || statusColumn < 0 || sentColumn < 0 || consentColumn < 0 || localeColumn < 0) return;
       var rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, headers.length).getDisplayValues();
-      var index = rows.findIndex(function(row) { var pending = row[statusColumn] === 'pending-thanks-v1' || (row[statusColumn] === 'pending-immediate-thanks-v1' && Date.now() - Date.parse(row[1]) > 60000); return pending && row[consentColumn] === 'true' && !row[sentColumn]; });
+      var index = rows.findIndex(function(row) { var pending = row[statusColumn] === 'pending-thanks-v1' || (row[statusColumn] === 'pending-immediate-thanks-v1' && Date.now() - Date.parse(row[headers.indexOf('Registered at (UTC)')]) > 60000); return pending && row[consentColumn] === 'true' && !row[sentColumn]; });
       if (index < 0) return;
       rowNumber = index + 2;
       email = String(rows[index][0]).replace(/^'/, '');
       locale = rows[index][localeColumn];
-      registeredAt = rows[index][1];
+      registeredAt = rows[index][headers.indexOf('Registered at (UTC)')];
       if (email.length > 254 || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email) || /[\r\n\x00]/.test(email)) return;
       // Claim and flush before sending. Interrupted/ambiguous sends are not retried.
       sheet.getRange(rowNumber, statusColumn + 1, 1, 1).setValues([['sending-thanks-v1']]);
@@ -205,9 +212,9 @@ function claimWelcomeSmtp(input, props) {
   var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getDisplayValues()[0];
   var statusColumn = headers.indexOf('Welcome email status'), sentColumn = headers.indexOf('Welcome email sent at (UTC)');
   var consentColumn = headers.indexOf('Consent'), localeColumn = headers.indexOf('Locale');
-  if (headers[0] !== 'Email' || statusColumn < 0 || sentColumn < 0 || consentColumn < 0 || localeColumn < 0) return false;
+  if (headers[0] !== 'Email' || headers.indexOf('Registered at (UTC)') < 0 || statusColumn < 0 || sentColumn < 0 || consentColumn < 0 || localeColumn < 0) return false;
   var row = sheet.getRange(input.rowNumber, 1, 1, headers.length).getDisplayValues()[0];
-  if (String(row[0]).replace(/^'/, '') !== input.email || row[1] !== input.registeredAt || row[localeColumn] !== input.locale
+  if (String(row[0]).replace(/^'/, '') !== input.email || row[headers.indexOf('Registered at (UTC)')] !== input.registeredAt || row[localeColumn] !== input.locale
     || row[consentColumn] !== 'true' || row[sentColumn] || row[statusColumn] !== (input.deliveryMode === 'immediate' ? 'pending-immediate-thanks-v1' : 'sending-thanks-v1')) return false;
   sheet.getRange(input.rowNumber, statusColumn + 1, 1, 1).setValues([['smtp-claimed-thanks-v1']]);
   SpreadsheetApp.flush();
@@ -241,9 +248,9 @@ function completeWelcomeImmediate(input, props) {
   var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getDisplayValues()[0];
   var statusColumn = headers.indexOf('Welcome email status'), sentColumn = headers.indexOf('Welcome email sent at (UTC)');
   var localeColumn = headers.indexOf('Locale');
-  if (headers[0] !== 'Email' || statusColumn < 0 || sentColumn < 0 || localeColumn < 0) return false;
+  if (headers[0] !== 'Email' || headers.indexOf('Registered at (UTC)') < 0 || statusColumn < 0 || sentColumn < 0 || localeColumn < 0) return false;
   var row = sheet.getRange(input.rowNumber, 1, 1, headers.length).getDisplayValues()[0];
-  if (String(row[0]).replace(/^'/, '') !== input.email || row[1] !== input.registeredAt || row[localeColumn] !== input.locale) return false;
+  if (String(row[0]).replace(/^'/, '') !== input.email || row[headers.indexOf('Registered at (UTC)')] !== input.registeredAt || row[localeColumn] !== input.locale) return false;
   if (row[statusColumn] === 'sent-thanks-v1' && row[sentColumn]) return true;
   if (['pending-immediate-thanks-v1', 'smtp-claimed-thanks-v1'].indexOf(row[statusColumn]) < 0 || row[sentColumn]) return false;
   var accepted = input.deliveryResult === 'accepted' && row[statusColumn] === 'smtp-claimed-thanks-v1';

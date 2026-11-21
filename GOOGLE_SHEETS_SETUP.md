@@ -1,3 +1,5 @@
+> Receiver compatibility fix: the owner’s Waitlist starts Email, Referrer origin, device_type, os, Registered at (UTC), with one unnamed column. Preserve that order and subscriber data. Code.gs accepts this layout, assigns a unique Legacy column N name to blank headers, and appends missing known fields. Duplicate nonblank headers and unrelated layouts still fail safely. Registration date lookups in the email worker/claim/completion use the header name. Publish a new version of the existing waitlist deployment after replacing Code.gs; keep its URL and secret unchanged.
+
 > **17 November 2026 update:** The owner has requested free thank-you emails again. Follow [WELCOME_EMAIL_SETUP.md](WELCOME_EMAIL_SETUP.md) and the current Code.gs. Older instructions below describing disabled welcome sending are historical and superseded; existing storage setup, URL and secret remain unchanged.
 
 # Activate Google Sheets signup storage
