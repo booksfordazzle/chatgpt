@@ -6,15 +6,20 @@ function saveSkinResearch(input) {
  if(input.spreadsheetId!==target || input.consent!==true || typeof input.submissionId!=='string' || !/^[a-f0-9-]{36}$/i.test(input.submissionId) || Object.keys(input).some(function(k){return fields.indexOf(k)<0;}) || questions.some(function(q){return !Number.isInteger(input[q.id]) || input[q.id]<0 || input[q.id]>=q.options.length;}))return {ok:false};
  var book=SpreadsheetApp.openById(target);
  var sheet=book.getSheetByName('Skin Research') || book.insertSheet('Skin Research');
- var headers=['Submission ID','Submitted at (UTC)','Consent version'].concat(questions.map(function(q){return q.title;}));
- if(sheet.getLastRow()===0){sheet.appendRow(headers);sheet.setFrozenRows(1);}
- else {var actual=sheet.getRange(1,1,1,sheet.getLastColumn()).getDisplayValues()[0];if(JSON.stringify(actual)!==JSON.stringify(headers))return {ok:false};}
- var existing=sheet.getLastRow()>1?sheet.getRange(2,1,sheet.getLastRow()-1,1).getDisplayValues():[];
- var index=existing.findIndex(function(row){return row[0]===input.submissionId;});
- var answers=questions.map(function(q){return q.options[input[q.id]];});
- var row=index<0?sheet.getLastRow()+1:index+2;
- if(index<0){var values=[input.submissionId,new Date().toISOString(),'skin-research-v2'].concat(answers);var range=sheet.getRange(row,1,1,values.length);range.setNumberFormat('@');range.setValues([values]);SpreadsheetApp.flush();}
+ var expected=['Submission ID','Submitted at (UTC)','Consent version'].concat(questions.map(function(q){return q.title;})),headers;
+ if(sheet.getLastRow()===0){sheet.appendRow(expected);sheet.setFrozenRows(1);headers=expected.slice();}
+ else {
+  headers=sheet.getRange(1,1,1,sheet.getLastColumn()).getDisplayValues()[0];
+  if(headers.some(function(h,i){return h&&headers.indexOf(h)!==i;})||questions.some(function(q){return headers.indexOf(q.title)<0;}))return {ok:false};
+  var missing=expected.filter(function(h){return headers.indexOf(h)<0;});
+  if(missing.length){sheet.getRange(1,headers.length+1,1,missing.length).setValues([missing]);headers=headers.concat(missing);}
+ }
+ var existing=sheet.getLastRow()>1?sheet.getRange(2,headers.indexOf('Submission ID')+1,sheet.getLastRow()-1,1).getDisplayValues():[];
+ var index=existing.findIndex(function(row){return row[0]===input.submissionId;}),row=index<0?sheet.getLastRow()+1:index+2;
+ var valuesByHeader={'Submission ID':input.submissionId,'Consent version':'skin-research-v2'};
+ questions.forEach(function(q){valuesByHeader[q.title]=q.options[input[q.id]];});
+ if(index<0){valuesByHeader['Submitted at (UTC)']=new Date().toISOString();var values=headers.map(function(h){return valuesByHeader[h]||'';});var range=sheet.getRange(row,1,1,values.length);range.setNumberFormat('@');range.setValues([values]);SpreadsheetApp.flush();}
  var saved=sheet.getRange(row,1,1,headers.length).getDisplayValues()[0];
- if(saved[0]!==input.submissionId || saved[2]!=='skin-research-v2' || JSON.stringify(saved.slice(3))!==JSON.stringify(answers))return {ok:false};
+ if(Object.keys(valuesByHeader).some(function(h){return saved[headers.indexOf(h)]!==valuesByHeader[h];}))return {ok:false};
  return {ok:true,spreadsheetId:target,submissionId:input.submissionId};
 }
