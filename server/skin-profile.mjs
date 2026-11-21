@@ -21,7 +21,7 @@ export function createSkinProfileHandler({env=process.env,fetchImpl=fetch,create
  const aggregateLimit=createSubmissionLimiter({emailLimit:1000,ipLimit:120});
  const dbReady=()=>{try{database(env);return true;}catch{return false;}};
  const sheetsReady=()=>{try{researchSheetsSettings(env);return env.SKIN_PROFILE_RESEARCH_V2_ENABLED==='true';}catch{return false;}};
- const mailReady=()=>{try{smtpSettings(env);return env.SKIN_PROFILE_EMAIL_ENABLED==='true';}catch{return false;}};
+ const mailReady=()=>{try{smtpSettings(env);return env.SKIN_PROFILE_EMAIL_ENABLED!=='false';}catch{return false;}};
  async function count(entries){const response=await fetchImpl(database(env),{method:'POST',redirect:'error',signal:AbortSignal.timeout(6000),headers:{'Content-Type':'application/json',apikey:env.SKIN_PROFILE_SUPABASE_SERVICE_ROLE_KEY,Authorization:'Bearer '+env.SKIN_PROFILE_SUPABASE_SERVICE_ROLE_KEY},body:JSON.stringify({entries})});if(!response.ok)throw Error();const saved=await response.json();if(saved!==true)throw Error();}
  return async(req,res)=>{
   const reply=(status,data)=>{res.statusCode=status;res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json; charset=utf-8');res.setHeader('X-Content-Type-Options','nosniff');res.end(JSON.stringify(data));};

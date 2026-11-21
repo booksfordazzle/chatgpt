@@ -275,3 +275,13 @@
  #research-form>#research-status{flex:none;max-height:90px;overflow-y:auto;margin:0 4px 8px;font-size:13px;line-height:1.4}
  #research-form>#research-status:empty{display:none}
 }
+
+/* Optional result delivery is separate from research and marketing. */
+.profile-result-email{margin-top:36px;border-top:1px solid var(--profile-line);padding-top:28px}
+.profile-result-email h2{font-size:24px;margin:0 0 24px}
+.profile-result-email form>label:first-child{display:block;font-size:15px;margin-bottom:8px}
+.profile-result-email input[type=email]{display:block;width:100%;min-height:52px;padding:12px;border:1px solid var(--profile-line);border-radius:12px;background:var(--profile-bg);color:var(--profile-ink);font-size:16px}
+.profile-result-email .profile-check{font-size:13px;margin:20px 0 16px}
+.profile-result-head .profile-result-email .profile-fine{font-size:12px;margin:0 0 22px;line-height:1.6}
+.profile-result-email .profile-button{width:100%;font-size:14px;font-weight:700;line-height:1.4}
+.profile-result-head .profile-result-email #result-email-status{margin-top:16px;font-size:13px;line-height:1.5}
