@@ -26,6 +26,8 @@ test('quiz and email render the same title, guidance, and ordered photographs fo
     assert(!/<script|<form|<iframe|onload=|onerror=|cid:/i.test(html));
     assert(html.includes('role="presentation"'));
     assert(html.includes('max-width:600px'));
+    assert.match(html, /src="https:\/\/preview\.example\/assets\/home-wordmark\.jpg"[^>]+alt="PRIMAL CORE"/);
+    assert.match(html, /BEEF TALLOW &amp; MASTIC/);
     const webImages = [...web.matchAll(/data-image="([^"]+)"/g)].map(match => match[1]);
     const mailImages = [...html.matchAll(/<img src="https:\/\/preview\.example\/images\/skin-profiles\/([^"]+)\.jpg"/g)].map(match => match[1]);
     assert.deepEqual(mailImages, webImages);
@@ -61,6 +63,7 @@ test('PROTECT is renderable for review without assigning it to a quiz answer', (
   assert.match(web, />PROTECT<\/h1>/);
   assert.match(html, />PROTECT<\/h1>/);
   assert.match(html, /protect\/layered-rock\.jpg/);
+  assert.match(html, /src="https:\/\/primalcore\.gr\/assets\/home-wordmark\.jpg"[^>]+alt="PRIMAL CORE"/);
   assert.match(subject, /PROTECT/);
   assert(text.includes(protect.disclaimer));
 });

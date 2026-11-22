@@ -37,9 +37,14 @@ function html(profile, subject, origin) {
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#080808"><tr><td align="center">
 <!--[if mso]><table role="presentation" width="600" cellspacing="0" cellpadding="0"><tr><td><![endif]-->
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#171717" style="width:100%;max-width:600px;font-family:'Google Sans',Arial,sans-serif">
+<tr><td align="center" bgcolor="#000000" style="padding:0 20px 24px;background:#000000;color:#ffffff">
+<a href="${escapeHtml(origin)}/" style="color:#ffffff;text-decoration:none">
+<img src="${escapeHtml(origin)}/assets/home-wordmark.jpg" width="260" height="145" alt="PRIMAL CORE" style="display:block;width:100%;max-width:260px;height:auto;margin:0 auto;border:0;color:#ffffff;font-size:18px;font-weight:bold">
+</a>
+<p style="margin:0;color:#ffffff;font-size:11px;line-height:1.5;letter-spacing:2px">BEEF TALLOW &amp; MASTIC</p>
+</td></tr>
 <tr><td class="content" style="padding:36px 36px 28px">
-<a href="${escapeHtml(origin)}/" style="color:#ffffff;text-decoration:none;font-size:14px;font-weight:bold;letter-spacing:2px">PRIMAL CORE</a>
-<h1 class="result-title" style="margin:28px 0 14px;color:#ffffff;font-size:52px;line-height:1.1">${escapeHtml(profile.title)}</h1>
+<h1 class="result-title" style="margin:0 0 14px;color:#ffffff;font-size:52px;line-height:1.1">${escapeHtml(profile.title)}</h1>
 <p style="margin:0;color:#d5d5d5;font-size:22px;line-height:1.4">${escapeHtml(profile.subtitle)}</p></td></tr>
 ${imageRow(profile.hero, origin)}
 <tr><td class="content" style="padding:36px 36px 20px">${renderBlocks(profile.intro, styles)}</td></tr>
