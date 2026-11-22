@@ -2,6 +2,7 @@ import {researchSheetsSettings,saveResearchToSheets,saveQuizToSheets} from './sk
 import nodemailer from 'nodemailer';
 import {smtpSettings} from './welcome-email.mjs';
 import {validResult,validAnswer} from '../public/skin-profile/engine.mjs';
+import {skinResultHtml,skinResultAttachments} from './skin-result-template.mjs';
 import {resultText} from '../public/skin-profile/content.mjs';
 import {createSubmissionLimiter,rejectsBrowserOrigin} from '../netlify/functions/lib/request-guard.mjs';
 export const funnelEvents=['lead_magnet_view','quiz_start','quiz_step_complete','quiz_complete','result_view','result_copy','email_delivery_requested','marketing_opt_in','product_concept_view','product_interest_click','research_complete','early_access_signup'];
@@ -42,10 +43,10 @@ export function createSkinProfileHandler({env=process.env,fetchImpl=fetch,create
   if(!permission.allowed){res.setHeader('Retry-After',String(permission.retryAfter));return reply(429,{ok:false,code:'rate_limited'});}
   if(d.action==='email'){
    if(!mailReady())return reply(503,{ok:false,code:'unavailable'});
-   // Only fixed educational content is mailed; no arbitrary HTML, attachments,
+   // Only fixed educational content is mailed; no arbitrary HTML or attachments,
    // raw answers, marketing subscription or database writes on this path.
    const transport=createTransport(smtpSettings(env));
-   try{const sent=await transport.sendMail({from:{name:'PRIMAL CORE',address:'hello@primalcore.gr'},replyTo:'hello@primalcore.gr',to:d.email,envelope:{from:'hello@primalcore.gr',to:[d.email]},subject:'PRIMAL CORE — Η σύνοψη της καθημερινής σου φροντίδας',text:resultText(d.result)});if(!sent.accepted?.some(a=>String(a).toLowerCase()===d.email.toLowerCase()))throw Error();return reply(200,{ok:true,status:'accepted'});}catch{return reply(502,{ok:false,code:'send_unconfirmed'});}finally{transport.close();}
+   try{const sent=await transport.sendMail({from:{name:'PRIMAL CORE',address:'hello@primalcore.gr'},replyTo:'hello@primalcore.gr',to:d.email,envelope:{from:'hello@primalcore.gr',to:[d.email]},subject:'PRIMAL CORE — Η σύνοψη της καθημερινής σου φροντίδας',text:resultText(d.result),html:skinResultHtml(d.result),attachments:skinResultAttachments()});if(!sent.accepted?.some(a=>String(a).toLowerCase()===d.email.toLowerCase()))throw Error();return reply(200,{ok:true,status:'accepted'});}catch{return reply(502,{ok:false,code:'send_unconfirmed'});}finally{transport.close();}
   }
   if(d.action==='quiz-save'){if(!sheetsReady())return reply(503,{ok:false,code:'unavailable'});try{await saveQuizToSheets({submissionId:d.submissionId,answers:d.answers,consent:true},{env,fetchImpl});return reply(200,{ok:true});}catch{return reply(503,{ok:false,code:'unavailable'});}}
   if(d.action==='research-v2'){
