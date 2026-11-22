@@ -10,6 +10,9 @@
   window.dataLayer=window.dataLayer||[];
   function tag(){window.dataLayer.push(arguments);}
   tag('consent','default',denied);
+  // Suppress the container's initial automatic pageview before js/config runs.
+  // Per-destination send_page_view:false remains; currentPage is the sole owner.
+  tag('set','send_page_view',false);
   function allowed(){return choice==='granted';}
   function clearCookies(){
     const parts=location.hostname.split('.');const domains=['',...parts.map((_,i)=>'.'+parts.slice(i).join('.')).filter(d=>d.slice(1).includes('.'))];
