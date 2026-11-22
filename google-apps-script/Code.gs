@@ -20,6 +20,8 @@ function doPost(event) {
       return reply(quiz.ok === true, quiz);
     }
     if (input.action === 'skin-profile-delivery-v1') {
+      var deliverySecret = props.getProperty('SKIN_PROFILE_RESEARCH_SECRET') || props.getProperty('WAITLIST_SHARED_SECRET');
+      if (!deliverySecret || input.token !== deliverySecret) return reply(false);
       lock.waitLock(10000); locked = true;
       var delivery = saveSkinProfileDelivery(input, props);
       return reply(delivery.ok === true, delivery);
@@ -271,9 +273,8 @@ function saveSkinProfileDelivery(input, props) {
   if (input.spreadsheetId !== target || input.deliveryConsent !== true || input.status !== 'smtp-accepted' ||
       typeof input.submissionId !== 'string' || !/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(input.submissionId) ||
       typeof input.email !== 'string' || input.email.length > 254 || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(input.email) ||
-      /[\r\n\x00]/.test(input.email) || ['RESTORE','ENDURE','CALM','BALANCE','ESSENTIAL'].indexOf(input.result) < 0 ||
+      /[\r\n\x00]/.test(input.email) || ['M','A','C','B','E'].indexOf(input.result) < 0 ||
       Object.keys(input).some(function(k){return allowed.indexOf(k) < 0;})) return {ok:false};
-  if (props.getProperty('SPREADSHEET_ID') !== target) return {ok:false};
   var book = SpreadsheetApp.openById(target), sheet = book.getSheetByName('Skin Profile Emails') || book.insertSheet('Skin Profile Emails');
   var expected = ['Submission ID','Email','Requested at (UTC)','Result','Delivery consent','Email status'];
   if (sheet.getLastRow() === 0) { sheet.appendRow(expected); sheet.setFrozenRows(1); }
