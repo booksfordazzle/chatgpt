@@ -84,6 +84,11 @@ export const researchQuestions=[
       "Δεν θα αγόραζα τέτοιο προϊόν"
     ]
   }
+  ,{
+    "id":"reason",
+    "title":"Ποιος είναι ο βασικός λόγος που δεν θα το αγόραζες;",
+    "options":["Η τιμή","Το beef tallow ως συστατικό","Δεν χρησιμοποιώ balm προσώπου","Κάτι άλλο"]
+  }
 ];
 
 // Editorial labels only; question IDs and assessment inputs remain unchanged.
