@@ -50,7 +50,7 @@ export function createSkinProfileHandler({env=process.env,fetchImpl=fetch,create
       if(d.submissionId){try{await saveSkinProfileDeliveryToSheets({submissionId:d.submissionId,email:d.email,result:d.result.primary,deliveryConsent:true,status:'smtp-accepted'},{env,fetchImpl});}catch{return reply(503,{ok:false,code:'email_accepted_storage_unconfirmed'});}}
       return reply(200,{ok:true,status:d.submissionId?'accepted_and_saved':'accepted'});}catch{return reply(502,{ok:false,code:'send_unconfirmed'});}finally{transport.close();}
   }
-  if(d.action==='quiz-save'){if(!sheetsReady())return reply(503,{ok:false,code:'unavailable'});try{await saveQuizToSheets({submissionId:d.submissionId,answers:d.answers,consent:true},{env,fetchImpl});return reply(200,{ok:true});}catch{return reply(503,{ok:false,code:'unavailable'});}}
+  if(d.action==='quiz-save'){if(!sheetsReady())return reply(503,{ok:false,code:'unavailable'});try{await saveQuizToSheets({submissionId:d.submissionId,answers:d.answers,gender:d.gender??null,consent:true},{env,fetchImpl});return reply(200,{ok:true});}catch{return reply(503,{ok:false,code:'unavailable'});}}
   if(d.action==='research-v2'){
    if(!sheetsReady())return reply(503,{ok:false,code:'unavailable'});
    try{const {action,...answers}=d;await saveResearchToSheets(answers,{env,fetchImpl});return reply(200,{ok:true});}catch{return reply(503,{ok:false,code:'unavailable'});}
