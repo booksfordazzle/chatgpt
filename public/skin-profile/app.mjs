@@ -75,9 +75,9 @@ function syncResultMail(){const form=$('#result-email-form');if(!form||resultMai
 function bindResultMail(){
  syncResultMail();const form=$('#result-email-form');
  form.onsubmit=async e=>{e.preventDefault();if(resultMailSending||available.email!==true||!form.reportValidity())return;
- resultMailSending=true;const button=form.querySelector('button'),status=$('#result-email-status');button.disabled=true;button.textContent='Αποστολή…';form.setAttribute('aria-busy','true');status.textContent='Το αποτέλεσμά σου αποστέλλεται…';
- try{await request({action:'email',email:form.elements.email.value.trim(),submissionId:quizSubmissionId,result:structuredClone(result),deliveryConsent:form.elements.deliveryConsent.checked,adult:true});window.PrimalAnalytics?.trackOnce('generate_lead',quizSubmissionId,{form_id:'result_email'});status.textContent='Το αποτέλεσμά σου στάλθηκε. Έλεγξε τα εισερχόμενα και τα ανεπιθύμητα.';form.reset();}
- catch(error){status.textContent=error.message==='email_accepted_storage_unconfirmed'?'Το email έγινε αποδεκτό για αποστολή, αλλά η καταγραφή του δεν επιβεβαιώθηκε. Μην επαναλάβεις την αποστολή.':'Δεν επιβεβαιώθηκε η αποστολή του email. Οι πληροφορίες σου διατηρήθηκαν· δοκίμασε ξανά.';}
+ resultMailSending=true;const button=form.querySelector('button'),status=$('#result-email-status');button.disabled=true;button.textContent='Αποστολή…';form.setAttribute('aria-busy','true');status.style.color='';status.textContent='Το αποτέλεσμά σου αποστέλλεται…';
+ try{await request({action:'email',email:form.elements.email.value.trim(),submissionId:quizSubmissionId,result:structuredClone(result),deliveryConsent:form.elements.deliveryConsent.checked,adult:true});window.PrimalAnalytics?.trackOnce('generate_lead',quizSubmissionId,{form_id:'result_email'});status.textContent='Το αποτέλεσμά σου στάλθηκε. Έλεγξε τα εισερχόμενα και τα ανεπιθύμητα.';status.style.color='#22C55E';form.reset();}
+ catch(error){status.style.color='';status.textContent=error.message==='email_accepted_storage_unconfirmed'?'Το email έγινε αποδεκτό για αποστολή, αλλά η καταγραφή του δεν επιβεβαιώθηκε. Μην επαναλάβεις την αποστολή.':'Δεν επιβεβαιώθηκε η αποστολή του email. Οι πληροφορίες σου διατηρήθηκαν· δοκίμασε ξανά.';}
  finally{resultMailSending=false;form.removeAttribute('aria-busy');button.textContent='Στείλε μου το αποτέλεσμά μου';syncResultMail();}
  };
 }
