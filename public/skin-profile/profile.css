@@ -285,3 +285,11 @@
 .profile-result-head .profile-result-email .profile-fine{font-size:12px;margin:0 0 22px;line-height:1.6}
 .profile-result-email .profile-button{width:100%;font-size:14px;font-weight:700;line-height:1.4}
 .profile-result-head .profile-result-email #result-email-status{margin-top:16px;font-size:13px;line-height:1.5}
+
+/* Keep desktop quiz navigation immediately beneath the last answer. */
+@media (min-width:901px){
+ #profile-quiz .profile-question-panel{align-self:center;}
+ #profile-quiz #question-form{display:flex;flex-direction:column;flex:0 1 auto;min-height:0;height:auto;overflow:visible;}
+ #profile-quiz #question-content{flex:0 1 auto;overflow:visible;min-height:0;padding-bottom:0;}
+ #profile-quiz .profile-controls{position:static;margin:14px 0 0;padding:8px 4px 0;border-top:0;flex:none;width:100%;}
+}
