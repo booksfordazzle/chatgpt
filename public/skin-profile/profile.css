@@ -293,3 +293,12 @@
  #profile-quiz #question-content{flex:0 1 auto;overflow:visible;min-height:0;padding-bottom:0;}
  #profile-quiz .profile-controls{position:static;margin:14px 0 0;padding:8px 4px 0;border-top:0;flex:none;width:100%;}
 }
+
+/* Desktop: compact, left-aligned back/next controls, matching the reference. */
+@media (min-width:901px){
+ #profile-quiz .profile-controls{justify-content:flex-start;gap:36px;}
+ #profile-quiz #question-back{flex:0 0 56px;}
+ #profile-quiz #question-next{flex:0 0 56px;}
+}
+/* Highlight multiple-choice guidance without altering answer cards. */
+#profile-quiz .profile-choice-hint{color:#78bf78;}
