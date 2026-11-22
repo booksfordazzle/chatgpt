@@ -52,8 +52,8 @@ export function createSkinProfileHandler({env=process.env,fetchImpl=fetch,create
   }
   if(d.action==='quiz-save'){if(!sheetsReady()){console.error('[skin-profile:quiz-save] configuration_or_feature_flag_unavailable');return reply(503,{ok:false,code:'unavailable'});}try{await saveQuizToSheets({submissionId:d.submissionId,answers:d.answers,gender:d.gender??null,consent:true},{env,fetchImpl});return reply(200,{ok:true});}catch(error){const category=error?.name==='TimeoutError'?'timeout':error?.message==='unconfirmed'?'receiver_unconfirmed':error?.message==='not_configured'?'configuration_invalid':'transport_or_other';console.error('[skin-profile:quiz-save] '+category);return reply(503,{ok:false,code:'unavailable'});}}
   if(d.action==='research-v2'){
-   if(!sheetsReady())return reply(503,{ok:false,code:'unavailable'});
-   try{const {action,...answers}=d;await saveResearchToSheets(answers,{env,fetchImpl});return reply(200,{ok:true});}catch{return reply(503,{ok:false,code:'unavailable'});}
+   if(!sheetsReady()){console.error('[skin-profile:research-v2] configuration_or_feature_flag_unavailable');return reply(503,{ok:false,code:'unavailable'});}
+   try{const {action,...answers}=d;await saveResearchToSheets(answers,{env,fetchImpl});return reply(200,{ok:true});}catch(error){const category=error?.name==='TimeoutError'?'timeout':error?.message==='unconfirmed'?'receiver_unconfirmed':error?.message==='not_configured'?'configuration_invalid':'transport_or_other';console.error('[skin-profile:research-v2] '+category);return reply(503,{ok:false,code:'unavailable'});}
   }
   if(!dbReady()||d.action==='event'&&env.SKIN_PROFILE_ANALYTICS_ENABLED!=='true')return reply(503,{ok:false,code:'unavailable'});
   const entries=d.action==='event'?[{metric:'event:'+d.name}]:['interest','spend','decision'].filter(k=>d[k]!==null).map(k=>({metric:'research:'+k+':'+d[k]}));
