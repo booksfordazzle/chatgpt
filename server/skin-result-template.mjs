@@ -39,7 +39,7 @@ function html(profile, subject, origin) {
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#171717" style="width:100%;max-width:600px;font-family:'Google Sans',Arial,sans-serif">
 <tr><td align="center" bgcolor="#000000" style="padding:0 20px 24px;background:#000000;color:#ffffff">
 <a href="${escapeHtml(origin)}/" style="color:#ffffff;text-decoration:none">
-<img src="${escapeHtml(origin)}/assets/home-wordmark.jpg" width="260" height="145" alt="PRIMAL CORE" style="display:block;width:100%;max-width:260px;height:auto;margin:0 auto;border:0;color:#ffffff;font-size:18px;font-weight:bold">
+<img src="${escapeHtml(origin)}/assets/skin-profile-wordmark.png" width="320" height="119" alt="PRIMAL CORE" style="display:block;width:100%;max-width:320px;height:auto;margin:0 auto;border:0;color:#ffffff;font-size:18px;font-weight:bold">
 </a>
 <p style="margin:0;color:#ffffff;font-size:11px;line-height:1.5;letter-spacing:2px">BEEF TALLOW &amp; MASTIC</p>
 </td></tr>
