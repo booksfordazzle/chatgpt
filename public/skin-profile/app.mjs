@@ -1,17 +1,17 @@
 let researchSubmissionId=crypto.randomUUID();
 import {questions,researchQuestions,questionVisuals} from './questions.mjs';
 import {evaluate,selectedOptions,validAnswer} from './engine.mjs';
-import {profiles,identities,profileVisuals,resultStories,personalizedSummary} from './content.mjs';
+import {personalizedSummary} from './content.mjs';
+import {editorialResult,renderEditorialResult} from './editorial-result.mjs';
 const $=s=>document.querySelector(s);
 const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const arrow=(left=false)=>`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" ${left?'class="profile-arrow-left"':''}><path d="M4 12h15M12 5l7 7-7 7"/></svg>`;
-const paragraphs=items=>items.map(t=>'<p>'+escape(t)+'</p>').join('');
 const ui={landing:$('#profile-landing'),quiz:$('#profile-quiz'),results:$('#profile-results'),research:$('#profile-research')};
 let gender=null,answers=Array(questions.length).fill(null),step=0,result,consented=Boolean(window.PrimalAnalytics?.allowed()),started=false;
 let researchAnswers=Array(researchQuestions.length).fill(null),researchStep=0,researchConsent=false,researchSending=false,researchDone=false;
 let aggregateQuizStarted=false;
 let quizSaveConsent=false,quizSaved=false,quizSaving=false,quizSubmissionId=crypto.randomUUID();
-let available={research:false,analytics:false,email:null};let resultMailSending=false;
+let available={research:false,analytics:false,email:null};let resultMailSending=false;const deliveredResults=new Map();
 // Navigation snapshots stay in this tab; optional research storage is separate.
 const resultSessionKey='primal-skin-result-v2';
 const resultSchema=JSON.stringify([questions,researchQuestions]);
@@ -63,22 +63,54 @@ $('#question-content').addEventListener('change',e=>{if(e.target.name==='gender'
 $('#question-form').addEventListener('submit',e=>{e.preventDefault();if(step===0&&!gender){$('#question-error').textContent='Επίλεξε φύλο ή «Προτιμώ να μην απαντήσω».';$('#question-content input[name="gender"]').focus();return;}if(!validAnswer(answers[step],step)){$('#question-error').textContent='Επίλεξε μία απάντηση για να συνεχίσεις.';$('#question-content input').focus();return;}event('quiz_step_complete');if(step<questions.length-1){step++;question();}else{result=evaluate(answers);researchSubmissionId=crypto.randomUUID();researchAnswers=Array(researchQuestions.length).fill(null);researchStep=0;researchConsent=false;researchDone=false;event('quiz_complete');renderResult();window.PrimalAnalytics?.trackOnce('quiz_complete',quizSubmissionId);}});
 $('#question-back').addEventListener('click',()=>{if(navigationDepth>0){history.back();return;}if(step>0){step--;question();}else{show('landing');focus($('#profile-title'));}});
 function renderResult(){
- show('results');const identity=identities[result.primary],visual=profileVisuals[result.primary],story=resultStories[result.primary];
- ui.results.innerHTML=`<div class="profile-result-opening"><figure class="profile-result-material"><picture>${visual.mobileSrc?`<source media="(max-width:900px)" srcset="${escape(visual.mobileSrc)}">`:''}<img src="${escape(visual.src)}" style="object-position:${escape(visual.position)}" width="941" height="1672" alt="" loading="lazy"></picture></figure><header class="profile-result-head"><div class="profile-result-copy"><h1 id="result-title" tabindex="-1">${escape(identity.title)}</h1><p class="profile-result-subtitle">${escape(identity.subtitle)}</p><p class="profile-lead">${escape(identity.intro)}</p></div><div class="profile-result-accordions" aria-label="Οι εξηγήσεις του προφίλ σου"><details><summary>Τι μας έδειξαν οι απαντήσεις σου</summary>${paragraphs(personalizedSummary(answers))}</details><details><summary>Τι συμβαίνει στο δέρμα σου;</summary>${paragraphs(story.explanation)}<p class="profile-source-links">Πηγές: <a href="https://www.aad.org/public/everyday-care/skin-care-basics/dry/dermatologists-tips-relieve-dry-skin">AAD — Ξηρή επιδερμίδα</a> · <a href="https://www.aad.org/public/everyday-care/sun-protection/sunscreen/how-to-select-sunscreen">AAD — Αντηλιακή προστασία</a>.</p></details><details><summary>Τι χρειάζεται να αλλάξεις;</summary>${paragraphs(story.actions)}</details><details><summary>Τι μπορείς να περιμένεις;</summary>${paragraphs(story.expectations)}</details></div><aside id="result-final-note" class="profile-final-note" aria-label="Σημείωση για τα αποτελέσματα"></aside></header>
- <section class="profile-research-invitation" aria-labelledby="research-invitation-title"><img class="profile-research-tin" src="assets/primal-research-tin.webp" width="1408" height="1760" alt="" loading="lazy"><div class="profile-research-overlay"><h2 id="research-invitation-title">Γίνε μέρος της δημιουργίας του PRIMAL CORE</h2><p class="profile-study-duration">5 ερωτήσεις. 60 δευτερόλεπτα.</p><p>Οι απαντήσεις σου θα συμβάλουν στη διαμόρφωση του PRIMAL CORE.</p><button class="profile-button profile-research-cta" id="product-interest" aria-label="ΓΙΝΕ ΜΕΡΟΣ της έρευνας για το PRIMAL CORE">ΓΙΝΕ ΜΕΡΟΣ ${arrow()}</button></div></section></div>`;
- $('#result-final-note').innerHTML='<p><em>Τα αποτελέσματα αυτά δεν αποτελούν ιατρική διάγνωση.</em></p><p id="quiz-save-status" role="status"></p><section class="profile-result-email" aria-labelledby="result-email-title"><h2 id="result-email-title">Το αποτέλεσμά σου στο email σου</h2><form id="result-email-form"><label for="result-email">Email</label><input id="result-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required><label class="profile-check"><input name="deliveryConsent" type="checkbox" required>Θέλω να λάβω το προσωπικό μου αποτέλεσμα σε αυτό το email.</label><p class="profile-fine">Το email χρησιμοποιείται μόνο για αυτή την αποστολή. Δεν σε εγγράφει στη λίστα αναμονής.</p><button class="profile-button" type="submit">Στείλε μου το αποτέλεσμά μου</button><p id="result-email-status" role="status"></p></form></section>';
+ show('results');
+ const profile=editorialResult(result);
+ ui.results.innerHTML=renderEditorialResult(profile,personalizedSummary(answers))+`
+ <div class="skin-editorial-actions skin-editorial-copy"><section class="profile-result-email" aria-labelledby="result-email-title"><h2 id="result-email-title">Το αποτέλεσμά σου στο email σου</h2><form id="result-email-form"><label for="result-email">Email</label><input id="result-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required><label class="profile-check"><input name="deliveryConsent" type="checkbox" required>Θέλω να λάβω το προσωπικό μου αποτέλεσμα σε αυτό το email.</label><p class="profile-fine">Το email χρησιμοποιείται μόνο για αυτή την αποστολή. Δεν σε εγγράφει στη λίστα αναμονής.</p><button class="profile-button" type="submit">Στείλε μου το αποτέλεσμά μου</button><p id="result-email-status" role="status"></p></form></section><section class="profile-research-invitation" aria-labelledby="research-invitation-title"><div class="profile-research-overlay"><h2 id="research-invitation-title">Γίνε μέρος της δημιουργίας του PRIMAL CORE</h2><p class="profile-study-duration">5 ερωτήσεις. 60 δευτερόλεπτα.</p><p>Οι απαντήσεις σου θα συμβάλουν στη διαμόρφωση του PRIMAL CORE.</p><button class="profile-button profile-research-cta" id="product-interest" aria-label="ΓΙΝΕ ΜΕΡΟΣ της έρευνας για το PRIMAL CORE">ΓΙΝΕ ΜΕΡΟΣ ${arrow()}</button></div></section></div>`;
+
  $('#product-interest').onclick=()=>{event('product_interest_click');if(!researchDone)window.PrimalAnalytics?.trackOnce('survey_start',researchSubmissionId);renderResearch();};focus($('#result-title'));event('result_view');
  bindResultMail();void saveQuizAnswers();
  // The invitation has no finalized product concept or purchase claim.
 }
-function syncResultMail(){const form=$('#result-email-form');if(!form||resultMailSending)return;form.querySelector('button').disabled=available.email!==true;if(available.email===false)$('#result-email-status').textContent='Η αποστολή email δεν είναι διαθέσιμη αυτή τη στιγμή.';}
+function deliveryNotice(id) {
+ try { return sessionStorage.getItem('primal-result-delivered:'+id)||deliveredResults.get(id); }
+ catch { return deliveredResults.get(id); }
+}
+function markDelivered(id, notice) {
+ deliveredResults.set(id,notice);
+ try { sessionStorage.setItem('primal-result-delivered:'+id,notice); } catch {}
+}
+function syncResultMail(){
+ const form=$('#result-email-form');
+ if(!form)return;
+ const notice=deliveryNotice(quizSubmissionId);
+ form.querySelector('button').disabled=resultMailSending||Boolean(notice)||available.email!==true;
+ if(notice)$('#result-email-status').textContent=notice;
+ else if(available.email===false)$('#result-email-status').textContent='Η αποστολή email δεν είναι διαθέσιμη αυτή τη στιγμή.';
+}
 function bindResultMail(){
  syncResultMail();const form=$('#result-email-form');
- form.onsubmit=async e=>{e.preventDefault();if(resultMailSending||available.email!==true||!form.reportValidity())return;
- resultMailSending=true;const button=form.querySelector('button'),status=$('#result-email-status');button.disabled=true;button.textContent='Αποστολή…';form.setAttribute('aria-busy','true');status.style.color='';status.textContent='Το αποτέλεσμά σου αποστέλλεται…';
- try{await request({action:'email',email:form.elements.email.value.trim(),submissionId:quizSubmissionId,result:structuredClone(result),deliveryConsent:form.elements.deliveryConsent.checked,adult:true});window.PrimalAnalytics?.trackOnce('generate_lead',quizSubmissionId,{form_id:'result_email'});status.textContent='Το αποτέλεσμά σου στάλθηκε. Έλεγξε τα εισερχόμενα και τα ανεπιθύμητα.';status.style.color='#22C55E';form.reset();}
- catch(error){status.style.color=error.message==='email_accepted_storage_unconfirmed'?'#22C55E':'';status.textContent=error.message==='email_accepted_storage_unconfirmed'?'Το email είναι στον δρόμο. Δες και στα ανεπιθύμητα.':'Δεν επιβεβαιώθηκε η αποστολή του email. Οι πληροφορίες σου διατηρήθηκαν· δοκίμασε ξανά.';}
- finally{resultMailSending=false;form.removeAttribute('aria-busy');button.textContent='Στείλε μου το αποτέλεσμά μου';syncResultMail();}
+ form.onsubmit=async e=>{
+  e.preventDefault();
+  const id=quizSubmissionId;
+  if(resultMailSending||deliveryNotice(id)||available.email!==true||!form.reportValidity())return;
+  resultMailSending=true;
+  const button=form.querySelector('button'),status=$('#result-email-status');
+  button.disabled=true;button.textContent='Αποστολή…';form.setAttribute('aria-busy','true');
+  status.textContent='Το αποτέλεσμά σου αποστέλλεται…';
+  try {
+   await request({action:'email',email:form.elements.email.value.trim(),submissionId:id,result:structuredClone(result),deliveryConsent:form.elements.deliveryConsent.checked,adult:true});
+   markDelivered(id,'Το αποτέλεσμά σου στάλθηκε. Έλεγξε τα εισερχόμενα και τα ανεπιθύμητα.');
+   window.PrimalAnalytics?.trackOnce('generate_lead',id,{form_id:'result_email'});
+   form.reset();
+  } catch(error) {
+   if(error.message==='email_accepted_storage_unconfirmed'){
+    markDelivered(id,'Το email είναι στον δρόμο. Δες και στα ανεπιθύμητα.');
+    form.reset();
+   } else status.textContent='Δεν επιβεβαιώθηκε η αποστολή του email. Οι πληροφορίες σου διατηρήθηκαν· δοκίμασε ξανά.';
+  } finally {
+   resultMailSending=false;form.removeAttribute('aria-busy');button.textContent='Στείλε μου το αποτέλεσμά μου';syncResultMail();
+  }
  };
 }
 async function saveQuizAnswers(){
