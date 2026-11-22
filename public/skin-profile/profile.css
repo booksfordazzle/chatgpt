@@ -302,3 +302,19 @@
 }
 /* Highlight multiple-choice guidance without altering answer cards. */
 #profile-quiz .profile-choice-hint{color:#78bf78;}
+
+
+/* Research navigation: compact left-aligned arrows, matching the supplied reference.
+   Scope deliberately excludes quiz, answers, submission, and storage. */
+@media (min-width:901px){
+ #profile-research #research-form>.profile-controls{
+  position:static;display:flex;justify-content:flex-start;align-items:center;
+  gap:36px;width:max-content;max-width:100%;margin:14px 0 0;
+  padding:8px 4px 0;border:0;background:transparent;
+ }
+ #profile-research #research-back,#profile-research #research-next{
+  flex:0 0 56px;width:56px;min-width:56px;height:56px;min-height:56px;
+ }
+ #profile-research #research-back{background:transparent;border:0;box-shadow:none;}
+ #profile-research #research-next{background:#dbd6ca;color:#080808;border:0;border-radius:6px;}
+}
