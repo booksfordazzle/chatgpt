@@ -5,7 +5,7 @@ function saveSkinResearch(input) {
  var reasonTitle='Ποιος είναι ο βασικός λόγος που δεν θα το αγόραζες;';
  var reasons=['Η τιμή','Το beef tallow ως συστατικό','Δεν χρησιμοποιώ balm προσώπου','Κάτι άλλο'];
  var fields = ['action','token','spreadsheetId','submissionId','consent','reason'].concat(questions.map(function(q){return q.id;}));
- if(input.spreadsheetId!==target || input.consent!==true || typeof input.submissionId!=='string' || !/^[a-f0-9-]{36}$/i.test(input.submissionId) || Object.keys(input).some(function(k){return fields.indexOf(k)<0;}) || questions.some(function(q){return !Number.isInteger(input[q.id]) || input[q.id]<0 || input[q.id]>=q.options.length;}) || (input.price===5?(!Number.isInteger(input.reason)||input.reason<0||input.reason>=reasons.length):input.reason!==null))return {ok:false};
+ if(input.spreadsheetId!==target || input.consent!==true || typeof input.submissionId!=='string' || !/^[a-f0-9-]{36}$/i.test(input.submissionId) || Object.keys(input).some(function(k){return fields.indexOf(k)<0;}) || questions.some(function(q){return !Number.isInteger(input[q.id]) || input[q.id]<0 || input[q.id]>=q.options.length;}) || (input.price===6?(!Number.isInteger(input.reason)||input.reason<0||input.reason>=reasons.length):input.reason!==null))return {ok:false};
  var book=SpreadsheetApp.openById(target);
  var sheet=book.getSheetByName('Skin Research') || book.insertSheet('Skin Research');
  var headers=['Consent version'].concat(questions.map(function(q){return q.title;}),['Submission ID','Submitted at (UTC)']);
@@ -15,8 +15,8 @@ function saveSkinResearch(input) {
  var index=existing.findIndex(function(row){return row[0]===input.submissionId;});
  var answers=questions.map(function(q){return q.options[input[q.id]];});
  var row=index<0?sheet.getLastRow()+1:index+2;
- if(index<0){var values=['skin-research-v2'].concat(answers,[input.submissionId,new Date().toISOString()]);var range=sheet.getRange(row,1,1,values.length);range.setNumberFormat('@');range.setValues([values]);sheet.getRange(row,headers.length+1).setValue(input.price===5?reasons[input.reason]:'');SpreadsheetApp.flush();}
+ if(index<0){var values=['skin-research-v2'].concat(answers,[input.submissionId,new Date().toISOString()]);var range=sheet.getRange(row,1,1,values.length);range.setNumberFormat('@');range.setValues([values]);sheet.getRange(row,headers.length+1).setValue(input.price===6?reasons[input.reason]:'');SpreadsheetApp.flush();}
  var saved=sheet.getRange(row,1,1,headers.length).getDisplayValues()[0];
- if(saved[6]!==input.submissionId || saved[0]!=='skin-research-v2' || JSON.stringify(saved.slice(1,6))!==JSON.stringify(answers) || sheet.getRange(row,headers.length+1).getDisplayValue()!==(input.price===5?reasons[input.reason]:''))return {ok:false};
+ if(saved[6]!==input.submissionId || saved[0]!=='skin-research-v2' || JSON.stringify(saved.slice(1,6))!==JSON.stringify(answers) || sheet.getRange(row,headers.length+1).getDisplayValue()!==(input.price===6?reasons[input.reason]:''))return {ok:false};
  return {ok:true,spreadsheetId:target,submissionId:input.submissionId};
 }
