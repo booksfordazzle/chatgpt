@@ -1,0 +1,20 @@
+name: Security gate
+on:
+  pull_request:
+    branches: [codex/bilingual-site]
+  push:
+    branches: [security/research-rejection-validation]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm test
+      - run: npm audit --omit=dev --audit-level=high
