@@ -1,3 +1,4 @@
+export const EMAILS_SPREADSHEET_ID='1ptOmDxONI9KD_rLRZp0xGsjJezsOyIP0H3gd5HgleRg';
 export const RESEARCH_SPREADSHEET_ID='1mNlfIPPEO1eEm6L8RsmRuCZ0A5jVkX2MpnpPY2RhVAA';
 export function researchSheetsSettings(env){
  const url=new URL(env.SKIN_PROFILE_RESEARCH_SCRIPT_URL||env.GOOGLE_APPS_SCRIPT_URL);
@@ -18,4 +19,19 @@ async function saveToSheets(data,{env,fetchImpl},action){
  const saved=await response.json();
  if(action==='skin-quiz-v1'&&saved.sheetName!=='Skin Quiz')throw Error('unconfirmed');
  if(saved.ok!==true||saved.spreadsheetId!==RESEARCH_SPREADSHEET_ID||saved.submissionId!==data.submissionId)throw Error('unconfirmed');
+}
+
+/** Store an SMTP-accepted delivery receipt in the existing email spreadsheet. */
+export async function saveSkinProfileDeliveryToSheets(data,{env,fetchImpl}) {
+ const url=researchSheetsSettings(env);
+ const signal=AbortSignal.timeout(10000);
+ let response=await fetchImpl(url,{method:'POST',redirect:'manual',signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'skin-profile-delivery-v1',token:env.SKIN_PROFILE_RESEARCH_SECRET||env.WAITLIST_SHARED_SECRET,spreadsheetId:EMAILS_SPREADSHEET_ID,...data})});
+ if([302,303].includes(response.status)){
+  const next=new URL(response.headers.get('location'));
+  if(next.protocol!=='https:'||next.hostname!=='script.googleusercontent.com'||next.pathname!=='/macros/echo'||next.username||next.password||next.port)throw Error('unconfirmed');
+  response=await fetchImpl(next.href,{method:'GET',redirect:'error',signal});
+ }
+ if(!response.ok)throw Error('unconfirmed');
+ const saved=await response.json();
+ if(saved.ok!==true||saved.spreadsheetId!==EMAILS_SPREADSHEET_ID||saved.sheetName!=='Skin Profile Emails'||saved.submissionId!==data.submissionId)throw Error('unconfirmed');
 }

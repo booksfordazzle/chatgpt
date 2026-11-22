@@ -33,7 +33,7 @@ window.addEventListener('popstate',e=>{if(restoreNavigation(e.state?.primal))sav
 
 // No answers, profile, email or persistent visitor identifiers accompany events.
 function event(name){if(consented&&window.PrimalAnalytics?.allowed()&&available.analytics)void fetch('/api/skin-profile',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'event',name,consent:true})}).catch(()=>{});}
-async function request(body){const r=await fetch('/api/skin-profile',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});let data={};try{data=await r.json();}catch{}if(!r.ok||data.ok!==true)throw Error(data.code==='rate_limited'?'Περίμενε λίγο πριν δοκιμάσεις ξανά.':'Δεν επιβεβαιώθηκε η αποστολή. Οι επιλογές σου διατηρούνται· δοκίμασε αργότερα.');return data;}
+async function request(body){const r=await fetch('/api/skin-profile',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});let data={};try{data=await r.json();}catch{}if(!r.ok||data.ok!==true)throw Error(data.code==='email_accepted_storage_unconfirmed'?'email_accepted_storage_unconfirmed':data.code==='rate_limited'?'Περίμενε λίγο πριν δοκιμάσεις ξανά.':'Δεν επιβεβαιώθηκε η αποστολή. Οι επιλογές σου διατηρούνται· δοκίμασε αργότερα.');return data;}
 window.addEventListener('primal:analytics-consent',e=>{consented=e.detail.granted;});
 $('#profile-analytics').addEventListener('change',e=>{consented=e.target.checked;});
 fetch('/api/skin-profile',{headers:{Accept:'application/json'}}).then(r=>r.ok?r.json():{}).then(data=>{available={research:data.researchV2===true,analytics:data.analytics===true,email:data.email===true};syncResultMail();if(!ui.research.hidden&&researchStep===researchQuestions.length-1&&!researchSending&&!researchDone&&$('#research-next')){$('#research-next').disabled=!available.research;$('#research-status').textContent=available.research?'':'Η έρευνα δεν δέχεται απαντήσεις αυτή τη στιγμή.';}}).catch(()=>{available.email=false;syncResultMail();});
@@ -76,8 +76,8 @@ function bindResultMail(){
  syncResultMail();const form=$('#result-email-form');
  form.onsubmit=async e=>{e.preventDefault();if(resultMailSending||available.email!==true||!form.reportValidity())return;
  resultMailSending=true;const button=form.querySelector('button'),status=$('#result-email-status');button.disabled=true;button.textContent='Αποστολή…';form.setAttribute('aria-busy','true');status.textContent='Το αποτέλεσμά σου αποστέλλεται…';
- try{await request({action:'email',email:form.elements.email.value.trim(),result:structuredClone(result),deliveryConsent:form.elements.deliveryConsent.checked,adult:true});window.PrimalAnalytics?.trackOnce('generate_lead',quizSubmissionId,{form_id:'result_email'});status.textContent='Το αποτέλεσμά σου στάλθηκε. Έλεγξε τα εισερχόμενα και τα ανεπιθύμητα.';form.reset();}
- catch{status.textContent='Δεν επιβεβαιώθηκε η αποστολή του email. Οι πληροφορίες σου διατηρήθηκαν· δοκίμασε ξανά.';}
+ try{await request({action:'email',email:form.elements.email.value.trim(),submissionId:quizSubmissionId,result:structuredClone(result),deliveryConsent:form.elements.deliveryConsent.checked,adult:true});window.PrimalAnalytics?.trackOnce('generate_lead',quizSubmissionId,{form_id:'result_email'});status.textContent='Το αποτέλεσμά σου στάλθηκε. Έλεγξε τα εισερχόμενα και τα ανεπιθύμητα.';form.reset();}
+ catch(error){status.textContent=error.message==='email_accepted_storage_unconfirmed'?'Το email έγινε αποδεκτό για αποστολή, αλλά η καταγραφή του δεν επιβεβαιώθηκε. Μην επαναλάβεις την αποστολή.':'Δεν επιβεβαιώθηκε η αποστολή του email. Οι πληροφορίες σου διατηρήθηκαν· δοκίμασε ξανά.';}
  finally{resultMailSending=false;form.removeAttribute('aria-busy');button.textContent='Στείλε μου το αποτέλεσμά μου';syncResultMail();}
  };
 }

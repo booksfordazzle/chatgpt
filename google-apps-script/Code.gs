@@ -14,6 +14,18 @@ function doPost(event) {
     var props = PropertiesService.getScriptProperties();
     var expected = props.getProperty('WAITLIST_SHARED_SECRET');
     if (!expected || input.token !== expected) return reply(false);
+    if (input.action === 'skin-quiz-v1') {
+      lock.waitLock(10000); locked = true;
+      var quiz = saveSkinQuiz(input);
+      return reply(quiz.ok === true, quiz);
+    }
+    if (input.action === 'skin-profile-delivery-v1') {
+      var deliverySecret = props.getProperty('SKIN_PROFILE_RESEARCH_SECRET') || props.getProperty('WAITLIST_SHARED_SECRET');
+      if (!deliverySecret || input.token !== deliverySecret) return reply(false);
+      lock.waitLock(10000); locked = true;
+      var delivery = saveSkinProfileDelivery(input, props);
+      return reply(delivery.ok === true, delivery);
+    }
     if (input.action === 'skin-research-v2') {
       lock.waitLock(10000); locked = true;
       var result = saveSkinResearch(input);
@@ -252,4 +264,33 @@ function completeWelcomeImmediate(input, props) {
   if (accepted) sheet.getRange(input.rowNumber, sentColumn + 1, 1, 1).setValues([[new Date().toISOString()]]);
   SpreadsheetApp.flush();
   return true;
+}
+
+/** Delivery-only receipt. Never enrolls the recipient in Waitlist or marketing. */
+function saveSkinProfileDelivery(input, props) {
+  var target = '1ptOmDxONI9KD_rLRZp0xGsjJezsOyIP0H3gd5HgleRg';
+  var allowed = ['action','token','spreadsheetId','submissionId','email','result','deliveryConsent','status'];
+  if (input.spreadsheetId !== target || input.deliveryConsent !== true || input.status !== 'smtp-accepted' ||
+      typeof input.submissionId !== 'string' || !/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(input.submissionId) ||
+      typeof input.email !== 'string' || input.email.length > 254 || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(input.email) ||
+      /[\r\n\x00]/.test(input.email) || ['M','A','C','B','E'].indexOf(input.result) < 0 ||
+      Object.keys(input).some(function(k){return allowed.indexOf(k) < 0;})) return {ok:false};
+  var book = SpreadsheetApp.openById(target), sheet = book.getSheetByName('Skin Profile Emails') || book.insertSheet('Skin Profile Emails');
+  var expected = ['Submission ID','Email','Requested at (UTC)','Result','Delivery consent','Email status'];
+  if (sheet.getLastRow() === 0) { sheet.appendRow(expected); sheet.setFrozenRows(1); }
+  var headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getDisplayValues()[0];
+  if (JSON.stringify(headers) !== JSON.stringify(expected)) return {ok:false};
+  var ids = sheet.getLastRow() > 1 ? sheet.getRange(2,1,sheet.getLastRow()-1,1).getDisplayValues() : [];
+  var index = ids.findIndex(function(row){return row[0] === input.submissionId;});
+  var rowNumber = index < 0 ? sheet.getLastRow()+1 : index+2;
+  var safeEmail = "'" + input.email.trim();
+  if (index < 0) {
+    var values = [input.submissionId,safeEmail,new Date().toISOString(),input.result,'true','smtp-accepted'];
+    var range = sheet.getRange(rowNumber,1,1,expected.length);
+    range.setNumberFormat('@'); range.setValues([values]); SpreadsheetApp.flush();
+  }
+  var saved = sheet.getRange(rowNumber,1,1,expected.length).getDisplayValues()[0];
+  if (saved[0] !== input.submissionId || String(saved[1]).replace(/^'/,'').toLowerCase() !== input.email.trim().toLowerCase() ||
+      saved[3] !== input.result || saved[4] !== 'true' || saved[5] !== 'smtp-accepted') return {ok:false};
+  return {ok:true,spreadsheetId:target,submissionId:input.submissionId,sheetName:'Skin Profile Emails'};
 }

@@ -1,4 +1,4 @@
-import {researchSheetsSettings,saveResearchToSheets,saveQuizToSheets} from './skin-research-sheets.mjs';
+import {researchSheetsSettings,saveResearchToSheets,saveQuizToSheets,saveSkinProfileDeliveryToSheets} from './skin-research-sheets.mjs';
 import nodemailer from 'nodemailer';
 import {smtpSettings} from './welcome-email.mjs';
 import {validResult,validAnswer} from '../public/skin-profile/engine.mjs';
@@ -34,7 +34,7 @@ export function createSkinProfileHandler({env=process.env,fetchImpl=fetch,create
   try{if(Number(req.headers?.['content-length']||0)>2048)throw Error();let raw='';if(req.body!==undefined)raw=Buffer.isBuffer(req.body)?req.body.toString():typeof req.body==='string'?req.body:JSON.stringify(req.body);else for await(const chunk of req){raw+=chunk.toString();if(Buffer.byteLength(raw)>2048)throw Error();}if(Buffer.byteLength(raw)>2048)throw Error();d=JSON.parse(raw);if(!d||Array.isArray(d)||typeof d!=='object')throw Error();}catch{return reply(400,{ok:false});}
   if(!['email','research','research-v2','quiz-save','event'].includes(d.action))return reply(400,{ok:false});
   if(d.action==='email'){
-   if(!keys(d,['action','email','result','deliveryConsent','adult'])||d.deliveryConsent!==true||d.adult!==true||typeof d.email!=='string'||d.email.length>254||!emailPattern.test(d.email)||/[\r\n\x00]/.test(d.email)||!validResult(d.result))return reply(400,{ok:false});
+   if(!keys(d,['action','email','result','deliveryConsent','adult','submissionId'])||d.deliveryConsent!==true||d.adult!==true||typeof d.email!=='string'||d.email.length>254||!emailPattern.test(d.email)||/[\r\n\x00]/.test(d.email)||!validResult(d.result)||(d.submissionId!==undefined&&!/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(d.submissionId)))return reply(400,{ok:false});
   }else if(d.action==='quiz-save'&&!quizValid(d))return reply(400,{ok:false});
   else if(d.action==='research-v2'&&!researchV2Valid(d))return reply(400,{ok:false});
   else if(d.action==='research'&&!researchValid(d))return reply(400,{ok:false});
@@ -46,7 +46,9 @@ export function createSkinProfileHandler({env=process.env,fetchImpl=fetch,create
    // Only fixed educational content is mailed; no arbitrary HTML or attachments,
    // raw answers, marketing subscription or database writes on this path.
    const transport=createTransport(smtpSettings(env));
-   try{const sent=await transport.sendMail({from:{name:'PRIMAL CORE',address:'hello@primalcore.gr'},replyTo:'hello@primalcore.gr',to:d.email,envelope:{from:'hello@primalcore.gr',to:[d.email]},subject:'PRIMAL CORE — Η σύνοψη της καθημερινής σου φροντίδας',text:resultText(d.result),html:skinResultHtml(d.result),attachments:skinResultAttachments()});if(!sent.accepted?.some(a=>String(a).toLowerCase()===d.email.toLowerCase()))throw Error();return reply(200,{ok:true,status:'accepted'});}catch{return reply(502,{ok:false,code:'send_unconfirmed'});}finally{transport.close();}
+   try{const sent=await transport.sendMail({from:{name:'PRIMAL CORE',address:'hello@primalcore.gr'},replyTo:'hello@primalcore.gr',to:d.email,envelope:{from:'hello@primalcore.gr',to:[d.email]},subject:'PRIMAL CORE — Η σύνοψη της καθημερινής σου φροντίδας',text:resultText(d.result),html:skinResultHtml(d.result),attachments:skinResultAttachments()});if(!sent.accepted?.some(a=>String(a).toLowerCase()===d.email.toLowerCase()))throw Error();
+      if(d.submissionId){try{await saveSkinProfileDeliveryToSheets({submissionId:d.submissionId,email:d.email,result:d.result.primary,deliveryConsent:true,status:'smtp-accepted'},{env,fetchImpl});}catch{return reply(503,{ok:false,code:'email_accepted_storage_unconfirmed'});}}
+      return reply(200,{ok:true,status:d.submissionId?'accepted_and_saved':'accepted'});}catch{return reply(502,{ok:false,code:'send_unconfirmed'});}finally{transport.close();}
   }
   if(d.action==='quiz-save'){if(!sheetsReady())return reply(503,{ok:false,code:'unavailable'});try{await saveQuizToSheets({submissionId:d.submissionId,answers:d.answers,consent:true},{env,fetchImpl});return reply(200,{ok:true});}catch{return reply(503,{ok:false,code:'unavailable'});}}
   if(d.action==='research-v2'){
