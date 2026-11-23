@@ -11,19 +11,35 @@ let gender=null,answers=Array(questions.length).fill(null),step=0,result,consent
 let researchAnswers=Array(researchQuestions.length).fill(null),researchStep=0,researchConsent=false,researchSending=false,researchDone=false;
 let aggregateQuizStarted=false;
 let quizSaveConsent=false,quizSaved=false,quizSaving=false,quizSubmissionId=crypto.randomUUID();
+let resultDeliveryId=crypto.randomUUID();
+const migratedDeliveryIds=new Map();
 let available={research:false,analytics:false,email:null};let resultMailSending=false;const deliveredResults=new Map();
 // Navigation snapshots stay in this tab; optional research storage is separate.
 const resultSessionKey='primal-skin-result-v2';
 const resultSchema=JSON.stringify([questions,researchQuestions]);
 let currentView='landing',replaying=false,navigationDepth=0;
-function snapshot(){return {gender,quizSubmissionId,quizSaveConsent,quizSaved,depth:navigationDepth,schema:resultSchema,view:currentView,answers,step,researchAnswers,researchStep,researchConsent,researchDone,submissionId:researchSubmissionId};}
+function snapshot(){return {gender,quizSubmissionId,resultDeliveryId,quizSaveConsent,quizSaved,depth:navigationDepth,schema:resultSchema,view:currentView,answers,step,researchAnswers,researchStep,researchConsent,researchDone,submissionId:researchSubmissionId};}
 function locationHash(){return currentView==='quiz'?'#question-'+(step+1):currentView==='research'?(researchDone?'#thanks':'#research-'+(researchStep+1)):currentView==='results'?'#result':'#intro';}
 function saveResultSession(replace=false){if(replaying)return;const state=structuredClone(snapshot());try{sessionStorage.setItem(resultSessionKey,JSON.stringify(state));}catch{}try{const same=history.state?.primal?.view===state.view&&history.state?.primal?.step===state.step&&history.state?.primal?.researchStep===state.researchStep&&history.state?.primal?.researchDone===state.researchDone;if(!replace&&!same)state.depth=++navigationDepth;history[replace||same?'replaceState':'pushState']({...history.state,primal:state},'',locationHash());}catch{}}
+const isAttemptId=value=>typeof value==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+// Preserve the delivery ID and any existing success notice across older history entries.
+function migrateDeliveryId(quizId){
+ const key='primal-legacy-delivery:'+quizId;
+ let id=migratedDeliveryIds.get(quizId);
+ try { id=sessionStorage.getItem(key)||id; } catch {}
+ if(!isAttemptId(id)||id.toLowerCase()===quizId.toLowerCase())id=crypto.randomUUID();
+ migratedDeliveryIds.set(quizId,id);
+ try { sessionStorage.setItem(key,id); } catch {}
+ const notice=deliveryNotice(quizId);
+ if(notice&&!deliveryNotice(id))markDelivered(id,notice);
+ return id;
+}
 function restoreNavigation(saved){
  if(!saved||saved.schema!==resultSchema||!['landing','quiz','results','research'].includes(saved.view)||!Array.isArray(saved.answers)||saved.answers.length!==questions.length||!saved.answers.every((a,i)=>a===null||validAnswer(a,i))||!Number.isInteger(saved.step)||saved.step<0||saved.step>=questions.length||!Array.isArray(saved.researchAnswers)||saved.researchAnswers.length!==researchQuestions.length||!saved.researchAnswers.every((a,i)=>a===null||(Number.isInteger(a)&&a>=0&&a<researchQuestions[i].options.length&&!(researchQuestions[i].hiddenOptions||[]).includes(a)))||!Number.isInteger(saved.researchStep)||saved.researchStep<0||saved.researchStep>=researchQuestions.length)return false;
  if((saved.view==='results'||saved.view==='research')&&!saved.answers.every((a,i)=>validAnswer(a,i)))return false;
  if(saved.view==='quiz'&&!saved.answers.slice(0,saved.step).every((a,i)=>validAnswer(a,i)))return false;
- saved=structuredClone(saved);gender=['Άνδρας','Γυναίκα','Άλλο','Προτιμώ να μην απαντήσω'].includes(saved.gender)?saved.gender:null;navigationDepth=Number.isInteger(saved.depth)&&saved.depth>=0?saved.depth:0;if(typeof saved.quizSubmissionId==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(saved.quizSubmissionId))quizSubmissionId=saved.quizSubmissionId;quizSaveConsent=saved.quizSaveConsent===true;quizSaved=saved.quizSaved===true;answers=saved.answers;aggregateQuizStarted=answers.some((a,i)=>validAnswer(a,i));step=saved.step;researchAnswers=saved.researchAnswers;researchStep=saved.researchStep;researchConsent=saved.researchConsent===true;researchDone=saved.researchDone===true;started=saved.view!=='landing';
+ saved=structuredClone(saved);gender=['Άνδρας','Γυναίκα','Άλλο','Προτιμώ να μην απαντήσω'].includes(saved.gender)?saved.gender:null;navigationDepth=Number.isInteger(saved.depth)&&saved.depth>=0?saved.depth:0;quizSubmissionId=isAttemptId(saved.quizSubmissionId)?saved.quizSubmissionId:crypto.randomUUID();quizSaveConsent=saved.quizSaveConsent===true;quizSaved=saved.quizSaved===true;answers=saved.answers;aggregateQuizStarted=answers.some((a,i)=>validAnswer(a,i));step=saved.step;researchAnswers=saved.researchAnswers;researchStep=saved.researchStep;researchConsent=saved.researchConsent===true;researchDone=saved.researchDone===true;started=saved.view!=='landing';
+ resultDeliveryId=isAttemptId(saved.resultDeliveryId)&&saved.resultDeliveryId.toLowerCase()!==quizSubmissionId.toLowerCase()?saved.resultDeliveryId:migrateDeliveryId(quizSubmissionId);
  if(typeof saved.submissionId==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(saved.submissionId))researchSubmissionId=saved.submissionId;
  if(answers.every((a,i)=>validAnswer(a,i)))result=evaluate(answers);
  replaying=true;try{if(saved.view==='quiz')question();else if(saved.view==='research'){renderResult();renderResearch();}else if(saved.view==='results')renderResult();else{show('landing');focus($('#profile-title'));}}finally{replaying=false;}return true;
@@ -53,7 +69,7 @@ function question(){
  $('#question-error').textContent='';$('#question-next').innerHTML=arrow();$('#question-next').setAttribute('aria-label',step===questions.length-1?'Δες το αποτέλεσμα':'Επόμενη ερώτηση');
  $('#question-back').innerHTML=arrow(true);$('#question-back').setAttribute('aria-label',step===0?'Επιστροφή στην εισαγωγή':'Προηγούμενη ερώτηση');focus($('#question-title'));reveal($('#question-content'));
 }
-$('#profile-start').addEventListener('submit',e=>{e.preventDefault();if(!$('#profile-adult').checked){$('#start-error').textContent='Για να ξεκινήσεις, επιβεβαίωσε ότι είσαι 18 ετών και άνω.';$('#profile-adult').focus();return;}$('#start-error').textContent='';quizSaveConsent=$('#profile-save-consent').checked;quizSaved=false;aggregateQuizStarted=false;quizSubmissionId=crypto.randomUUID();gender=null;answers=Array(questions.length).fill(null);step=0;result=undefined;researchAnswers=Array(researchQuestions.length).fill(null);researchStep=0;researchConsent=false;researchDone=false;researchSubmissionId=crypto.randomUUID();if(!started)started=true;question();});
+$('#profile-start').addEventListener('submit',e=>{e.preventDefault();if(!$('#profile-adult').checked){$('#start-error').textContent='Για να ξεκινήσεις, επιβεβαίωσε ότι είσαι 18 ετών και άνω.';$('#profile-adult').focus();return;}$('#start-error').textContent='';quizSaveConsent=$('#profile-save-consent').checked;quizSaved=false;aggregateQuizStarted=false;quizSubmissionId=crypto.randomUUID();resultDeliveryId=crypto.randomUUID();gender=null;answers=Array(questions.length).fill(null);step=0;result=undefined;researchAnswers=Array(researchQuestions.length).fill(null);researchStep=0;researchConsent=false;researchDone=false;researchSubmissionId=crypto.randomUUID();if(!started)started=true;question();});
 $('#question-content').addEventListener('change',e=>{if(e.target.name==='gender'){gender=e.target.value;saveResultSession(true);return;}if(e.target.name!=='answer')return;
  const q=questions[step];if(!q.multiple)answers[step]=Number(e.target.value);
  else{const changed=Number(e.target.value),inputs=[...$('#question-content').querySelectorAll('input[name="answer"]')];
@@ -66,7 +82,7 @@ function renderResult(){
  show('results');
  const profile=editorialResult(result);
  ui.results.innerHTML=renderEditorialResult(profile,personalizedSummary(answers))+`
- <div class="skin-editorial-actions skin-editorial-copy"><section class="profile-result-email" aria-labelledby="result-email-title"><h2 id="result-email-title">Το αποτέλεσμά σου στο email σου</h2><form id="result-email-form"><label for="result-email">Email</label><input id="result-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required><label class="profile-check"><input name="deliveryConsent" type="checkbox" required>Θέλω να λάβω το προσωπικό μου αποτέλεσμα σε αυτό το email.</label><p class="profile-fine">Το email χρησιμοποιείται μόνο για αυτή την αποστολή. Δεν σε εγγράφει στη λίστα αναμονής.</p><button class="profile-button" type="submit">Στείλε μου το αποτέλεσμά μου</button><p id="result-email-status" role="status"></p></form></section><section class="profile-research-invitation" aria-labelledby="research-invitation-title"><div class="profile-research-overlay"><h2 id="research-invitation-title">Γίνε μέρος της δημιουργίας του PRIMAL CORE</h2><p class="profile-study-duration">5 ερωτήσεις. 60 δευτερόλεπτα.</p><p>Οι απαντήσεις σου θα συμβάλουν στη διαμόρφωση του PRIMAL CORE.</p><button class="profile-button profile-research-cta" id="product-interest" aria-label="ΓΙΝΕ ΜΕΡΟΣ της έρευνας για το PRIMAL CORE">ΓΙΝΕ ΜΕΡΟΣ ${arrow()}</button></div></section></div>`;
+ <div class="skin-editorial-actions skin-editorial-copy"><section class="profile-result-email" aria-labelledby="result-email-title"><h2 id="result-email-title">Το αποτέλεσμά σου στο email σου</h2><form id="result-email-form"><label for="result-email">Email</label><input id="result-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required><label class="profile-check"><input name="deliveryConsent" type="checkbox" required>Θέλω να λάβω το προσωπικό μου αποτέλεσμα σε αυτό το email.</label><p class="profile-fine">Το email χρησιμοποιείται για την αποστολή του αποτελέσματος και την καταγραφή της. Δεν σε εγγράφει στη λίστα αναμονής.</p><button class="profile-button" type="submit">Στείλε μου το αποτέλεσμά μου</button><p id="result-email-status" role="status"></p></form></section><section class="profile-research-invitation" aria-labelledby="research-invitation-title"><div class="profile-research-overlay"><h2 id="research-invitation-title">Γίνε μέρος της δημιουργίας του PRIMAL CORE</h2><p class="profile-study-duration">5 ερωτήσεις. 60 δευτερόλεπτα.</p><p>Οι απαντήσεις σου θα συμβάλουν στη διαμόρφωση του PRIMAL CORE.</p><button class="profile-button profile-research-cta" id="product-interest" aria-label="ΓΙΝΕ ΜΕΡΟΣ της έρευνας για το PRIMAL CORE">ΓΙΝΕ ΜΕΡΟΣ ${arrow()}</button></div></section></div>`;
 
  $('#product-interest').onclick=()=>{event('product_interest_click');if(!researchDone)window.PrimalAnalytics?.trackOnce('survey_start',researchSubmissionId);renderResearch();};focus($('#result-title'));event('result_view');
  bindResultMail();void saveQuizAnswers();
@@ -83,7 +99,7 @@ function markDelivered(id, notice) {
 function syncResultMail(){
  const form=$('#result-email-form');
  if(!form)return;
- const notice=deliveryNotice(quizSubmissionId);
+ const notice=deliveryNotice(resultDeliveryId);
  form.querySelector('button').disabled=resultMailSending||Boolean(notice)||available.email!==true;
  if(notice)$('#result-email-status').textContent=notice;
  else if(available.email===false)$('#result-email-status').textContent='Η αποστολή email δεν είναι διαθέσιμη αυτή τη στιγμή.';
@@ -92,7 +108,7 @@ function bindResultMail(){
  syncResultMail();const form=$('#result-email-form');
  form.onsubmit=async e=>{
   e.preventDefault();
-  const id=quizSubmissionId;
+  const id=resultDeliveryId;
   if(resultMailSending||deliveryNotice(id)||available.email!==true||!form.reportValidity())return;
   resultMailSending=true;
   const button=form.querySelector('button'),status=$('#result-email-status');
@@ -115,9 +131,9 @@ function bindResultMail(){
 }
 async function saveQuizAnswers(){
  if(!quizSaveConsent||quizSaving)return;
- const status=$('#quiz-save-status');if(quizSaved){status.textContent='Οι απαντήσεις του τεστ αποθηκεύτηκαν ανώνυμα.';return;}
+ const status=$('#quiz-save-status');if(quizSaved){status.textContent='Οι απαντήσεις του τεστ αποθηκεύτηκαν για έρευνα.';return;}
  quizSaving=true;const id=quizSubmissionId,payload=structuredClone(answers);status.textContent='Αποθήκευση απαντήσεων…';
- try{await request({action:'quiz-save',submissionId:id,answers:payload,gender,consent:true});if(id===quizSubmissionId){quizSaved=true;saveResultSession(true);status.textContent='Οι απαντήσεις του τεστ αποθηκεύτηκαν ανώνυμα.';}}
+ try{await request({action:'quiz-save',submissionId:id,answers:payload,gender,consent:true});if(id===quizSubmissionId){quizSaved=true;saveResultSession(true);status.textContent='Οι απαντήσεις του τεστ αποθηκεύτηκαν για έρευνα.';}}
  catch{if(id===quizSubmissionId){status.textContent='Δεν επιβεβαιώθηκε η αποθήκευση των απαντήσεων. Το αποτέλεσμά σου παραμένει διαθέσιμο.';}}
  finally{quizSaving=false;}
 }
