@@ -50,7 +50,7 @@ const { chromium } = require('/opt/codex/runtimes/codex-primary-runtime/dependen
      assert.equal(subscriptions[0].email,'controlled@example.com');
     }
     if (scenario==='waitlist-failure') assert.match(await page.locator('#result-email-status').textContent(),/δεν επιβεβαιώθηκε/);
-    await page.locator('#result-email-form button').click({force:true});
+    await page.locator('#result-email-form').evaluate(form => form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));
     assert.equal(delivered.length,1,'repeated submission should be ignored');
     assert.equal(subscriptions.length,scenario==='without-opt-in'?0:1);
     assert(await page.evaluate(() => document.documentElement.scrollWidth<=innerWidth));
