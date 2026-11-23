@@ -66,7 +66,7 @@ function renderResult(){
  show('results');
  const profile=editorialResult(result);
  ui.results.innerHTML=renderEditorialResult(profile,personalizedSummary(answers))+`
- <div class="skin-editorial-actions skin-editorial-copy"><section class="profile-result-email" aria-labelledby="result-email-title"><h2 id="result-email-title">Το αποτέλεσμά σου στο email σου</h2><form id="result-email-form"><label for="result-email">Email</label><input id="result-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required><label class="profile-check"><input name="deliveryConsent" type="checkbox" required>Θέλω να λάβω το προσωπικό μου αποτέλεσμα σε αυτό το email.</label><p class="profile-fine">Το email χρησιμοποιείται μόνο για αυτή την αποστολή. Δεν σε εγγράφει στη λίστα αναμονής.</p><button class="profile-button" type="submit">Στείλε μου το αποτέλεσμά μου</button><p id="result-email-status" role="status"></p></form></section><section class="profile-research-invitation" aria-labelledby="research-invitation-title"><div class="profile-research-overlay"><h2 id="research-invitation-title">Γίνε μέρος της δημιουργίας του PRIMAL CORE</h2><p class="profile-study-duration">5 ερωτήσεις. 60 δευτερόλεπτα.</p><p>Οι απαντήσεις σου θα συμβάλουν στη διαμόρφωση του PRIMAL CORE.</p><button class="profile-button profile-research-cta" id="product-interest" aria-label="ΓΙΝΕ ΜΕΡΟΣ της έρευνας για το PRIMAL CORE">ΓΙΝΕ ΜΕΡΟΣ ${arrow()}</button></div></section></div>`;
+ <div class="skin-editorial-actions skin-editorial-copy"><section class="profile-result-email" aria-labelledby="result-email-title"><h2 id="result-email-title">Το αποτέλεσμά σου στο email σου</h2><form id="result-email-form"><label for="result-email">Email</label><input id="result-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required><label class="profile-check"><input name="deliveryConsent" type="checkbox" required>Θέλω να λάβω το προσωπικό μου αποτέλεσμα σε αυτό το email.</label><label class="profile-check"><input name="waitlistConsent" type="checkbox">Θέλω να λαμβάνω ενημερώσεις για την κυκλοφορία του PRIMAL CORE και να μάθω πρώτος για το Early Access.</label><p class="profile-fine">Η αποστολή του αποτελέσματος είναι ανεξάρτητη από την προαιρετική εγγραφή στη λίστα. Δες την <a href="/privacy.html">πολιτική απορρήτου</a>.</p><button class="profile-button" type="submit">Στείλε μου το αποτέλεσμά μου</button><p id="result-email-status" role="status"></p></form></section><section class="profile-research-invitation" aria-labelledby="research-invitation-title"><div class="profile-research-overlay"><h2 id="research-invitation-title">Γίνε μέρος της δημιουργίας του PRIMAL CORE</h2><p class="profile-study-duration">5 ερωτήσεις. 60 δευτερόλεπτα.</p><p>Οι απαντήσεις σου θα συμβάλουν στη διαμόρφωση του PRIMAL CORE.</p><button class="profile-button profile-research-cta" id="product-interest" aria-label="ΓΙΝΕ ΜΕΡΟΣ της έρευνας για το PRIMAL CORE">ΓΙΝΕ ΜΕΡΟΣ ${arrow()}</button></div></section></div>`;
 
  $('#product-interest').onclick=()=>{event('product_interest_click');if(!researchDone)window.PrimalAnalytics?.trackOnce('survey_start',researchSubmissionId);renderResearch();};focus($('#result-title'));event('result_view');
  bindResultMail();void saveQuizAnswers();
@@ -88,6 +88,12 @@ function syncResultMail(){
  if(notice)$('#result-email-status').textContent=notice;
  else if(available.email===false)$('#result-email-status').textContent='Η αποστολή email δεν είναι διαθέσιμη αυτή τη στιγμή.';
 }
+async function subscribeFromSkinProfile(email){
+ const response=await fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({email,consent:true,source:'primal-core-skin-profile',lang:document.documentElement.lang.startsWith('en')?'en':'el',landing_path:'/skin-profile'})});
+ const confirmation=await response.json().catch(()=>({}));
+ if(!response.ok||confirmation.ok!==true)throw Error('waitlist_unconfirmed');
+ if(confirmation.registration==='new')window.PrimalAnalytics?.track('early_access_signup');
+}
 function bindResultMail(){
  syncResultMail();const form=$('#result-email-form');
  form.onsubmit=async e=>{
@@ -100,8 +106,18 @@ function bindResultMail(){
   status.textContent='Το αποτέλεσμά σου αποστέλλεται…';
   try {
    await request({action:'email',email:form.elements.email.value.trim(),submissionId:id,result:structuredClone(result),deliveryConsent:form.elements.deliveryConsent.checked,adult:true});
+   const wantsWaitlist=form.elements.waitlistConsent.checked;
+   const confirmedEmail=form.elements.email.value.trim();
    markDelivered(id,'Το αποτέλεσμά σου στάλθηκε. Έλεγξε τα εισερχόμενα και τα ανεπιθύμητα.');
    window.PrimalAnalytics?.trackOnce('generate_lead',id,{form_id:'result_email'});
+   if(wantsWaitlist){
+    try {
+     await subscribeFromSkinProfile(confirmedEmail);
+     markDelivered(id,'Το αποτέλεσμά σου στάλθηκε και η εγγραφή στην Early Access λίστα επιβεβαιώθηκε.');
+    } catch {
+     markDelivered(id,'Το αποτέλεσμά σου στάλθηκε. Η εγγραφή στην Early Access λίστα δεν επιβεβαιώθηκε. Μπορείς να εγγραφείς από την αρχική σελίδα.');
+    }
+   }
    form.reset();
   } catch(error) {
    if(error.message==='email_accepted_storage_unconfirmed'){
