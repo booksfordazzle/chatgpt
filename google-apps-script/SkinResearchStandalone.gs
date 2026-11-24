@@ -18,8 +18,9 @@ function doPost(event) {
     if (!event || !event.postData || event.postData.contents.length > 2048) return reply({ok:false});
     var input = JSON.parse(event.postData.contents);
     var secret = PropertiesService.getScriptProperties().getProperty('SKIN_PROFILE_RESEARCH_SECRET');
-    if (!input || Array.isArray(input) || typeof input !== 'object' || !secret || input.token !== secret || ['skin-research-v2','skin-quiz-v1'].indexOf(input.action)<0) return reply({ok:false});
+    if (!input || Array.isArray(input) || typeof input !== 'object' || !secret || input.token !== secret || ['skin-research-v2','skin-quiz-v1','skin-profile-delivery-v1'].indexOf(input.action)<0) return reply({ok:false});
     lock.waitLock(10000); locked = true;
+    if(input.action==='skin-profile-delivery-v1')return reply(saveSkinProfileDelivery(input));
     return reply(input.action==='skin-quiz-v1'?saveSkinQuiz(input):saveSkinResearch(input));
   } catch (_) { return reply({ok:false}); }
   finally { if (locked) lock.releaseLock(); }
@@ -75,4 +76,33 @@ function saveSkinQuiz(input){
  var saved=sheet.getRange(row,1,1,headers.length).getDisplayValues()[0];
  if(Object.keys(valuesByHeader).some(function(h){return saved[headers.indexOf(h)]!==valuesByHeader[h];}))return {ok:false};
  return {ok:true,spreadsheetId:target,submissionId:input.submissionId,sheetName:'Skin Quiz'};
+}
+
+/** Delivery-only receipt. Never enrolls the recipient in Waitlist or marketing. */
+function saveSkinProfileDelivery(input) {
+  var target = '1ptOmDxONI9KD_rLRZp0xGsjJezsOyIP0H3gd5HgleRg';
+  var allowed = ['action','token','spreadsheetId','submissionId','email','result','deliveryConsent','status'];
+  if (input.spreadsheetId !== target || input.deliveryConsent !== true || input.status !== 'smtp-accepted' ||
+      typeof input.submissionId !== 'string' || !/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(input.submissionId) ||
+      typeof input.email !== 'string' || input.email.length > 254 || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(input.email) ||
+      /[\r\n\x00]/.test(input.email) || ['M','A','C','B','E'].indexOf(input.result) < 0 ||
+      Object.keys(input).some(function(k){return allowed.indexOf(k) < 0;})) return {ok:false};
+  var book = SpreadsheetApp.openById(target), sheet = book.getSheetByName('Skin Profile Emails') || book.insertSheet('Skin Profile Emails');
+  var expected = ['Submission ID','Email','Requested at (UTC)','Result','Delivery consent','Email status'];
+  if (sheet.getLastRow() === 0) { sheet.appendRow(expected); sheet.setFrozenRows(1); }
+  var headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getDisplayValues()[0];
+  if (JSON.stringify(headers) !== JSON.stringify(expected)) return {ok:false};
+  var ids = sheet.getLastRow() > 1 ? sheet.getRange(2,1,sheet.getLastRow()-1,1).getDisplayValues() : [];
+  var index = ids.findIndex(function(row){return row[0] === input.submissionId;});
+  var rowNumber = index < 0 ? sheet.getLastRow()+1 : index+2;
+  var safeEmail = "'" + input.email.trim();
+  if (index < 0) {
+    var values = [input.submissionId,safeEmail,new Date().toISOString(),input.result,'true','smtp-accepted'];
+    var range = sheet.getRange(rowNumber,1,1,expected.length);
+    range.setNumberFormat('@'); range.setValues([values]); SpreadsheetApp.flush();
+  }
+  var saved = sheet.getRange(rowNumber,1,1,expected.length).getDisplayValues()[0];
+  if (saved[0] !== input.submissionId || String(saved[1]).replace(/^'/,'').toLowerCase() !== input.email.trim().toLowerCase() ||
+      saved[3] !== input.result || saved[4] !== 'true' || saved[5] !== 'smtp-accepted') return {ok:false};
+  return {ok:true,spreadsheetId:target,submissionId:input.submissionId,sheetName:'Skin Profile Emails'};
 }
