@@ -111,8 +111,22 @@ async function run() {
     await page.goto(base, { waitUntil: 'domcontentloaded' });
     assert(await page.locator('#analytics-consent').isVisible());
     await assertForeground(page);
+    const compactTitle = await page.locator('#hero-title').boundingBox();
     await page.locator('#analytics-reject').click();
     assert.equal(await page.evaluate(() => window.PrimalAnalytics.allowed()), false);
+    const heroBox = await page.locator('.hero-autoplay').boundingBox();
+    const titleBox = await page.locator('#hero-title').boundingBox();
+    const signupBox = await page.locator(waitlist).boundingBox();
+    const titleCenter = (titleBox.y + titleBox.height / 2 - heroBox.y) / heroBox.height;
+    assert(titleCenter > .28 && titleCenter < .38, 'Headline should sit around one third of the way down the hero');
+    assert(signupBox.y > heroBox.y + heroBox.height * .60, 'Signup should sit in the lower portion of the hero');
+    assert(titleBox.y > compactTitle.y + 120, 'Dismissing privacy choices should restore the headline position');
+
+    await page.locator('.analytics-settings').click();
+    assert(await page.locator('#analytics-consent').isVisible());
+    await assertForeground(page);
+    await page.locator('#analytics-reject').click();
+    assert.deepEqual(await page.locator('#hero-title').boundingBox(), titleBox);
     await page.waitForFunction(() => document.querySelector('.hero-video').currentTime > 0.25);
     const originalGeometry = await page.locator('#hero-title').boundingBox();
     await page.waitForFunction(() => document.querySelector('.hero-video').currentTime > 9);

@@ -112,14 +112,14 @@ html:not(.js) .hero-autoplay .hero-video {
     justify-content: space-between;
     width: min(calc(100% - var(--page-gutter) * 2), 480px);
     margin-inline: auto;
-    padding: clamp(88px, 21svh, 200px) 0 60px;
+    padding: clamp(88px, 25svh, 220px) 0 60px;
     text-align: center;
     pointer-events: none;
   }
   .hero-autoplay .hero-content #hero-title {
     position: relative;
     isolation: isolate;
-    font-size: clamp(24px, 7.35vw, 38px);
+    font-size: clamp(24px, 7.65vw, 38px);
   }
   .hero-autoplay .hero-content .hero-signup {
     position: relative;
@@ -135,29 +135,34 @@ html:not(.js) .hero-autoplay .hero-video {
     background: radial-gradient(ellipse farthest-side, rgba(0, 0, 0, .74) 68%, transparent);
     pointer-events: none;
   }
+  .hero-autoplay .hero-content .hero-prelaunch {
+    margin-bottom: 8px;
+    line-height: 1.35;
+  }
   .hero-autoplay .hero-signup .consent {
+    margin-top: 10px;
     text-align: left;
   }
 
   /* Keep signup reachable while the fixed privacy choices are open. */
-  body:has(#analytics-consent:not([hidden])) .hero-autoplay .hero-content {
+  .hero-autoplay.is-privacy-open .hero-sticky .hero-content {
     justify-content: flex-start;
     padding-top: 16px;
   }
-  body:has(#analytics-consent:not([hidden])) .hero-autoplay #hero-title {
+  .hero-autoplay.is-privacy-open #hero-title {
     font-size: clamp(20px, 5.4vw, 30px);
   }
-  body:has(#analytics-consent:not([hidden])) .hero-autoplay .hero-signup {
+  .hero-autoplay.is-privacy-open .hero-signup {
     margin-top: 10px;
   }
-  body:has(#analytics-consent:not([hidden])) .hero-autoplay #hero-waitlist-title {
+  .hero-autoplay.is-privacy-open #hero-waitlist-title {
     margin-bottom: 4px;
   }
-  body:has(#analytics-consent:not([hidden])) .hero-autoplay .hero-prelaunch {
+  .hero-autoplay.is-privacy-open .hero-prelaunch {
     margin-bottom: 6px;
     line-height: 1.25;
   }
-  body:has(#analytics-consent:not([hidden])) .hero-autoplay .consent {
+  .hero-autoplay.is-privacy-open .consent {
     margin-top: 4px;
   }
 }
