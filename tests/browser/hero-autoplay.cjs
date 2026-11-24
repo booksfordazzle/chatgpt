@@ -79,10 +79,8 @@ async function run() {
       const freshPage = await fresh.newPage();
       await freshPage.goto(base, { waitUntil: 'domcontentloaded' });
       assert(await freshPage.locator('#analytics-consent').isVisible());
+      await freshPage.locator('#analytics-reject').click();
       await assertForeground(freshPage);
-      const banner = await freshPage.locator('#analytics-consent').boundingBox();
-      const consent = await freshPage.locator(waitlist + ' .consent').boundingBox();
-      assert(consent.y + consent.height <= banner.y, 'Privacy panel overlaps signup consent');
       await fresh.close();
     }
 
@@ -110,8 +108,9 @@ async function run() {
     });
     await page.goto(base, { waitUntil: 'domcontentloaded' });
     assert(await page.locator('#analytics-consent').isVisible());
-    await assertForeground(page);
-    const compactTitle = await page.locator('#hero-title').boundingBox();
+    await page.evaluate(() => document.fonts.ready);
+    const firstVisitTitle = await page.locator('#hero-title').boundingBox();
+    const firstVisitSignup = await page.locator(waitlist).boundingBox();
     await page.locator('#analytics-reject').click();
     assert.equal(await page.evaluate(() => window.PrimalAnalytics.allowed()), false);
     const heroBox = await page.locator('.hero-autoplay').boundingBox();
@@ -120,13 +119,15 @@ async function run() {
     const titleCenter = (titleBox.y + titleBox.height / 2 - heroBox.y) / heroBox.height;
     assert(titleCenter > .28 && titleCenter < .38, 'Headline should sit around one third of the way down the hero');
     assert(signupBox.y > heroBox.y + heroBox.height * .60, 'Signup should sit in the lower portion of the hero');
-    assert(titleBox.y > compactTitle.y + 120, 'Dismissing privacy choices should restore the headline position');
+    assert.deepEqual(titleBox, firstVisitTitle);
+    assert.deepEqual(signupBox, firstVisitSignup);
 
     await page.locator('.analytics-settings').click();
     assert(await page.locator('#analytics-consent').isVisible());
-    await assertForeground(page);
-    await page.locator('#analytics-reject').click();
     assert.deepEqual(await page.locator('#hero-title').boundingBox(), titleBox);
+    assert.deepEqual(await page.locator(waitlist).boundingBox(), signupBox);
+    await page.locator('#analytics-reject').click();
+    await assertForeground(page);
     await page.waitForFunction(() => document.querySelector('.hero-video').currentTime > 0.25);
     const originalGeometry = await page.locator('#hero-title').boundingBox();
     await page.waitForFunction(() => document.querySelector('.hero-video').currentTime > 9);

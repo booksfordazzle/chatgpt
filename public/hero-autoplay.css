@@ -99,7 +99,7 @@ html:not(.js) .hero-autoplay .hero-video {
 
 @media (max-width: 760px) {
   html .hero-autoplay .hero-sticky:has(.hero-signup) {
-    align-items: stretch;
+    display: block;
   }
   .hero-autoplay .hero-media {
     inset: 0;
@@ -110,6 +110,7 @@ html:not(.js) .hero-autoplay .hero-video {
   .hero-autoplay .hero-sticky .hero-content {
     align-items: center;
     justify-content: space-between;
+    min-height: calc(100svh - var(--header));
     width: min(calc(100% - var(--page-gutter) * 2), 480px);
     margin-inline: auto;
     padding: clamp(88px, 25svh, 220px) 0 60px;
@@ -142,27 +143,5 @@ html:not(.js) .hero-autoplay .hero-video {
   .hero-autoplay .hero-signup .consent {
     margin-top: 10px;
     text-align: left;
-  }
-
-  /* Keep signup reachable while the fixed privacy choices are open. */
-  .hero-autoplay.is-privacy-open .hero-sticky .hero-content {
-    justify-content: flex-start;
-    padding-top: 16px;
-  }
-  .hero-autoplay.is-privacy-open #hero-title {
-    font-size: clamp(20px, 5.4vw, 30px);
-  }
-  .hero-autoplay.is-privacy-open .hero-signup {
-    margin-top: 10px;
-  }
-  .hero-autoplay.is-privacy-open #hero-waitlist-title {
-    margin-bottom: 4px;
-  }
-  .hero-autoplay.is-privacy-open .hero-prelaunch {
-    margin-bottom: 6px;
-    line-height: 1.25;
-  }
-  .hero-autoplay.is-privacy-open .consent {
-    margin-top: 4px;
   }
 }

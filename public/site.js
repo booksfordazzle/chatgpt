@@ -112,19 +112,6 @@ if (film) {
   let pendingPlay;
   let alternateSource;
 
-  // Only compact the hero while the privacy panel is actually open.
-  document.addEventListener('DOMContentLoaded', () => {
-    const panel = document.getElementById('analytics-consent');
-    if (!panel) return;
-
-    const syncPrivacyLayout = () => scene.classList.toggle('is-privacy-open', !panel.hidden);
-    new MutationObserver(syncPrivacyLayout).observe(panel, {
-      attributes: true,
-      attributeFilter: ['hidden']
-    });
-    syncPrivacyLayout();
-  }, { once: true });
-
   function syncToggle() {
     toggle.hidden = reduced.matches || Boolean(film.error);
     const paused = film.paused;
