@@ -136,7 +136,7 @@ async function saveQuizAnswers(){
  const status=$('#quiz-save-status');if(quizSaved){status.textContent='Οι απαντήσεις του τεστ αποθηκεύτηκαν ανώνυμα.';return;}
  quizSaving=true;const id=quizSubmissionId,payload=structuredClone(answers);status.textContent='Αποθήκευση απαντήσεων…';
  try{await request({action:'quiz-save',submissionId:id,answers:payload,gender,consent:true});if(id===quizSubmissionId){quizSaved=true;saveResultSession(true);status.textContent='Οι απαντήσεις του τεστ αποθηκεύτηκαν ανώνυμα.';}}
- catch{if(id===quizSubmissionId){status.textContent='Δεν επιβεβαιώθηκε η αποθήκευση των απαντήσεων. Μπορείς ακόμη να ζητήσεις το αποτέλεσμά σου μέσω email.';}}
+ catch{if(id===quizSubmissionId){status.textContent='';}}
  finally{quizSaving=false;}
 }
 function returnToResult(){show('results');focus($('#product-interest'));}
