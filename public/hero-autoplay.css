@@ -1,3 +1,26 @@
+/* Keep the cursor light between the page background and content. */
+@media screen and (any-hover: hover) and (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
+  body {
+    isolation: isolate;
+  }
+  .homepage-cursor-light {
+    position: fixed;
+    inset: 0 auto auto 0;
+    z-index: -1;
+    width: clamp(420px, 65vw, 920px);
+    height: clamp(340px, 52vw, 720px);
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 49% 44% at 46% 48%, rgba(127, 135, 93, .17), transparent 100%),
+      radial-gradient(ellipse 39% 42% at 63% 58%, rgba(150, 113, 77, .11), transparent 100%);
+    opacity: 0;
+    transition: opacity 220ms ease-out;
+  }
+  .homepage-cursor-light.is-visible {
+    opacity: 1;
+  }
+}
+
 /* Keep the foreground in normal flow. Only the media occupies a background layer. */
 html .hero-film.hero-autoplay {
   height: auto;

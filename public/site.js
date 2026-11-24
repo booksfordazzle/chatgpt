@@ -100,6 +100,50 @@ form.addEventListener('submit', async event => {
 // One capture shared by both forms, refreshed for current viewport on submit.
 document.querySelectorAll('.waitlist-form').forEach(populateAttributionFields);
 attribution.ready.then(() => document.querySelectorAll('.waitlist-form').forEach(populateAttributionFields));
+// Update the small background layer at most once per pointer frame.
+if (document.querySelector('.hero-autoplay')) {
+  const cursorMotion = matchMedia('(any-hover: hover) and (any-pointer: fine) and (prefers-reduced-motion: no-preference)');
+  let light;
+  let frame = null;
+
+  function hideCursorLight() {
+    light?.classList.remove('is-visible');
+    if (frame !== null) cancelAnimationFrame(frame);
+    frame = null;
+  }
+
+  function syncCursorLight() {
+    if (cursorMotion.matches) {
+      light ??= document.createElement('div');
+      light.className = 'homepage-cursor-light';
+      light.setAttribute('aria-hidden', 'true');
+      document.body.prepend(light);
+    } else {
+      hideCursorLight();
+      light?.remove();
+      light = null;
+    }
+  }
+
+  let pointerX;
+  let pointerY;
+  document.addEventListener('pointermove', event => {
+    if (!light || event.pointerType !== 'mouse') return;
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    if (frame !== null) return;
+    frame = requestAnimationFrame(() => {
+      frame = null;
+      light.style.transform = `translate3d(calc(${pointerX}px - 50%), calc(${pointerY}px - 50%), 0)`;
+      light.classList.add('is-visible');
+    });
+  }, { passive: true });
+  document.documentElement.addEventListener('pointerleave', hideCursorLight);
+  window.addEventListener('blur', hideCursorLight);
+  cursorMotion.addEventListener('change', syncCursorLight);
+  syncCursorLight();
+}
+
 // Responsive background playback, independent of the hero content.
 const film = document.querySelector('[data-film]');
 if (film) {
