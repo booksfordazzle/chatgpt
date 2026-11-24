@@ -1,4 +1,4 @@
-import {questions} from './questions.mjs';
+import {questions,activeQuestionIndices} from './questions.mjs';
 export const profileIds=['M','A','C','B','E'];
 export const habitIds=['cleanse','moisturize','sun','keep'];
 export function selectedOptions(answer){return Array.isArray(answer)?[...answer]:[answer];}
@@ -11,8 +11,13 @@ export function validAnswer(answer,index){
  if((q.incompatible||[]).some(group=>group.filter(v=>values.includes(v)).length>1))return false;
  return true;
 }
+export function validQuizAnswers(answers){
+ if(!Array.isArray(answers)||answers.length!==questions.length)return false;
+ const omitted=questions.every((_,i)=>activeQuestionIndices.includes(i)||answers[i]===null);
+ return questions.every((_,i)=>validAnswer(answers[i],i)||(omitted&&!activeQuestionIndices.includes(i)));
+}
 export function evaluate(answers){
- if(!Array.isArray(answers)||answers.length!==questions.length||questions.some((q,i)=>!validAnswer(answers[i],i)))throw Error('incomplete_answers');
+ if(!validQuizAnswers(answers))throw Error('incomplete_answers');
  const original=['M','A','M','C','B','E'][answers[3]];
  const primary=selectedOptions(answers[1]).includes(3)||answers[5]===2?'C':original;
  const candidates=[primary!==original?original:null,(selectedOptions(answers[1]).some(v=>[1,2].includes(v))||answers[2]===0)?'M':null,answers[4]===2?'A':null,[1,2].includes(answers[2])?'B':null,[2,3].includes(answers[9])?'E':null];
@@ -20,7 +25,7 @@ export function evaluate(answers){
  const habits=[];
  if(selectedOptions(answers[6]).some(v=>[1,3].includes(v)))habits.push('cleanse');
  if(answers[7]!==0)habits.push('moisturize');
- if(answers[8]!==0)habits.push('sun');
+ if(answers[8]!==null&&answers[8]!==0)habits.push('sun');
  if(answers[9]===0)habits.push('keep');
  return {primary,secondary,habits};
 }

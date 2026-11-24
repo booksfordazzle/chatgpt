@@ -5,10 +5,11 @@ function setupSkinQuiz(){var book=SpreadsheetApp.openById('1mNlfIPPEO1eEm6L8RsmR
 function saveSkinQuiz(input){
  var target='1mNlfIPPEO1eEm6L8RsmRuCZ0A5jVkX2MpnpPY2RhVAA',qs=skinQuizQuestions();
  if(input.spreadsheetId!==target||input.consent!==true||typeof input.submissionId!=='string'||! /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(input.submissionId)||Object.keys(input).some(function(k){return ['action','token','spreadsheetId','submissionId','consent','answers','gender'].indexOf(k)<0;})||(input.gender!==undefined&&input.gender!==null&&['Άνδρας','Γυναίκα','Άλλο','Προτιμώ να μην απαντήσω'].indexOf(input.gender)<0)||!Array.isArray(input.answers)||input.answers.length!==qs.length)return {ok:false};
- var answers=input.answers;
- if(qs.some(function(q,i){var a=answers[i],v=Array.isArray(a)?a:[a];return (Array.isArray(a)&&!q.multiple)||!v.length||v.length>(q.maxChoices||1)||new Set(v).size!==v.length||v.some(function(n){return !Number.isInteger(n)||n<0||n>=q.options.length;})||(v.length>1&&(q.exclusive||[]).some(function(n){return v.indexOf(n)>=0;}))||(q.incompatible||[]).some(function(g){return g.filter(function(n){return v.indexOf(n)>=0;}).length>1;});}))return {ok:false};
+ var answers=input.answers, omitted=[5,6,8,9];
+ var shortQuiz=omitted.every(function(i){return answers[i]===null;});
+ if(qs.some(function(q,i){if(shortQuiz&&omitted.indexOf(i)>=0)return false;var a=answers[i],v=Array.isArray(a)?a:[a];return (Array.isArray(a)&&!q.multiple)||!v.length||v.length>(q.maxChoices||1)||new Set(v).size!==v.length||v.some(function(n){return !Number.isInteger(n)||n<0||n>=q.options.length;})||(v.length>1&&(q.exclusive||[]).some(function(n){return v.indexOf(n)>=0;}))||(q.incompatible||[]).some(function(g){return g.filter(function(n){return v.indexOf(n)>=0;}).length>1;});}))return {ok:false};
  var primary=(Array.isArray(answers[1])?answers[1]:[answers[1]]).indexOf(3)>=0||answers[5]===2?'CALM':['RESTORE','ENDURE','RESTORE','CALM','BALANCE','ESSENTIAL'][answers[3]];
- var labels=qs.map(function(q,i){return (Array.isArray(answers[i])?answers[i]:[answers[i]]).map(function(n){return q.options[n];}).join(' | ');});
+ var labels=qs.map(function(q,i){if(answers[i]===null)return '';return (Array.isArray(answers[i])?answers[i]:[answers[i]]).map(function(n){return q.options[n];}).join(' | ');});
  var book=SpreadsheetApp.openById(target),sheet=book.getSheetByName('Skin Quiz')||book.insertSheet('Skin Quiz'),expected=skinQuizHeaders(),headers;
  if(sheet.getLastRow()===0){sheet.appendRow(expected);sheet.setFrozenRows(1);headers=expected.slice();}
  else {

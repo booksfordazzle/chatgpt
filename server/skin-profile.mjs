@@ -1,7 +1,7 @@
 import {researchSheetsSettings,saveResearchToSheets,saveQuizToSheets,saveSkinProfileDeliveryToSheets} from './skin-research-sheets.mjs';
 import nodemailer from 'nodemailer';
 import {smtpSettings} from './welcome-email.mjs';
-import {validResult,validAnswer} from '../public/skin-profile/engine.mjs';
+import {validResult,validQuizAnswers} from '../public/skin-profile/engine.mjs';
 import {skinResultMessage} from './skin-result-template.mjs';
 import {createSubmissionLimiter,rejectsBrowserOrigin} from '../netlify/functions/lib/request-guard.mjs';
 export const funnelEvents=['lead_magnet_view','quiz_start','quiz_step_complete','quiz_complete','result_view','result_copy','email_delivery_requested','marketing_opt_in','product_concept_view','product_interest_click','research_complete','early_access_signup'];
@@ -9,7 +9,7 @@ const emailPattern=/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
 const keys=(value,allowed)=>value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).every(k=>allowed.includes(k));
 function researchValid(d){return keys(d,['action','interest','spend','decision','consent'])&&d.consent===true&&['interest','spend','decision'].every((k,i)=>d[k]===null||Number.isInteger(d[k])&&d[k]>=0&&d[k]<[4,6,6][i])&&['interest','spend','decision'].some(k=>d[k]!==null);}
 
-function quizValid(d){return keys(d,['action','submissionId','answers','gender','consent'])&&(d.gender===null||d.gender===undefined||['Άνδρας','Γυναίκα','Άλλο','Προτιμώ να μην απαντήσω'].includes(d.gender))&&d.consent===true&&typeof d.submissionId==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(d.submissionId)&&Array.isArray(d.answers)&&d.answers.length===10&&Array.from(d.answers,(a,i)=>validAnswer(a,i)).every(Boolean);}
+function quizValid(d){return keys(d,['action','submissionId','answers','gender','consent'])&&(d.gender===null||d.gender===undefined||['Άνδρας','Γυναίκα','Άλλο','Προτιμώ να μην απαντήσω'].includes(d.gender))&&d.consent===true&&typeof d.submissionId==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(d.submissionId)&&validQuizAnswers(d.answers);}
 const researchV2Fields={problem:8,routine:7,unmet:9,concept:7,price:7,reason:4};
 function researchV2Valid(d){return keys(d,['action','consent','submissionId',...Object.keys(researchV2Fields)])&&d.consent===true&&typeof d.submissionId==='string'&&/^[a-f0-9-]{36}$/i.test(d.submissionId)&&Object.entries(researchV2Fields).every(([k,n])=>k==='reason'?(d.price===6?Number.isInteger(d.reason)&&d.reason>=0&&d.reason<n:d.reason===null):Number.isInteger(d[k])&&d[k]>=0&&d[k]<n)&&Object.keys(researchV2Fields).some(k=>d[k]!==null);}
 function database(env){

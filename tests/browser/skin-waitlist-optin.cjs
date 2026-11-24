@@ -25,7 +25,10 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || '/opt/codex/runtim
     await page.locator('#profile-adult').check();
     await page.locator('#profile-start button').click();
     await page.locator('#question-content [name=gender]').last().check();
-    for (let i=0;i<10;i++) {
+    const expected = [/Σε ποια ηλικία/, /Μόλις έπλυνες/, /μέσα στην ημέρα/, /Αν μπορούσες/, /λεπτές γραμμές/, /Πόσο συχνά ενυδατώνεις/];
+    for (const [i,title] of expected.entries()) {
+     assert.match((await page.locator('#question-title').textContent()).trim(),title);
+     assert.equal(await page.locator('#profile-progress').getAttribute('aria-valuetext'),`Ερώτηση ${i+1} από 6`);
      await page.locator('#question-content [name=answer]').first().check();
      await page.locator('#question-next').click();
     }
@@ -53,7 +56,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || '/opt/codex/runtim
     await page.waitForFunction(() => document.querySelector('#result-email-status')?.textContent.includes('στάλθηκε'));
     assert.equal(delivered.length,1, 'result email must be submitted once');
     assert.equal(await completion.locator('.skin-editorial, #result-final-note').count(),0);
-    assert.equal(delivered[0].result.primary,'M');
+    assert.deepEqual(delivered[0].result,{primary:'M',secondary:null,habits:[]});
     assert.equal(delivered[0].email,'controlled@example.com');
     assert.equal(delivered[0].deliveryConsent,true);
     assert.equal('waitlistConsent' in delivered[0],false);

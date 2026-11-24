@@ -13,6 +13,8 @@ export const questions = [
 // Multiple answers are allowed only for coexisting sensations and cleansing habits.
 Object.assign(questions[1],{multiple:true,exclusive:[0,4],incompatible:[[1,2]],maxChoices:2});
 Object.assign(questions[6],{multiple:true,exclusive:[4],maxChoices:4});
+// Keep original question slots for saved sessions and spreadsheet columns.
+export const activeQuestionIndices = [0, 1, 2, 3, 4, 7];
 // V2 research has a separate metric namespace; never merge with the prior spend survey.
 export const researchQuestions=[
   {
