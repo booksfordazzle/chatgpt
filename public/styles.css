@@ -380,16 +380,12 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 }
 @media(max-width:760px) and (prefers-reduced-motion:no-preference){.js .hero-film{height:calc(var(--hero-viewport-height,100svh)*2.8)}}
 
-/* Each animated chapter occupies the absolute center of the hero frame. */
+/* Default hero content positioning. */
 .hero-sticky .hero-content{position:absolute;inset:0;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:24px 0;width:calc(100% - var(--page-gutter)*2);margin:auto}
 .hero-content #hero-title{position:static;transform:none;margin:0}
 .hero-content .hero-signup{position:static;transform:none;margin:32px 0 0}
 .hero-signup #hero-waitlist-title{font-size:clamp(28px,3.5vw,48px);line-height:1.15;text-align:center;margin-bottom:24px}
 .hero-content .hero-signup .form-status:empty{min-height:0;margin:0}
-.hero-film.has-timed-reveal #hero-title,.hero-film.has-timed-reveal .hero-signup{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);margin:0}
-.hero-film.has-timed-reveal #hero-title{opacity:var(--hero-title-opacity,0)}
-.hero-film.has-timed-reveal .hero-signup{opacity:var(--hero-signup-opacity,0)}
-.hero-film.has-timed-reveal .hero-shade{background:rgba(0,0,0,.3);opacity:var(--hero-shade-opacity,0)}
 
 .waitlist-form .email-row .button:hover{background:#fff;box-shadow:0 5px 24px rgba(255,255,255,.55),0 10px 38px rgba(255,255,255,.28)}
 
@@ -413,8 +409,6 @@ body{background-color:#080908;background-image:radial-gradient(ellipse at 90% 15
 .contact-actions .button:disabled::before{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){.contact-actions .button::before{animation:none;opacity:.5}}
 
-/* Both hero chapter headings share the same vertical center. */
-.hero-film.has-timed-reveal #hero-title{top:calc(50% + var(--hero-heading-offset,0px))}
 
 /* Icon-only navigation keeps a comfortable keyboard and touch target. */
 @media(max-width:1100px){.header-inner>.menu-toggle{width:44px;height:44px;padding:10px;justify-content:center;gap:0}}

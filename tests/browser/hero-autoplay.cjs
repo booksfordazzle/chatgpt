@@ -1,67 +1,183 @@
-const playwright=require(process.env.PLAYWRIGHT_MODULE||'playwright');
-const engine=process.env.BROWSER_ENGINE||'chromium';
-const browserType=playwright[engine];
-const assert=require('node:assert/strict');
-const base=process.env.BASE_URL||'http://localhost:8080';
-async function state(page){return page.locator('.hero-film').evaluate(s=>({title:Number(getComputedStyle(s).getPropertyValue('--hero-title-opacity')),signup:Number(getComputedStyle(s).getPropertyValue('--hero-signup-opacity')),shade:Number(getComputedStyle(s).getPropertyValue('--hero-shade-opacity')),inert:s.querySelector('.hero-signup').inert,static:s.classList.contains('is-hero-static')}));}
-async function seek(page,time){await page.locator('[data-film]').evaluate(async(v,time)=>{v.pause();await new Promise(resolve=>{v.addEventListener('seeked',resolve,{once:true});v.currentTime=time});v.dispatchEvent(new Event('timeupdate'))},time);return state(page)}
-(async()=>{
- const browser=await browserType.launch({executablePath:process.env.BROWSER_EXECUTABLE||undefined,args:engine==='chromium'?['--no-sandbox']:[],timeout:20000});
- console.log('Browser:',process.env.BROWSER_NAME||engine,browser.version());
- for(const width of[390,1440])for(const lang of['','/en/']){
-  const context=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width,height:844},...(engine!=='firefox'?{isMobile:width<761}:{}),hasTouch:width<761});const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto(base+lang);await page.waitForFunction(()=>{const v=document.querySelector('[data-film]');return v.readyState>=2&&!v.paused&&v.currentTime>.05});await page.evaluate(()=>document.fonts.ready);
-  const video=page.locator('[data-film]');const src=await video.getAttribute('src');assert(src.includes(width<761?'hero-loop-mobile.':'hero-loop-desktop.'));
-  assert.equal(await video.evaluate(v=>v.loop&&v.muted&&v.playsInline),true);
-  const geometry=await page.locator('.hero-film').evaluate(s=>({height:s.offsetHeight,stage:s.querySelector('.hero-sticky').offsetHeight,position:getComputedStyle(s.querySelector('.hero-sticky')).position}));assert.equal(geometry.height,geometry.stage);assert.equal(geometry.position,'relative');
-  await video.evaluate(v=>{const descriptor=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'currentTime');v.scrollSeekWrites=0;Object.defineProperty(v,'currentTime',{configurable:true,get(){return descriptor.get.call(this)},set(value){this.scrollSeekWrites++;descriptor.set.call(this,value)}})});await page.evaluate(()=>scrollTo({top:100,behavior:'instant'}));await page.waitForTimeout(120);assert.equal(await video.evaluate(v=>v.scrollSeekWrites),0,'scroll must not seek video');await video.evaluate(v=>delete v.currentTime);await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
-  const duration=await video.evaluate(v=>v.duration),fps=width<761?60:24,start=duration-200/fps,span=duration-.05-start;
-  let s=await seek(page,Math.max(0,start-1.25)+span*.18+.15);assert(s.title>.98&&s.signup<.01,JSON.stringify(s));
-  if(process.env.SCREENSHOT_DIR)await page.screenshot({path:`${process.env.SCREENSHOT_DIR}/hero-autoplay-title-${width}-${lang?'en':'el'}.png`});
-  s=await seek(page,start+span*.58);assert(s.title<.02&&s.signup<.02,JSON.stringify(s));
-  s=await seek(page,start+span*.95);assert(s.title<.01&&s.signup>.99&&!s.inert,JSON.stringify(s));
-  await page.locator('.hero-signup [name=email]').fill('hero-test@example.invalid');
-  await video.evaluate(async v=>{v.currentTime=v.duration-.1;v.playbackRate=3;await v.play()});await page.waitForFunction(()=>document.querySelector('[data-film]').currentTime<2);s=await state(page);assert(s.signup>.99&&!s.inert);assert.equal(await page.locator('.hero-signup [name=email]').inputValue(),'hero-test@example.invalid');
-  await page.locator('[data-hero-toggle]').click();assert.equal(await video.evaluate(v=>v.paused),true);await page.locator('[data-hero-toggle]').click();await page.waitForFunction(()=>!document.querySelector('[data-film]').paused);
-  if(process.env.SCREENSHOT_DIR)await page.screenshot({path:`${process.env.SCREENSHOT_DIR}/hero-autoplay-signup-${width}-${lang?'en':'el'}.png`});
-  if(width===1440&&!lang){
-    await page.setViewportSize({width:390,height:844});
-    await page.waitForFunction(()=>{const v=document.querySelector('[data-film]');return v.currentSrc.includes('hero-loop-mobile.')&&!v.paused});
-    assert.equal(await page.locator('.hero-signup [name=email]').inputValue(),'hero-test@example.invalid');assert((await state(page)).signup>.99);
-    await page.setViewportSize({width:1440,height:844});
-    await page.waitForFunction(()=>{const v=document.querySelector('[data-film]');return v.currentSrc.includes('hero-loop-desktop.')&&!v.paused});
+const assert = require('node:assert/strict');
+const playwright = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const engine = process.env.BROWSER_ENGINE || 'chromium';
+const base = process.env.BASE_URL || 'http://localhost:8080';
+const screenshots = process.env.HERO_SCREENSHOT_DIR;
+const baseline = process.env.HERO_BASELINE_URL;
+const sizes = [[360, 640], [390, 844], [430, 932], [768, 900], [1024, 768], [1440, 900], [1920, 1080]];
+const waitlist = '.hero-signup';
+const video = '.hero-video';
+
+async function seedConsent(context) {
+  await context.addInitScript(() => {
+    localStorage.setItem('primal-analytics-consent-v1', JSON.stringify({
+      version: 1, value: 'denied', at: Date.now()
+    }));
+  });
+}
+
+async function assertForeground(page, withinViewport = true) {
+  const state = await page.locator('.hero-autoplay').evaluate((hero, withinViewport) => {
+    const selectors = ['#hero-title', '#hero-waitlist-title', '.hero-prelaunch',
+      '#hero-email', '[type="submit"]', '.consent'];
+    const visible = selectors.map(selector => {
+      const node = hero.querySelector(selector);
+      const box = node.getBoundingClientRect();
+      return box.width > 0 && box.height > 0 && (!withinViewport || (box.top >= 0 && box.bottom <= innerHeight))
+        && box.left >= 0 && box.right <= innerWidth && !node.closest('[inert], [aria-hidden="true"]')
+        && getComputedStyle(node).visibility === 'visible' && getComputedStyle(node).opacity === '1';
+    });
+    return { visible, overflow: document.documentElement.scrollWidth > innerWidth };
+  }, withinViewport);
+  assert.deepEqual(state.visible, [true, true, true, true, true, true]);
+  assert.equal(state.overflow, false);
+  await page.locator(waitlist + ' button').click({ trial: true, timeout: 2000 });
+}
+
+async function capture(page, url, path) {
+  await page.goto(url, { waitUntil: 'domcontentloaded' });
+  if (await page.locator('#analytics-reject').isVisible()) await page.locator('#analytics-reject').click();
+  await page.locator('.hero-poster').evaluate(image => image.decode());
+  await page.waitForFunction(() => document.querySelector('.hero-video').currentTime > 0.2, null, { timeout: 10000 });
+  await page.locator(video).evaluate(media => {
+    media.pause();
+    media.currentTime = 1;
+    return new Promise(resolve => media.addEventListener('seeked', resolve, { once: true }));
+  });
+  await page.screenshot({ path, animations: 'disabled' });
+}
+
+async function run() {
+  const browser = await playwright[engine].launch({
+    executablePath: process.env.BROWSER_EXECUTABLE || undefined,
+    ...(engine === 'chromium' ? { args: ['--no-sandbox'] } : {})
+  });
+  try {
+    for (const [width, height] of sizes) {
+      for (const route of ['/', '/en/']) {
+        const context = await browser.newContext({ viewport: { width, height }, hasTouch: width <= 430 });
+        await seedConsent(context);
+        const page = await context.newPage();
+        await page.goto(base + route, { waitUntil: 'domcontentloaded' });
+        await assertForeground(page);
+        const poster = page.locator('.hero-poster');
+        await poster.evaluate(image => image.decode());
+        const variant = width < 761 ? 'mobile' : 'desktop';
+        assert.match(await poster.evaluate(image => image.currentSrc), new RegExp(variant));
+        assert.match(await page.locator(video).getAttribute('src'), new RegExp(variant));
+        if (screenshots && route === '/' && [390, 1440].includes(width)) {
+          if (baseline) await capture(page, baseline + route, screenshots + '/before-' + variant + '.png');
+          await capture(page, base + route, screenshots + '/after-' + variant + '.png');
+        }
+        await context.close();
+        console.log('Foreground and poster', width, route);
+      }
+    }
+
+    for (const [width, height] of [[360, 640], [390, 740], [1024, 768], [1440, 900]]) {
+      const fresh = await browser.newContext({ viewport: { width, height } });
+      const freshPage = await fresh.newPage();
+      await freshPage.goto(base, { waitUntil: 'domcontentloaded' });
+      assert(await freshPage.locator('#analytics-consent').isVisible());
+      await assertForeground(freshPage);
+      const banner = await freshPage.locator('#analytics-consent').boundingBox();
+      const consent = await freshPage.locator(waitlist + ' .consent').boundingBox();
+      assert(consent.y + consent.height <= banner.y, 'Privacy panel overlaps signup consent');
+      await fresh.close();
+    }
+
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    await context.addInitScript(() => {
+      window.heroFrames = { samples: 0, hidden: 0 };
+      function sample() {
+        const title = document.querySelector('#hero-title');
+        const form = document.querySelector('.hero-signup');
+        if (title?.getBoundingClientRect().width && form) {
+          window.heroFrames.samples++;
+          if (getComputedStyle(title).opacity !== '1' || getComputedStyle(form).opacity !== '1' || form.inert) {
+            window.heroFrames.hidden++;
+          }
+        }
+        requestAnimationFrame(sample);
+      }
+      requestAnimationFrame(sample);
+    });
+    const page = await context.newPage();
+    let submitted;
+    await page.route('**/api/waitlist', async route => {
+      submitted = route.request().postDataJSON();
+      await route.fulfill({ json: { ok: true, registration: 'new' } });
+    });
+    await page.goto(base, { waitUntil: 'domcontentloaded' });
+    assert(await page.locator('#analytics-consent').isVisible());
+    await assertForeground(page);
+    await page.locator('#analytics-reject').click();
+    assert.equal(await page.evaluate(() => window.PrimalAnalytics.allowed()), false);
+    await page.waitForFunction(() => document.querySelector('.hero-video').currentTime > 0.25);
+    const originalGeometry = await page.locator('#hero-title').boundingBox();
+    await page.waitForFunction(() => document.querySelector('.hero-video').currentTime > 9);
+    await page.waitForFunction(() => document.querySelector('.hero-video').currentTime < 2);
+    await assertForeground(page);
+    assert.deepEqual(await page.locator('#hero-title').boundingBox(), originalGeometry);
+    const frames = await page.evaluate(() => window.heroFrames);
+    assert(frames.samples > 100);
+    assert.equal(frames.hidden, 0);
+    await page.locator('[data-hero-toggle]').click();
+    assert(await page.locator(video).evaluate(media => media.paused));
+    await page.locator('[data-hero-toggle]').click();
+    await page.waitForFunction(() => !document.querySelector('.hero-video').paused);
+
+    const form = page.locator(waitlist);
+    const button = form.getByRole('button');
+    const email = form.locator('[type="email"]');
+    const consent = form.getByRole('checkbox');
+    await email.fill('invalid-email');
+    await button.click();
+    assert(await email.evaluate(node => node.validity.typeMismatch));
+    await email.fill('hero-test@example.com');
+    await button.click();
+    assert(await consent.evaluate(node => node.validity.valueMissing));
+    assert.equal(submitted, undefined);
+    await consent.check();
+    await Promise.all([page.waitForURL('**/thanks.html'), button.click()]);
+    assert.equal(submitted.email, 'hero-test@example.com');
+    assert.equal(submitted.consent, true);
+    assert.equal(submitted.source, 'primal-core-hero');
+    await context.close();
+    console.log('Natural video loop, pause/resume, analytics consent, validation and mocked waitlist success');
+
+    for (const mode of ['slow', 'blocked', 'media-error', 'reduced-motion', 'no-js']) {
+      const fallback = await browser.newContext({
+        viewport: { width: 390, height: 844 },
+        reducedMotion: mode === 'reduced-motion' ? 'reduce' : 'no-preference',
+        javaScriptEnabled: mode !== 'no-js'
+      });
+      if (mode !== 'no-js') await seedConsent(fallback);
+      const fallbackPage = await fallback.newPage();
+      if (mode === 'blocked') await fallback.addInitScript(() => {
+        const play = HTMLMediaElement.prototype.play;
+        HTMLMediaElement.prototype.play = function () {
+          return this.matches('.hero-video') ? Promise.reject(new DOMException('Blocked', 'NotAllowedError')) : play.call(this);
+        };
+      });
+      if (mode === 'media-error') await fallback.route('**/assets/hero-loop-*.{mp4,webm}', route => route.abort());
+      if (mode === 'slow') await fallback.route('**/assets/hero-loop-*.{mp4,webm}', async route => {
+        await new Promise(resolve => setTimeout(resolve, 800));
+        await route.continue();
+      });
+      await fallbackPage.goto(base, { waitUntil: 'domcontentloaded' });
+      await assertForeground(fallbackPage, mode !== 'no-js');
+      await fallbackPage.locator('.hero-poster').evaluate(image => image.decode());
+      if (mode === 'slow') await fallbackPage.waitForFunction(() => document.querySelector('.hero-video').currentTime > .1);
+      else if (mode === 'media-error') await fallbackPage.waitForFunction(() => Boolean(document.querySelector('.hero-video').error));
+      if (mode !== 'slow') assert.equal(await fallbackPage.locator(video).evaluate(media => getComputedStyle(media).opacity), '0');
+      await assertForeground(fallbackPage, mode !== 'no-js');
+      await fallback.close();
+      console.log('Poster and foreground', mode);
+    }
+  } finally {
+    await browser.close();
   }
-  await page.locator('.hero-signup [name=consent]').check();let payload;await page.route('**/api/waitlist',async r=>{payload=r.request().postDataJSON();await r.fulfill({status:503,contentType:'application/json',body:'{"ok":false}'})});await page.locator('.hero-signup button[type=submit]').click();await page.locator('.hero-signup .form-status.error').waitFor();assert.equal(payload.source,'primal-core-hero');assert.equal(payload.consent,true);assert.equal(await page.locator('.hero-signup [name=email]').inputValue(),'hero-test@example.invalid');
-  assert.deepEqual(errors,[]);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);console.log('PASS autoplay, nonsticky layout, title-in/out, signup hold across loop, pause and mocked form:',width,lang||'el');await context.close();
- }
- // Native autoplay remains authoritative if a competing play() rejects later.
- {
-  const context=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:1440,height:844}});const page=await context.newPage();
-  await page.addInitScript(()=>{const play=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){return this.hasAttribute('data-film')?new Promise((_resolve,reject)=>setTimeout(()=>reject(new DOMException('competing play','AbortError')),500)):play.call(this)}});
-  await page.goto(base);await page.waitForFunction(()=>{const v=document.querySelector('[data-film]');return !v.paused&&v.currentTime>.8});
-  assert.equal((await state(page)).static,false);console.log('PASS native autoplay survives rejected competing play');await context.close();
- }
- // An autoplay rejection or a slow first load must recover the timed text,
- // while a visitor already using the fallback form keeps their input visible.
- for(const preserveInput of [false,true]){
-  const context=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:1440,height:844}});const page=await context.newPage();
-  await page.addInitScript(()=>{window.allowHeroPlayback=false;const autoplay=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'autoplay');Object.defineProperty(HTMLMediaElement.prototype,'autoplay',{get:autoplay.get,set(value){autoplay.set.call(this,this.hasAttribute('data-film')&&!window.allowHeroPlayback?false:value)}});const play=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){return this.hasAttribute('data-film')&&!window.allowHeroPlayback?Promise.reject(new DOMException('blocked','NotAllowedError')):play.call(this)}});
-  await page.goto(base);await page.waitForFunction(()=>document.querySelector('.hero-film').classList.contains('is-hero-poster-intro'));
-  if(preserveInput){await page.waitForFunction(()=>Number(document.querySelector('.hero-film').style.getPropertyValue('--hero-signup-opacity'))>.99);await page.locator('.hero-signup [name=email]').fill('preserve@example.invalid')}
-  await page.evaluate(()=>window.allowHeroPlayback=true);await page.locator('[data-hero-toggle]').click();
-  await page.waitForFunction(()=>{const s=document.querySelector('.hero-film'),v=s.querySelector('[data-film]');return !s.classList.contains('is-hero-static')&&!v.paused});
-  if(preserveInput){assert((await state(page)).signup>.99);assert.equal(await page.locator('.hero-signup [name=email]').inputValue(),'preserve@example.invalid')}
-  else{await page.waitForFunction(()=>Number(document.querySelector('.hero-film').style.getPropertyValue('--hero-signup-opacity'))>.99);assert((await state(page)).title<.01)}
-  console.log('PASS autoplay fallback recovery and dedicated play toggle; preserve input:',preserveInput);await context.close();
- }
- for(const scenario of['failed','blocked','reduced','no-js']){
-  const context=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:390,height:700},reducedMotion:scenario==='reduced'?'reduce':'no-preference',javaScriptEnabled:scenario!=='no-js'});const page=await context.newPage();
-  if(scenario==='failed')await page.route(/\/hero-loop-mobile\.(mp4|webm)(\?|$)/,r=>r.abort());
-  if(scenario==='blocked')await page.addInitScript(()=>{const autoplay=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'autoplay');Object.defineProperty(HTMLMediaElement.prototype,'autoplay',{get:autoplay.get,set(value){autoplay.set.call(this,this.hasAttribute('data-film')?false:value)}});const original=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){return this.hasAttribute('data-film')?Promise.reject(new DOMException('blocked','NotAllowedError')):original.call(this)}});
-  await page.goto(base);
-  if(['failed','blocked'].includes(scenario)){await page.waitForFunction(()=>Number(document.querySelector('.hero-film').style.getPropertyValue('--hero-signup-opacity'))>.99);assert((await state(page)).title<.01);assert.equal((await state(page)).static,false)}
-  else{await page.waitForFunction(()=>document.querySelector('.hero-film').classList.contains('is-hero-static'));assert(await page.locator('#hero-title').isVisible())}
-  assert.equal(await page.locator('.hero-signup').evaluate(f=>f.inert),false);assert(await page.locator('.hero-signup [name=email]').isVisible());console.log('PASS readable poster/form fallback:',scenario);await context.close();
- }
- await browser.close();
-})().catch(error=>{console.error(error);process.exit(1)});
+}
+
+run().catch(error => { console.error(error); process.exitCode = 1; });

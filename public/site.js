@@ -100,131 +100,18 @@ form.addEventListener('submit', async event => {
 // One capture shared by both forms, refreshed for current viewport on submit.
 document.querySelectorAll('.waitlist-form').forEach(populateAttributionFields);
 attribution.ready.then(() => document.querySelectorAll('.waitlist-form').forEach(populateAttributionFields));
-// Responsive silent autoplay hero. Text advances once with playback, never scroll.
+// Responsive background playback, independent of the hero content.
 const film = document.querySelector('[data-film]');
 if (film) {
   const scene = film.closest('.hero-film');
-  const title = scene.querySelector('#hero-title');
-  const signup = scene.querySelector('.hero-signup');
   const toggle = scene.querySelector('[data-hero-toggle]');
   const desktop = matchMedia('(min-width: 761px)');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  let viewportWidth = innerWidth, finishedIntro = false, userPaused = false;
-  let nearViewport = true, playPending = false, generation = 0, frameTask = null, loadTimer, alternateSource;
-  let posterClock = null, posterFrame = null;
-  const captureViewport = () => {
-    const root = document.documentElement;
-    root.style.setProperty('--hero-viewport-height', `${innerHeight}px`);
-    root.classList.toggle('hero-viewport-medium', innerHeight <= 950);
-    root.classList.toggle('hero-viewport-short', innerHeight <= 800);
-    root.classList.toggle('hero-viewport-small', innerHeight <= 650);
-  };
-  function alignHeadings() {
-    const heading = signup.querySelector('#hero-waitlist-title');
-    const offset = heading.offsetTop + heading.offsetHeight / 2 - signup.offsetHeight / 2;
-    scene.style.setProperty('--hero-heading-offset', `${offset}px`);
-  }
-  function paint(titleOpacity, signupOpacity, shade) {
-    scene.style.setProperty('--hero-title-opacity', String(titleOpacity));
-    scene.style.setProperty('--hero-signup-opacity', String(signupOpacity));
-    scene.style.setProperty('--hero-shade-opacity', String(shade));
-    // Keep the chapter targets in sync with the clock directly as well,
-    // so recovery does not depend on stylesheet-variable resolution timing.
-    title.style.opacity = String(titleOpacity);
-    signup.style.opacity = String(signupOpacity);
-    signup.inert = signupOpacity < .05;
-    title.setAttribute('aria-hidden', String(titleOpacity < .01));
-  }
-  function stopPosterFrames() {
-    if (posterFrame !== null) cancelAnimationFrame(posterFrame);
-    posterFrame = null;
-    if (posterClock) posterClock.last = null;
-  }
-  function finishIntro() {
-    finishedIntro = true; stopPosterFrames(); posterClock = null;
-    scene.classList.remove('is-hero-poster-intro'); paint(0, 1, 1);
-  }
-  function resumePosterFrames() {
-    if (!posterClock || posterFrame !== null || reduced.matches || document.hidden || !nearViewport || finishedIntro) return;
-    posterFrame = requestAnimationFrame(advancePoster);
-  }
-  function advancePoster(now) {
-    posterFrame = null;
-    if (!posterClock || reduced.matches || document.hidden || !nearViewport || finishedIntro) {
-      if (posterClock) posterClock.last = null;
-      return;
-    }
-    if (posterClock.last !== null) posterClock.time += (now - posterClock.last) / 1000 * posterClock.rate;
-    posterClock.last = now;
-    updateReveal(); resumePosterFrames();
-  }
-  function startPosterIntro() {
-    scene.classList.remove('is-hero-static'); scene.classList.add('has-timed-reveal');
-    const hasInput = [...signup.querySelectorAll('input[type="email"]')].some(input => input.value.trim());
-    if (finishedIntro || signup.contains(document.activeElement) || hasInput) { finishIntro(); return; }
-    // iOS in-app browsers can deny autoplay on a cold visit. The text still
-    // gets one short intro over the poster, independent of media permission.
-    if (!posterClock) {
-      const duration = Number.isFinite(film.duration) && film.duration > 0 ? film.duration : 10;
-      const fps = Number(desktop.matches ? film.dataset.desktopFps : film.dataset.mobileFps);
-      const start = Math.max(0, duration - 200 / fps);
-      const span = Math.max(.01, duration - .05 - start);
-      const time = Math.max(film.currentTime || 0, Math.max(0, start - 1.25));
-      const end = start + .82 * span;
-      if (time >= end) { finishIntro(); return; }
-      posterClock = {time, duration, fps, rate: (end - time) / 4.2, last: null};
-    }
-    scene.classList.add('is-hero-poster-intro'); updateReveal(); resumePosterFrames();
-  }
-  function restoreTimedReveal() {
-    // If playback becomes available halfway through the poster intro, keep
-    // its clock rather than jumping back to the beginning of the video.
-    const hasInput = [...signup.querySelectorAll('input[type="email"]')].some(input => input.value.trim());
-    if (posterClock) {
-      if (finishedIntro || signup.contains(document.activeElement) || hasInput) finishIntro();
-      else resumePosterFrames();
-      return;
-    }
-    if (reduced.matches || !scene.classList.contains('is-hero-static')) return;
-    // A slow load or blocked first play can recover later. Do not leave a
-    // playing video stuck in the static-text fallback, or hide an active form.
-    const preserveSignup = finishedIntro || signup.contains(document.activeElement) || hasInput;
-    scene.classList.remove('is-hero-static');
-    scene.classList.add('has-timed-reveal');
-    if (preserveSignup) finishIntro();
-    else updateReveal();
-  }
-  function readableFallback() {
-    clearTimeout(loadTimer);
-    // Native autoplay can succeed while an earlier play() promise rejects.
-    // Never switch a healthy, playing film back to permanently static text.
-    if (!reduced.matches && !film.paused && film.readyState >= 3 && !film.error) {
-      restoreTimedReveal(); return;
-    }
-    if (finishedIntro && !reduced.matches) { finishIntro(); return; }
-    if (!reduced.matches) { startPosterIntro(); return; }
-    stopPosterFrames(); posterClock = null; scene.classList.remove('is-hero-poster-intro');
-    scene.classList.remove('has-timed-reveal');
-    scene.classList.add('is-hero-static');
-    title.style.removeProperty('opacity'); signup.style.removeProperty('opacity');
-    signup.inert = false;
-    title.removeAttribute('aria-hidden');
-  }
-  function updateReveal() {
-    if (reduced.matches || scene.classList.contains('is-hero-static')) return;
-    if (finishedIntro) { finishIntro(); return; }
-    const duration = posterClock ? posterClock.duration : Number.isFinite(film.duration) && film.duration > 0 ? film.duration : 10;
-    const time = posterClock ? posterClock.time : film.currentTime;
-    const fps = posterClock ? posterClock.fps : Number(desktop.matches ? film.dataset.desktopFps : film.dataset.mobileFps);
-    const start = Math.max(0, duration - 200 / fps);
-    const phase = Math.min(1, Math.max(0, (time - start) / Math.max(.01, duration - .05 - start)));
-    const ease = value => { const t = Math.min(1, Math.max(0, value)); return t * t * (3 - 2 * t); };
-    const titleIn = ease((time - Math.max(0, start - 1.25)) / (.18 * Math.max(.01, duration - .05 - start)));
-    const titleOut = ease((phase - .4) / .15);
-    const signupIn = ease((phase - .62) / .2);
-    paint(titleIn * (1 - titleOut), signupIn, titleIn);
-    if (signupIn >= .999) finishIntro();
-  }
+  let nearViewport = true;
+  let userPaused = false;
+  let pendingPlay;
+  let alternateSource;
+
   function syncToggle() {
     toggle.hidden = reduced.matches || Boolean(film.error);
     const paused = film.paused;
@@ -233,93 +120,103 @@ if (film) {
       ? '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z" fill="currentColor"/></svg>'
       : '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path d="M7 5h3v14H7zM14 5h3v14h-3z" fill="currentColor"/></svg>';
   }
-  function cancelFrames() {
-    if (frameTask === null) return;
-    if (film.cancelVideoFrameCallback) film.cancelVideoFrameCallback(frameTask);
-    else cancelAnimationFrame(frameTask);
-    frameTask = null;
+
+  function mayPlay() {
+    return !reduced.matches && !userPaused && nearViewport && !document.hidden;
   }
-  function tick() {
-    frameTask = null;
-    updateReveal();
-    if (posterClock || film.paused || reduced.matches || document.hidden || !nearViewport || finishedIntro || scene.classList.contains('is-hero-static')) return;
-    frameTask = film.requestVideoFrameCallback ? film.requestVideoFrameCallback(tick) : requestAnimationFrame(tick);
-  }
-  async function playHero() {
-    if (reduced.matches || userPaused || !nearViewport || document.hidden || playPending || film.error) return;
-    const currentGeneration = generation;
-    playPending = true;
+
+  function playHero() {
+    if (!mayPlay() || pendingPlay || film.error || !film.paused) return;
     film.muted = true;
-    try { await film.play(); }
-    catch { if (currentGeneration === generation && film.paused) readableFallback(); }
-    finally { if (currentGeneration === generation) { playPending = false; syncToggle(); } }
+    const attempt = film.play();
+    pendingPlay = attempt;
+    attempt.catch(() => {
+      // The responsive picture remains visible until playback succeeds.
+    }).finally(() => {
+      if (pendingPlay !== attempt) return;
+      pendingPlay = null;
+      syncToggle();
+    });
   }
+
+  function loadSource(source) {
+    pendingPlay = null;
+    film.classList.remove('is-ready');
+    film.src = source;
+    film.preload = 'auto';
+    film.load();
+  }
+
   function configure() {
-    generation++; playPending = false; cancelFrames(); stopPosterFrames(); clearTimeout(loadTimer);
-    film.pause(); film.defaultMuted = true; film.muted = true; film.playsInline = true;
-    film.loop = true; film.autoplay = !reduced.matches && !userPaused; film.controls = false;
-    captureViewport(); alignHeadings();
-    if (reduced.matches) { readableFallback(); syncToggle(); return; }
-    scene.classList.remove('is-hero-static'); scene.classList.add('has-timed-reveal');
-    if (finishedIntro) finishIntro(); else if (posterClock) { updateReveal(); resumePosterFrames(); } else paint(0, 0, 0);
+    if (reduced.matches) {
+      film.pause();
+      film.classList.remove('is-ready');
+      syncToggle();
+      return;
+    }
+
     const mp4 = desktop.matches ? film.dataset.desktopSrc : film.dataset.mobileSrc;
     const webm = desktop.matches ? film.dataset.desktopWebmSrc : film.dataset.mobileWebmSrc;
     const supportsWebm = Boolean(webm && film.canPlayType('video/webm; codecs="vp9"'));
     const source = !film.canPlayType('video/mp4; codecs="avc1.42E01E"') && supportsWebm ? webm : mp4;
-    alternateSource = source === mp4 && supportsWebm ? webm : null;
-    film.poster = desktop.matches ? film.dataset.desktopPoster : film.dataset.mobilePoster;
-    if (film.getAttribute('src') !== source) { film.classList.remove('is-ready'); film.src = source; film.preload = 'auto'; film.load(); }
-    loadTimer = setTimeout(() => { if (film.readyState < 3 || film.paused) readableFallback(); }, 6000);
-    playHero(); syncToggle();
+    if (film.getAttribute('src') !== source && film.getAttribute('src') !== webm) {
+      alternateSource = source === mp4 && supportsWebm ? webm : null;
+      film.poster = desktop.matches ? film.dataset.desktopPoster : film.dataset.mobilePoster;
+      loadSource(source);
+    }
+    playHero();
+    syncToggle();
   }
-  film.addEventListener('playing', () => { if (userPaused || reduced.matches || document.hidden || !nearViewport) { film.pause(); return; } clearTimeout(loadTimer); restoreTimedReveal(); film.classList.add('is-ready'); cancelFrames(); tick(); syncToggle(); });
-  film.addEventListener('pause', () => { cancelFrames(); syncToggle(); });
-  film.addEventListener('timeupdate', updateReveal);
-  film.addEventListener('loadedmetadata', updateReveal);
-  film.addEventListener('waiting', () => { clearTimeout(loadTimer); loadTimer = setTimeout(() => { if (film.readyState < 3) readableFallback(); }, 6000); });
+
+  film.addEventListener('playing', () => {
+    if (!mayPlay()) {
+      film.pause();
+      return;
+    }
+    film.classList.add('is-ready');
+    syncToggle();
+  });
+  film.addEventListener('pause', syncToggle);
   film.addEventListener('canplay', playHero);
   film.addEventListener('error', () => {
-    cancelFrames(); film.classList.remove('is-ready');
+    film.classList.remove('is-ready');
     if (alternateSource) {
-      const source = alternateSource; alternateSource = null; playPending = false;
-      readableFallback();
-      film.src = source; film.load(); playHero(); return;
+      const source = alternateSource;
+      alternateSource = null;
+      loadSource(source);
+      playHero();
     }
-    readableFallback(); syncToggle();
+    syncToggle();
   });
+
   toggle.addEventListener('click', () => {
-    if (!film.paused) { userPaused = true; film.autoplay = false; film.pause(); finishIntro(); }
+    userPaused = !film.paused;
+    if (userPaused) film.pause();
     else {
-      // Some iOS webviews leave an initial play() pending until a gesture.
-      // The visible Play button must retry on that first tap, not pause it.
-      generation++; playPending = false; userPaused = false; film.autoplay = true; playHero();
+      // Retry from this user gesture even if an earlier autoplay is pending.
+      pendingPlay = null;
+      playHero();
     }
   });
-  // Never hide/reposition an active email field when the background loops.
-  signup.addEventListener('focusin', finishIntro);
-  new IntersectionObserver(entries => {
-    nearViewport = entries[0].isIntersecting;
-    if (nearViewport) { playHero(); resumePosterFrames(); } else { film.pause(); stopPosterFrames(); }
-  }, { threshold: .01 }).observe(scene);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => {
+      nearViewport = entry.isIntersecting;
+      if (nearViewport) playHero();
+      else film.pause();
+    }, { threshold: .01 }).observe(scene);
+  }
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { film.pause(); stopPosterFrames(); }
-    else { playHero(); resumePosterFrames(); }
+    if (document.hidden) film.pause();
+    else playHero();
   });
-  ['touchstart', 'pointerdown'].forEach(event => scene.addEventListener(event, event => {
-    // The dedicated button handles its own toggle; a bubbling pointerdown
-    // must not start play immediately before click pauses it again.
-    if (event.target.closest('[data-hero-toggle]')) return;
-    if (film.paused) playHero();
-  }, { passive: true }));
-  addEventListener('resize', () => {
-    if (innerWidth !== viewportWidth || !matchMedia('(pointer: coarse)').matches) { viewportWidth = innerWidth; captureViewport(); }
-    alignHeadings();
+  scene.addEventListener('pointerdown', event => {
+    if (!event.target.closest('[data-hero-toggle]')) playHero();
   }, { passive: true });
-  addEventListener('pagehide', () => { film.pause(); stopPosterFrames(); });
-  addEventListener('pageshow', () => { stopPosterFrames(); playHero(); resumePosterFrames(); });
-  if (typeof ResizeObserver === 'function') new ResizeObserver(alignHeadings).observe(signup);
-  document.fonts.ready.then(alignHeadings);
-  desktop.addEventListener('change', configure); reduced.addEventListener('change', configure); configure();
+  addEventListener('pagehide', () => film.pause());
+  addEventListener('pageshow', playHero);
+  desktop.addEventListener('change', configure);
+  reduced.addEventListener('change', configure);
+  configure();
 }
 
 // Muted, audio-free ingredient film. Retry on media readiness and natural interaction.
