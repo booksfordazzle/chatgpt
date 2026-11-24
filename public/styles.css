@@ -448,3 +448,40 @@ html.has-confirmation-video{overflow:hidden}
 .skin-care-copy p+p{margin-top:24px}
 @media(max-width:1100px){.skin-care-story{gap:48px}}
 @media(max-width:760px){.skin-care-story{grid-template-columns:1fr;gap:var(--heading-content-gap)}.skin-care-copy{font-size:17px}}
+
+.site-footer .footer-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin-block: 4px 12px;
+}
+.site-footer .footer-socials a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  font-size: 13px;
+  line-height: 1.35;
+  text-decoration: none;
+}
+.site-footer .footer-socials a:hover,
+.site-footer .footer-socials a:focus-visible {
+  text-decoration: underline;
+}
+.site-footer .footer-socials svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+@media (max-width: 760px) {
+  .site-footer .footer-socials {
+    gap: 6px 16px;
+  }
+  .site-footer .footer-socials a {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    font-size: 12px;
+  }
+}
