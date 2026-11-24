@@ -109,6 +109,30 @@
   padding: 32px 20px 0;
 }
 
+.profile-completion-photo {
+  display: block;
+  width: min(100%, 360px);
+  height: auto;
+  margin: 24px auto 0;
+}
+
+@media (min-width: 901px) {
+  .skin-editorial-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: center;
+    column-gap: clamp(32px, 6vw, 80px);
+    max-width: min(100%, 1000px);
+  }
+  .skin-editorial-actions .profile-result-email,
+  .profile-completion-photo {
+    margin-top: 0;
+  }
+  .skin-editorial-actions .profile-research-invitation {
+    grid-column: 1 / -1;
+  }
+}
+
 .skin-editorial-actions #result-title {
   margin-bottom: 12px;
 }
