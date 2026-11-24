@@ -90,24 +90,47 @@ html:not(.js) .hero-autoplay .hero-video {
     align-items: stretch;
   }
   .hero-autoplay .hero-shade {
-    background:
-      linear-gradient(0deg, rgba(8, 9, 8, .76), transparent 38%),
-      linear-gradient(90deg, #080908, rgba(8, 9, 8, .84) 16%, transparent 48%);
+    background: linear-gradient(90deg, #080908, rgba(8, 9, 8, .84) 16%, transparent 48%);
   }
   .hero-autoplay .hero-sticky .hero-content {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: clamp(32px, 6vw, 112px);
     width: calc(100% - var(--page-gutter) * 2);
-    max-width: none;
+    max-width: 1500px;
     min-height: calc(100svh - var(--header));
     margin-inline: auto;
-    padding: clamp(24px, 5svh, 64px) 0 clamp(32px, 7svh, 64px);
+    padding: 48px 0 clamp(64px, 17svh, 180px);
     pointer-events: none;
   }
   .hero-autoplay .hero-content #hero-title {
-    width: min(46vw, 700px);
-    margin-block: auto;
+    font-size: clamp(28px, 3.35vw, 62px);
+    text-align: center;
   }
   .hero-autoplay .hero-content .hero-signup {
-    align-self: center;
+    position: relative;
+    isolation: isolate;
+    max-width: 640px;
+    margin: 0;
+    padding: clamp(20px, 2vw, 32px) clamp(20px, 5vw, 86px);
+    justify-self: center;
+  }
+  .hero-autoplay .hero-content .hero-signup::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: #080908;
+    opacity: .76;
+    transition: opacity 180ms ease-out;
+    pointer-events: none;
+  }
+  .hero-autoplay .hero-content .hero-signup:focus-within::before {
+    opacity: .9;
+  }
+  .hero-autoplay .hero-signup #hero-waitlist-title {
+    font-size: clamp(20px, 2vw, 34px);
   }
 }
 
@@ -150,5 +173,29 @@ html:not(.js) .hero-autoplay .hero-video {
   .hero-autoplay .hero-signup .consent {
     margin-top: 10px;
     text-align: left;
+  }
+}
+
+/* Homepage details respond without changing their geometry. */
+.benefit-list details {
+  transition: background-color 180ms ease-out;
+}
+.benefit-list details[open],
+.benefit-list details:focus-within {
+  background-color: rgba(241, 240, 233, .045);
+}
+@media (hover: hover) {
+  .benefit-list details:hover {
+    background-color: rgba(241, 240, 233, .045);
+  }
+}
+
+@keyframes ingredient-icon-arrive {
+  from { opacity: .55; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .js #ingredient-slides > .ingredient-slide:not([hidden]) .ingredient-icon {
+    animation: ingredient-icon-arrive 240ms ease-out both;
   }
 }
