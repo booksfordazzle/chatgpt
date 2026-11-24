@@ -89,8 +89,11 @@ html:not(.js) .hero-autoplay .hero-video {
   html .hero-autoplay .hero-sticky:has(.hero-signup) {
     align-items: stretch;
   }
+  .hero-autoplay .hero-media {
+    inset: 0;
+  }
   .hero-autoplay .hero-shade {
-    background: linear-gradient(90deg, #080908, rgba(8, 9, 8, .84) 16%, transparent 48%);
+    background: none;
   }
   .hero-autoplay .hero-sticky .hero-content {
     display: grid;
@@ -109,25 +112,10 @@ html:not(.js) .hero-autoplay .hero-video {
     text-align: center;
   }
   .hero-autoplay .hero-content .hero-signup {
-    position: relative;
-    isolation: isolate;
     max-width: 640px;
     margin: 0;
     padding: clamp(20px, 2vw, 32px) clamp(20px, 5vw, 86px);
     justify-self: center;
-  }
-  .hero-autoplay .hero-content .hero-signup::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: #080908;
-    opacity: .76;
-    transition: opacity 180ms ease-out;
-    pointer-events: none;
-  }
-  .hero-autoplay .hero-content .hero-signup:focus-within::before {
-    opacity: .9;
   }
   .hero-autoplay .hero-signup #hero-waitlist-title {
     font-size: clamp(20px, 2vw, 34px);
