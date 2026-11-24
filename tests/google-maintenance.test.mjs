@@ -16,9 +16,9 @@ test('unknown nested routes retain usable 404 navigation and assets',async()=>{
   }
  }
 });
-test('sitemap discovers real images alongside the 22 reviewed canonical pages',async()=>{
+test('sitemap discovers real images alongside the public canonical pages',async()=>{
  const sitemap=await load('sitemap.xml');
- assert.equal([...sitemap.matchAll(/<url>/g)].length,22);
+ assert.equal([...sitemap.matchAll(/<url>/g)].length,38);
  const images=[...sitemap.matchAll(/<image:loc>([^<]+)<\/image:loc>/g)];assert(images.length>0);
  for(const [,url]of images){assert.equal(new URL(url).origin,'https://primalcore.gr');await access(output+new URL(url).pathname)}
  assert(!sitemap.includes('<loc>https://primalcore.gr/thanks</loc>'));

@@ -67,3 +67,26 @@ test('all generated pages have parseable, unique global schema without changing 
  }}}
  await walk(output);
 });
+
+test('all public bilingual blog articles are indexable and included in the sitemap',async()=>{
+ const sitemap=await load('sitemap.xml');
+ for(const dir of ['blog','en/blog'])for(const name of await readdir('public/'+dir)){
+  if(!name.endsWith('.html')||name==='index.html')continue;
+  const relative=dir+'/'+name,html=await load(relative);
+  assert.doesNotMatch(html,/noindex/i,relative);
+  assert(sitemap.includes(`<loc>https://primalcore.gr${canonicalPath(relative)}</loc>`),relative);
+ }
+});
+test('organization identity and default-language alternates use confirmed public values',async()=>{
+ for(const relative of ['index.html','en/index.html','about.html','en/about.html']){
+  const html=await load(relative),organization=graph(html).find(n=>n['@type']==='Organization');
+  assert.equal(organization.legalName,'MMTX E.E');
+  assert.deepEqual(organization.sameAs,['https://www.instagram.com/primalcore.gr/','https://www.facebook.com/primalcore.gr/']);
+  const greek=html.match(/<link\b(?=[^>]*hreflang="el")(?=[^>]*href="([^"]+)")[^>]*>/)?.[1];
+  const fallback=html.match(/<link\b(?=[^>]*hreflang="x-default")(?=[^>]*href="([^"]+)")[^>]*>/)?.[1];
+  assert(greek);assert.equal(fallback,greek);
+ }
+ for(const relative of ['about.html','en/about.html','philosophy.html','en/philosophy.html']){
+  const html=await load(relative);assert.equal([...html.matchAll(/<h1\b/g)].length,1,relative);assert.match(html,/<h2[^>]*class="chapter-title"/);assert(!html.includes('μπώ'));
+ }
+});

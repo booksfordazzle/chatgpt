@@ -1,13 +1,13 @@
 .philosophy-page{--scene-ink:#f1f0e9;--scene-muted:#c6c9bd;background:transparent;color:var(--scene-ink)}
 .story-scene{position:relative;scroll-margin-top:var(--header)}
-.philosophy-page h1,.philosophy-page h2{font-weight:500;letter-spacing:-.035em;line-height:1.04}
-.philosophy-page h2{font-size:clamp(42px,5.6vw,80px)}
+.philosophy-page :is(h1,:where(.chapter-title)),.philosophy-page h2:not(:where(.chapter-title)){font-weight:500;letter-spacing:-.035em;line-height:1.04}
+.philosophy-page h2:not(:where(.chapter-title)){font-size:clamp(42px,5.6vw,80px)}
 .philosophy-page p{color:var(--scene-muted)}
 .origin-scene{min-height:calc(100svh - var(--header));display:flex;align-items:center;overflow:hidden}
 .origin-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:75% center;border-radius:0;will-change:transform}
 .origin-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,9,8,.35),transparent 65%);pointer-events:none}
 .origin-copy{position:relative;padding-block:96px 130px}
-.origin-copy h1{font-size:clamp(60px,7vw,96px);max-width:720px}
+.origin-copy :is(h1,:where(.chapter-title)){font-size:clamp(60px,7vw,96px);max-width:720px}
 .origin-copy>p{font-size:clamp(21px,2vw,28px);line-height:1.55;max-width:42ch;margin-top:36px}
 .origin-copy .text-link{margin-top:24px;color:var(--scene-ink)}
 .subtraction-scene{background:#050605}
@@ -19,10 +19,10 @@
 .clutter-bottle:nth-child(4n+3){bottom:3%;left:21%;transform:rotate(14deg)}
 .clutter-bottle:nth-child(4n){bottom:7%;right:18%;transform:rotate(-20deg)}
 .complexity-copy,.essence-lockup{position:relative;z-index:2;text-align:center;max-width:950px;margin-inline:auto}
-.complexity-copy h2{max-width:850px;margin:auto;text-shadow:0 4px 30px rgba(0,0,0,.7)}
+.complexity-copy h2:not(:where(.chapter-title)){max-width:850px;margin:auto;text-shadow:0 4px 30px rgba(0,0,0,.7)}
 .complexity-copy p{font-size:clamp(19px,2vw,25px);line-height:1.6;margin:32px auto 0}
 .essence-lockup{margin-top:80px}
-.essence-lockup h2{font-size:clamp(36px,4.6vw,64px)}
+.essence-lockup h2:not(:where(.chapter-title)){font-size:clamp(36px,4.6vw,64px)}
 .essence-lockup>p{font-size:clamp(28px,3.8vw,52px);line-height:1.3;letter-spacing:-.025em;color:var(--scene-ink);margin:28px 0}
 .essence-lockup>span{font-size:14px;line-height:1.6;color:var(--scene-muted);display:block}
 .subtraction-hint{display:none}
@@ -66,7 +66,7 @@
 .manifesto-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:0}
 .manifesto-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,6,5,.94),rgba(5,6,5,.65) 40%,rgba(5,6,5,.15));pointer-events:none}
 .manifesto-copy{position:relative;padding-block:112px 140px}
-.manifesto-copy h2{max-width:690px}
+.manifesto-copy h2:not(:where(.chapter-title)){max-width:690px}
 .manifesto-copy>p{max-width:32ch;font-size:24px;line-height:1.6;margin-top:36px}
 .manifesto-copy .button{margin-top:16px}
 .philosophy-afterword{padding-block:80px 100px;max-width:800px}
@@ -79,8 +79,8 @@
 .scene-navigation a span{font-variant-numeric:tabular-nums;font-size:12px;color:inherit}
 .scene-navigation a[aria-current]{color:var(--text)}
 .philosophy-route .site-footer{padding-bottom:120px}
-@media(max-width:1100px){.origin-copy h1{font-size:76px}.material-panel>div{left:32px;right:32px}.has-story-motion .material-panel>div{left:32px}.has-story-motion .mastic-panel>div{left:auto;right:32px}.return-copy>*{width:48%}}
-@media(max-width:760px){.philosophy-page h2{font-size:clamp(36px,9vw,52px)}.origin-copy{padding-block:80px 120px}.origin-copy h1{font-size:clamp(48px,12vw,64px)}.origin-copy>p{font-size:19px;max-width:29ch;margin-top:28px}.wide-only{display:none}.origin-shade{background:linear-gradient(90deg,rgba(8,9,8,.8),rgba(8,9,8,.15))}.origin-image{object-position:72% center}.origin-copy .text-link{font-size:13px;max-width:32ch}.complexity-copy p{font-size:17px}.essence-lockup>p{font-size:32px}.essence-lockup>span{font-size:12px}.has-story-motion .subtraction-hint{font-size:11px;bottom:24px}.return-copy{padding-block:96px 120px;align-items:flex-start}.return-copy>*{width:100%;max-width:440px}.return-visual:after{background:rgba(5,6,5,.65)}.return-copy p{font-size:19px}.materials-scene{padding-top:76px}.materials-heading{margin-bottom:48px}.materials-heading p{font-size:18px}.materials-panels{grid-template-columns:1fr}.material-panel{min-height:580px}.material-panel>div{left:24px;right:24px;bottom:48px}.material-panel p{font-size:17px}.has-story-motion .materials-scene{height:230svh}.has-story-motion .material-panel>div{left:24px;bottom:98px;max-width:calc(100% - 48px)}.has-story-motion .mastic-panel>div{left:24px;right:24px;text-align:left}.materials-note{font-size:13px}.has-story-motion .materials-note{bottom:8px;font-size:11px}.manifesto-copy{padding-block:100px 140px}.manifesto-copy h2{font-size:48px}.manifesto-copy>p{font-size:20px;max-width:28ch;margin-top:28px}.manifesto-shade{background:rgba(5,6,5,.64)}.manifesto-image{object-position:50% center}.philosophy-afterword{padding-block:64px 80px}.philosophy-afterword>p{font-size:19px}.scene-navigation{bottom:12px;width:calc(100% - 32px);justify-content:space-around;gap:4px;padding:8px 12px}.scene-navigation a{font-size:0;width:40px;min-height:40px;justify-content:center}.scene-navigation a span{font-size:14px}.philosophy-route .site-footer{padding-bottom:110px}}
+@media(max-width:1100px){.origin-copy :is(h1,:where(.chapter-title)){font-size:76px}.material-panel>div{left:32px;right:32px}.has-story-motion .material-panel>div{left:32px}.has-story-motion .mastic-panel>div{left:auto;right:32px}.return-copy>*{width:48%}}
+@media(max-width:760px){.philosophy-page h2:not(:where(.chapter-title)){font-size:clamp(36px,9vw,52px)}.origin-copy{padding-block:80px 120px}.origin-copy :is(h1,:where(.chapter-title)){font-size:clamp(48px,12vw,64px)}.origin-copy>p{font-size:19px;max-width:29ch;margin-top:28px}.wide-only{display:none}.origin-shade{background:linear-gradient(90deg,rgba(8,9,8,.8),rgba(8,9,8,.15))}.origin-image{object-position:72% center}.origin-copy .text-link{font-size:13px;max-width:32ch}.complexity-copy p{font-size:17px}.essence-lockup>p{font-size:32px}.essence-lockup>span{font-size:12px}.has-story-motion .subtraction-hint{font-size:11px;bottom:24px}.return-copy{padding-block:96px 120px;align-items:flex-start}.return-copy>*{width:100%;max-width:440px}.return-visual:after{background:rgba(5,6,5,.65)}.return-copy p{font-size:19px}.materials-scene{padding-top:76px}.materials-heading{margin-bottom:48px}.materials-heading p{font-size:18px}.materials-panels{grid-template-columns:1fr}.material-panel{min-height:580px}.material-panel>div{left:24px;right:24px;bottom:48px}.material-panel p{font-size:17px}.has-story-motion .materials-scene{height:230svh}.has-story-motion .material-panel>div{left:24px;bottom:98px;max-width:calc(100% - 48px)}.has-story-motion .mastic-panel>div{left:24px;right:24px;text-align:left}.materials-note{font-size:13px}.has-story-motion .materials-note{bottom:8px;font-size:11px}.manifesto-copy{padding-block:100px 140px}.manifesto-copy h2:not(:where(.chapter-title)){font-size:48px}.manifesto-copy>p{font-size:20px;max-width:28ch;margin-top:28px}.manifesto-shade{background:rgba(5,6,5,.64)}.manifesto-image{object-position:50% center}.philosophy-afterword{padding-block:64px 80px}.philosophy-afterword>p{font-size:19px}.scene-navigation{bottom:12px;width:calc(100% - 32px);justify-content:space-around;gap:4px;padding:8px 12px}.scene-navigation a{font-size:0;width:40px;min-height:40px;justify-content:center}.scene-navigation a span{font-size:14px}.philosophy-route .site-footer{padding-bottom:110px}}
 @media(prefers-reduced-motion:reduce){.origin-image,.clutter-bottle{will-change:auto}.origin-image{transform:none!important}}
 /* Crossfade material photography while both editorial labels remain readable. */
 .has-story-motion .material-panel{background:transparent}
@@ -94,7 +94,7 @@
 /* The supplied manifesto is told inside the five scenes, never repeated as an appendix. */
 .origin-history{max-width:48ch;margin-top:36px}.origin-history p{font-size:19px;line-height:1.75;margin:0 0 24px}.origin-shade{background:linear-gradient(90deg,rgba(8,9,8,.8),rgba(8,9,8,.35) 52%,transparent)}
 .complexity-copy p{max-width:42ch}.materials-heading>p{max-width:62ch;margin-inline:auto;line-height:1.7}.return-copy p{font-size:22px}.manifesto-copy>p{max-width:46ch;font-size:20px;line-height:1.75}.manifesto-copy strong{color:var(--scene-ink)}
-@media(max-width:760px){.origin-history{max-width:30ch;margin-top:32px}.origin-history p{font-size:17px;line-height:1.75}.origin-copy{padding-block:64px 120px}.origin-shade{background:rgba(8,9,8,.68)}.return-copy p{font-size:19px}.has-story-motion .material-panel p{font-size:16px;line-height:1.65}.has-story-motion .tallow-panel>div{top:32px}.has-story-motion .mastic-panel>div{bottom:112px}.material-panel h3{font-size:30px}.material-panel p{margin-top:18px}.manifesto-copy>p{font-size:18px;max-width:34ch}.manifesto-copy h2{font-size:42px}}
+@media(max-width:760px){.origin-history{max-width:30ch;margin-top:32px}.origin-history p{font-size:17px;line-height:1.75}.origin-copy{padding-block:64px 120px}.origin-shade{background:rgba(8,9,8,.68)}.return-copy p{font-size:19px}.has-story-motion .material-panel p{font-size:16px;line-height:1.65}.has-story-motion .tallow-panel>div{top:32px}.has-story-motion .mastic-panel>div{bottom:112px}.material-panel h3{font-size:30px}.material-panel p{margin-top:18px}.manifesto-copy>p{font-size:18px;max-width:34ch}.manifesto-copy h2:not(:where(.chapter-title)){font-size:42px}}
 
 /* Keep scroll-reading copy in genuine black negative space, with photographs framed right. */
 .return-copy{align-items:flex-start}.return-copy>*{width:44%;max-width:560px}
@@ -102,12 +102,12 @@
 .return-visual:after,.return-visual:has(img[src$="return-marble.png"]):after{background:linear-gradient(90deg,#050605 0%,#050605 46%,rgba(5,6,5,.4) 66%,rgba(5,6,5,.08) 100%)}
 .manifesto-image{left:30%;width:70%;object-position:75% center}
 .manifesto-shade{background:linear-gradient(90deg,#050605 0%,#050605 46%,rgba(5,6,5,.3) 66%,rgba(5,6,5,.08) 100%)}
-.manifesto-copy h2,.manifesto-copy>p{width:44%;max-width:560px}
-@media(max-width:760px){.return-copy>*,.manifesto-copy h2,.manifesto-copy>p{width:72%;max-width:none}.return-copy h2,.manifesto-copy h2{font-size:clamp(30px,8vw,42px)}.return-copy p,.manifesto-copy>p{font-size:17px;line-height:1.75}.return-visual img,.return-visual img[src$="return-marble.png"],.manifesto-image{left:48%;width:65%;object-position:75% center}.return-visual:after,.return-visual:has(img[src$="return-marble.png"]):after,.manifesto-shade{background:linear-gradient(90deg,#050605 0%,#050605 72%,rgba(5,6,5,.35) 90%,rgba(5,6,5,.1))}.manifesto-copy .button{max-width:72%;padding-inline:14px;gap:12px;font-size:14px}.manifesto-copy .button svg{flex:none}}
+.manifesto-copy h2:not(:where(.chapter-title)),.manifesto-copy>p{width:44%;max-width:560px}
+@media(max-width:760px){.return-copy>*,.manifesto-copy h2:not(:where(.chapter-title)),.manifesto-copy>p{width:72%;max-width:none}.return-copy h2:not(:where(.chapter-title)),.manifesto-copy h2:not(:where(.chapter-title)){font-size:clamp(30px,8vw,42px)}.return-copy p,.manifesto-copy>p{font-size:17px;line-height:1.75}.return-visual img,.return-visual img[src$="return-marble.png"],.manifesto-image{left:48%;width:65%;object-position:75% center}.return-visual:after,.return-visual:has(img[src$="return-marble.png"]):after,.manifesto-shade{background:linear-gradient(90deg,#050605 0%,#050605 72%,rgba(5,6,5,.35) 90%,rgba(5,6,5,.1))}.manifesto-copy .button{max-width:72%;padding-inline:14px;gap:12px;font-size:14px}.manifesto-copy .button svg{flex:none}}
 
 /* Keep the two essentials statements free of authored line breaks. */
-.essence-lockup h2,.essence-lockup>p{text-wrap:initial}
-@media(min-width:1101px){.essence-lockup h2{font-size:clamp(36px,4vw,58px)}.essence-lockup>p{font-size:clamp(28px,3.2vw,46px)}}
+.essence-lockup h2:not(:where(.chapter-title)),.essence-lockup>p{text-wrap:initial}
+@media(min-width:1101px){.essence-lockup h2:not(:where(.chapter-title)){font-size:clamp(36px,4vw,58px)}.essence-lockup>p{font-size:clamp(28px,3.2vw,46px)}}
 
 /* Place the final action over the quiet balm photograph, apart from the reading column. */
 .manifesto-cta{position:absolute;z-index:3;left:76%;top:62%;transform:translate(-50%,-50%);max-width:calc(48% - 40px);white-space:nowrap}
@@ -118,4 +118,4 @@
 
 /* Owner: essentials conclusion is H1; the 30-ingredients preface is H3. */
 .essence-lockup h3{font-size:clamp(20px,1.8vw,26px);font-weight:500;line-height:1.3;text-wrap:balance}
-.essence-lockup h1{margin:24px 0 0;text-wrap:balance}
+.essence-lockup :is(h1,:where(.chapter-title)){margin:24px 0 0;text-wrap:balance}

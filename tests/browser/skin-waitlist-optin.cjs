@@ -26,6 +26,7 @@ const { chromium } = require('/opt/codex/runtimes/codex-primary-runtime/dependen
     await page.locator('#profile-start button').click();
     for (let i=0;i<10;i++) {
      await page.locator('#question-content input').first().check();
+     if(i===0)await page.locator('#question-content [name=gender]').first().check();
      await page.locator('#question-next').click();
     }
     const email = page.locator('#result-email');

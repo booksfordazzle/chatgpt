@@ -26,7 +26,7 @@ export function structuredData(html,relative,url) {
   const managed=new Set(['Organization','Brand','WebSite','WebPage',...(home?['Product','FAQPage']:[])]);
   const graph=nodes.filter(n=>!managed.has(n['@type']));
   const organization=origin+'/#organization',brand=origin+'/#brand',website=origin+'/#website';
-  graph.push({'@type':'Organization','@id':organization,name:'PRIMAL CORE',url:origin+'/',logo:{'@type':'ImageObject',url:origin+'/assets/email-bull.png',width:480,height:350},foundingLocation:{'@type':'Place',name:'Greece'},knowsAbout:["Men’s natural skincare",'Beef tallow balm','Chios mastic oil','Minimalist five-ingredient skincare','Post-shave skincare']},
+  graph.push({'@type':'Organization','@id':organization,name:'PRIMAL CORE',legalName:'MMTX E.E',sameAs:['https://www.instagram.com/primalcore.gr/','https://www.facebook.com/primalcore.gr/'],url:origin+'/',logo:{'@type':'ImageObject',url:origin+'/assets/email-bull.png',width:480,height:350},foundingLocation:{'@type':'Place',name:'Greece'},knowsAbout:["Men’s natural skincare",'Beef tallow balm','Chios mastic oil','Minimalist five-ingredient skincare','Post-shave skincare']},
     {'@type':'Brand','@id':brand,name:'PRIMAL CORE',url:origin+'/'},
     {'@type':'WebSite','@id':website,name:'PRIMAL CORE',url:origin+'/',inLanguage:['el','en'],publisher:{'@id':organization}},
     {'@type':'WebPage','@id':url+'#webpage',url,name:plainText(html.match(/<title>([\s\S]*?)<\/title>/)?.[1]||'PRIMAL CORE'),inLanguage:lang,isPartOf:{'@id':website},about:{'@id':organization}});
