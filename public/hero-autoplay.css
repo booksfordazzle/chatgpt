@@ -112,8 +112,6 @@ html:not(.js) .hero-autoplay .hero-video {
     pointer-events: none;
   }
   .hero-autoplay .hero-content #hero-title {
-    position: relative;
-    isolation: isolate;
     font-size: clamp(24px, 7.65vw, 38px);
   }
   .hero-autoplay .hero-content .hero-signup {
@@ -121,7 +119,6 @@ html:not(.js) .hero-autoplay .hero-video {
     isolation: isolate;
     margin-top: 24px;
   }
-  .hero-autoplay .hero-content #hero-title::before,
   .hero-autoplay .hero-content .hero-signup::before {
     content: "";
     position: absolute;
