@@ -85,9 +85,29 @@ html:not(.js) .hero-autoplay .hero-video {
   display: none;
 }
 
-@media (min-width: 761px) and (max-width: 1100px) {
+@media (min-width: 761px) {
+  html .hero-autoplay .hero-sticky:has(.hero-signup) {
+    align-items: stretch;
+  }
+  .hero-autoplay .hero-shade {
+    background:
+      linear-gradient(0deg, rgba(8, 9, 8, .76), transparent 38%),
+      linear-gradient(90deg, #080908, rgba(8, 9, 8, .84) 16%, transparent 48%);
+  }
   .hero-autoplay .hero-sticky .hero-content {
-    margin-bottom: 72px;
+    width: calc(100% - var(--page-gutter) * 2);
+    max-width: none;
+    min-height: calc(100svh - var(--header));
+    margin-inline: auto;
+    padding: clamp(24px, 5svh, 64px) 0 clamp(32px, 7svh, 64px);
+    pointer-events: none;
+  }
+  .hero-autoplay .hero-content #hero-title {
+    width: min(46vw, 700px);
+    margin-block: auto;
+  }
+  .hero-autoplay .hero-content .hero-signup {
+    align-self: center;
   }
 }
 
