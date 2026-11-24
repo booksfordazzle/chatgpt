@@ -281,3 +281,9 @@ Subtract another 5px from every title-size declaration in heading-scale.css, inc
 Latest owner adjustment: increase the title sizes by exactly 5px, reversing the previous 5px subtraction. Preserve the quieter 500/450 weights and ingredient-film title opacity 0.9. The film caption returns to 28px maximum on desktop and 22px on mobile; utility H2 minimum is 20px and article H3 is 20px. Use heading-scale.css cache version 4. Body copy, placement and hero fades are unchanged.
 
 Latest Philosophy essentials hierarchy: keep “Δεν χρειάζεσαι 30 συστατικά.” as the smaller H3 preface and “Χρειάζεσαι μόνο αυτά που δουλεύουν.” as the H1 conclusion, with the equivalent English tags. Keep their existing order and scene behavior, 24px separation, and shared H1 scale. The H3 uses 20–26px at weight 500.
+
+## Owner-requested semantic headings and result confirmation
+
+History and Philosophy now have one H1 each in both languages. Subsequent former H1s are H2s with `.chapter-title`; zero-specificity selector branches preserve the former typography, dimensions and chapter motion. The latest owner spelling is “μπω”, superseding the older “μπώ” references above.
+
+The result-delivery area uses a three-column desktop composition above 1100px: email delivery form, existing PRIMAL CORE tin photograph, research invitation. Its title is bounded to 26–34px; consent and submission messages stay readable below the form. At narrower widths retain the stacked reading flow and hide the extra desktop photograph. Independent delivery and marketing consent, honest partial-success messages, and confirmed-only registration remain unchanged.

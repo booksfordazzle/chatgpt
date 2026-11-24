@@ -25,8 +25,8 @@ test('blog cards provide excerpts and retain explicit crawlable article destinat
   for(const [,card]of cards){assert.match(card,/<a href="[^"]+">/);assert.match(card,/<h2>.+?<\/h2>/);assert(plainText(card.match(/<\/a><p>([\s\S]*?)<\/p>/)[1]).length>30)}
  }
 });
-test('history corrections remove unsupported outcome claims in both languages without changing noindex policy',async()=>{
+test('history corrections remove unsupported outcome claims in both languages with owner-requested public indexing',async()=>{
  for(const f of ['blog/hippocrates-tallow-mastic.html','en/blog/hippocrates-tallow-mastic.html']){
-  const html=await load(f);assert.match(html,/noindex,follow/);assert(!/σχεδόν ταυτόσημο|almost identical|Instantly soothes|Καταπραΰνει άμεσα|unchanged for months|αναλλοίωτη για μήνες/.test(html));assert(html.includes('https://www.ema.europa.eu/en/medicines/herbal/mastic'));assert(html.includes('https://ich.unesco.org/'));
+  const html=await load(f);assert.doesNotMatch(html,/noindex,follow/);assert(!/σχεδόν ταυτόσημο|almost identical|Instantly soothes|Καταπραΰνει άμεσα|unchanged for months|αναλλοίωτη για μήνες/.test(html));assert(html.includes('https://www.ema.europa.eu/en/medicines/herbal/mastic'));assert(html.includes('https://ich.unesco.org/'));
  }
 });

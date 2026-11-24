@@ -59,12 +59,15 @@ async function visit(dir) {
     const target = new URL(href, SITE_URL + '/' + relative);
     return `href="${escape(SITE_URL + canonicalPath(target.pathname.slice(1)))}"`;
   }));
+  // Default-language alternate matches the actual Greek counterpart, never the current English URL.
+  const greekAlternate=html.match(/<link\b(?=[^>]*rel="alternate")(?=[^>]*hreflang="el")(?=[^>]*href="([^"]+)")[^>]*>/i)?.[1];
+  if(greekAlternate&&!/hreflang="x-default"/i.test(html))html=html.replace('</head>',`<link rel="alternate" hreflang="x-default" href="${escape(greekAlternate)}"></head>`);
   html = html.replace('</head>',metadata+'</head>');
   // Explicitly requested public discovery pages become indexable; private/provisional pages retain noindex.
   if(discoveryPages.includes(relative))html=html.replace(/<meta\b(?=[^>]*name="robots")(?=[^>]*content="[^"]*noindex)[^>]*>/gi,'');
   html = structuredData(html, relative, url);
   // Only reviewed complete pages are eligible; provisional ingredient declarations stay noindexed.
-  if(reviewedPages.has(relative)&&!/<meta\b(?=[^>]*name="robots")(?=[^>]*content="[^"]*noindex)/i.test(html)){
+  if((reviewedPages.has(relative)||/^(?:en\/)?blog\/(?!index\.html$)[^/]+\.html$/.test(relative))&&!/<meta\b(?=[^>]*name="robots")(?=[^>]*content="[^"]*noindex)/i.test(html)){
     pages.push(url);
     const images=new Set();
     for(const [tag] of html.matchAll(/<img\b[^>]*>/gi)){
