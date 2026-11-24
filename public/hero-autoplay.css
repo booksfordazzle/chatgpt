@@ -56,12 +56,6 @@ html:not(.js) .hero-autoplay .hero-video {
   transform: none;
   white-space: normal;
 }
-.hero-autoplay .hero-content .hero-prelaunch {
-  max-width: 100%;
-  margin: 0 0 16px;
-  color: #fff;
-  font-size: 16px;
-}
 .hero-autoplay .hero-signup .consent {
   color: #fff;
 }
@@ -135,10 +129,6 @@ html:not(.js) .hero-autoplay .hero-video {
     inset: -16px -12px;
     background: radial-gradient(ellipse farthest-side, rgba(0, 0, 0, .74) 68%, transparent);
     pointer-events: none;
-  }
-  .hero-autoplay .hero-content .hero-prelaunch {
-    margin-bottom: 8px;
-    line-height: 1.35;
   }
   .hero-autoplay .hero-signup .consent {
     margin-top: 10px;

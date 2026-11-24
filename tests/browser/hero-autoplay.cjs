@@ -18,7 +18,7 @@ async function seedConsent(context) {
 
 async function assertForeground(page, withinViewport = true) {
   const state = await page.locator('.hero-autoplay').evaluate((hero, withinViewport) => {
-    const selectors = ['#hero-title', '#hero-waitlist-title', '.hero-prelaunch',
+    const selectors = ['#hero-title', '#hero-waitlist-title',
       '#hero-email', '[type="submit"]', '.consent'];
     const visible = selectors.map(selector => {
       const node = hero.querySelector(selector);
@@ -29,7 +29,7 @@ async function assertForeground(page, withinViewport = true) {
     });
     return { visible, overflow: document.documentElement.scrollWidth > innerWidth };
   }, withinViewport);
-  assert.deepEqual(state.visible, [true, true, true, true, true, true]);
+  assert.deepEqual(state.visible, [true, true, true, true, true]);
   assert.equal(state.overflow, false);
   await page.locator(waitlist + ' button').click({ trial: true, timeout: 2000 });
 }
