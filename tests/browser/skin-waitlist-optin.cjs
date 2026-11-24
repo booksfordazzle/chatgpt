@@ -1,9 +1,9 @@
 const assert = require('node:assert/strict');
-const { chromium } = require('/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const { chromium } = require(process.env.PLAYWRIGHT_MODULE || '/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
 
 // Run against the local static site: npm run dev (port 8097).
 (async () => {
- const browser = await chromium.launch({args:['--no-sandbox']});
+ const browser = await chromium.launch({executablePath:process.env.BROWSER_EXECUTABLE,args:['--no-sandbox']});
  try {
   for (const width of [390, 1440]) {
    for (const scenario of ['without-opt-in','with-opt-in','waitlist-failure','existing-subscriber']) {
@@ -24,12 +24,27 @@ const { chromium } = require('/opt/codex/runtimes/codex-primary-runtime/dependen
     if (await page.locator('#analytics-reject').isVisible()) await page.locator('#analytics-reject').click();
     await page.locator('#profile-adult').check();
     await page.locator('#profile-start button').click();
+    await page.locator('#question-content [name=gender]').last().check();
     for (let i=0;i<10;i++) {
-     await page.locator('#question-content input').first().check();
+     await page.locator('#question-content [name=answer]').first().check();
      await page.locator('#question-next').click();
     }
+    const completion = page.locator('#profile-results');
+    await completion.waitFor();
+    assert.equal(await completion.locator('h1').textContent(),'Το αποτέλεσμά σου στο email σου');
+    assert.equal(await completion.locator('.skin-editorial, #result-final-note').count(),0);
+    await page.reload();
+    await completion.waitFor();
+    assert.equal(await completion.locator('h1').textContent(),'Το αποτέλεσμά σου στο email σου');
+    assert.equal(await completion.locator('.skin-editorial, #result-final-note').count(),0);
     const email = page.locator('#result-email');
     assert.equal(await page.locator('#result-email-form [name=waitlistConsent]').isChecked(),false);
+    await email.fill('controlled@example.com');
+    await page.locator('#result-email-form [name=waitlistConsent]').check();
+    await page.locator('#result-email-form button').click();
+    assert.equal(delivered.length,0,'marketing consent cannot authorize result delivery');
+    assert.equal(subscriptions.length,0);
+    await page.locator('#result-email-form [name=waitlistConsent]').uncheck();
     await email.fill('invalid-email');
     await page.locator('#result-email-form [name=deliveryConsent]').check();
     await page.locator('#result-email-form button').click();
@@ -39,6 +54,8 @@ const { chromium } = require('/opt/codex/runtimes/codex-primary-runtime/dependen
     await page.locator('#result-email-form button').dblclick();
     await page.waitForFunction(() => document.querySelector('#result-email-status')?.textContent.includes('στάλθηκε'));
     assert.equal(delivered.length,1, 'result email must be submitted once');
+    assert.equal(await completion.locator('.skin-editorial, #result-final-note').count(),0);
+    assert.equal(delivered[0].result.primary,'M');
     assert.equal(delivered[0].email,'controlled@example.com');
     assert.equal(delivered[0].deliveryConsent,true);
     assert.equal('waitlistConsent' in delivered[0],false);
