@@ -99,47 +99,65 @@ html:not(.js) .hero-autoplay .hero-video {
 
 @media (max-width: 760px) {
   html .hero-autoplay .hero-sticky:has(.hero-signup) {
-    align-items: start;
+    align-items: stretch;
   }
   .hero-autoplay .hero-media {
     inset: 0;
   }
   .hero-autoplay .hero-shade {
-    background: linear-gradient(180deg, rgba(0, 0, 0, .76) 220px, transparent 340px);
+    background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, .48));
   }
   .hero-autoplay .hero-sticky .hero-content {
     align-items: center;
+    justify-content: space-between;
     width: min(calc(100% - var(--page-gutter) * 2), 480px);
     margin-inline: auto;
-    padding: clamp(16px, 4svh, 36px) 0 72px;
+    padding: clamp(88px, 21svh, 200px) 0 60px;
     text-align: center;
     pointer-events: none;
   }
+  .hero-autoplay .hero-content #hero-title {
+    position: relative;
+    isolation: isolate;
+    font-size: clamp(24px, 7.35vw, 38px);
+  }
   .hero-autoplay .hero-content .hero-signup {
-    margin-top: 16px;
+    position: relative;
+    isolation: isolate;
+    margin-top: 24px;
+  }
+  .hero-autoplay .hero-content #hero-title::before,
+  .hero-autoplay .hero-content .hero-signup::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -16px -12px;
+    background: radial-gradient(ellipse farthest-side, rgba(0, 0, 0, .74) 68%, transparent);
+    pointer-events: none;
   }
   .hero-autoplay .hero-signup .consent {
     text-align: left;
   }
-}
 
-/* Fit the foreground above the privacy panel on short phones. */
-@media (max-width: 390px) and (max-height: 810px),
-       (max-width: 650px) and (max-height: 740px) {
-  .hero-autoplay .hero-sticky .hero-content {
+  /* Keep signup reachable while the fixed privacy choices are open. */
+  body:has(#analytics-consent:not([hidden])) .hero-autoplay .hero-content {
+    justify-content: flex-start;
     padding-top: 16px;
   }
-  .hero-autoplay .hero-content .hero-signup {
+  body:has(#analytics-consent:not([hidden])) .hero-autoplay #hero-title {
+    font-size: clamp(20px, 5.4vw, 30px);
+  }
+  body:has(#analytics-consent:not([hidden])) .hero-autoplay .hero-signup {
     margin-top: 10px;
   }
-  .hero-autoplay .hero-signup #hero-waitlist-title {
+  body:has(#analytics-consent:not([hidden])) .hero-autoplay #hero-waitlist-title {
     margin-bottom: 4px;
   }
-  .hero-autoplay .hero-content .hero-prelaunch {
+  body:has(#analytics-consent:not([hidden])) .hero-autoplay .hero-prelaunch {
     margin-bottom: 6px;
     line-height: 1.25;
   }
-  .hero-autoplay .hero-signup .consent {
+  body:has(#analytics-consent:not([hidden])) .hero-autoplay .consent {
     margin-top: 4px;
   }
 }
